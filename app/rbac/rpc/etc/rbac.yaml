@@ -1,0 +1,22 @@
+Name: rbac.rpc
+ListenOn: 0.0.0.0:18080
+Mode: dev
+
+Database:
+  Driver: "mysql"
+  Host: "192.168.120.61"
+  Port: 3306
+  User: "root"
+  Pass: "root"
+  DbName: "business"
+  Charset: "utf8mb4"
+
+Etcd:
+  Hosts:
+    - "192.168.120.61:23790"
+  Key: "rbac.rpc"
+
+Cache:
+  - Host: "192.168.120.61:6379"
+    Type: "node"
+    Pass: ""

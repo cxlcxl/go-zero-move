@@ -1,0 +1,107 @@
+syntax = "proto3";
+
+option go_package = "./rbac";
+
+package rbac;
+
+message RoleDetail{
+  int64 id = 1;
+  string role_name = 2;
+  int64 state=3;
+}
+message RoleCreateReq{
+  string role_name = 2;
+  int64 sys=3;
+}
+message RoleUpdateReq{
+  int64 id = 1;
+  string role_name = 2;
+  int64 state=3;
+}
+message RoleDestroyReq{
+  int64 id = 1;
+}
+message RoleInfo{
+  int64 id = 1;
+}
+message UserCreateReq {
+  int64 role_id=1;
+  string username = 2;
+  string email = 3;
+  string mobile = 4;
+  string pass=5;
+}
+message UserUpdateReq {
+  int64 id = 1;
+  string username = 2;
+  string email = 3;
+  string mobile = 4;
+  int64 state = 5;
+  string pass=6;
+  int64 role_id=7;
+}
+message UserInfoIdReq{
+  int64 id = 1;
+}
+message UserInfoEmailReq{
+  string email= 1;
+}
+message LoginReq{
+  string email= 1;
+  string pass=2;
+}
+message UserDestroyReq{
+  int64 id = 1;
+}
+message UserListReq{
+  string username=1;
+  string email=2;
+  int64 state=3;
+  int64 page=4;
+  int64 page_size=5;
+}
+
+message BaseResp {
+  int64 code = 1;
+}
+message AllRoles{
+  string role_name=1;
+  int64 state=2;
+}
+message AllRolesResp{
+  repeated RoleDetail roles = 1;
+}
+message UserInfoResp {
+    int64 id = 1;
+    string username = 2;
+    string email = 3;
+    string mobile = 4;
+    int64 state = 5;
+    int64 created_at=6;
+    RoleDetail role=7;
+}
+message LoginResp {
+    int64 id = 1;
+    string username = 2;
+    string email = 3;
+    string mobile = 4;
+    int64 role_id=5;
+}
+message UserListResp{
+  int64 total=1;
+  repeated UserInfoResp users =2;
+}
+service RbacCenter{
+  rpc GetUserInfoById(UserInfoIdReq) returns(UserInfoResp);
+  rpc GetUserInfoByEmail(UserInfoEmailReq) returns(UserInfoResp);
+  rpc GetUserList(UserListReq) returns(UserListResp);
+  rpc Login(LoginReq) returns(LoginResp);
+  rpc UserCreate(UserCreateReq) returns(BaseResp);
+  rpc UserUpdate(UserUpdateReq) returns(BaseResp);
+  rpc UserDestroy(UserDestroyReq) returns(BaseResp);
+  rpc RoleCreate(RoleCreateReq) returns(BaseResp);
+  rpc RoleUpdate(RoleUpdateReq) returns(BaseResp);
+  rpc RoleDestroy(RoleDestroyReq) returns(BaseResp);
+  rpc GetRoleInfo(RoleInfo) returns(RoleDetail);
+  rpc GetAllRoles(AllRoles) returns(AllRolesResp);
+}

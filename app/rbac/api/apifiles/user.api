@@ -1,0 +1,172 @@
+syntax = "v1"
+
+type (
+	BaseResp {
+		Code int64  `json:"code"`
+		Msg  string `json:"msg"`
+	}
+	UserBase {
+		Username string `json:"username"`
+		Email    string `json:"email"`
+		Mobile   string `json:"mobile"`
+	}
+	UserCreateReq {
+		UserBase
+		Pass   string `json:"pass"`
+		RoleId int64  `json:"role_id"`
+	}
+	RoleCreateReq {
+		RoleName string `json:"role_name"`
+		Sys      int64  `json:"sys"`
+	}
+	UserUpdateReq {
+		Id int64 `json:"id"`
+		UserBase
+		Pass   string `json:"pass"`
+		State  int64  `json:"state"`
+		RoleId int64  `json:"role_id"`
+	}
+	RoleUpdateReq {
+		Id       int64  `json:"id"`
+		RoleName string `json:"roleName"`
+		State    int64  `json:"state"`
+	}
+	Login {
+		Email string `json:"email"`
+		Pass  string `json:"pass"`
+	}
+	LoginResp {
+		BaseResp
+		Data LoginTokenResp `json:"data"`
+	}
+	LoginTokenResp {
+		Id       int64  `json:"id"`
+		Email    string `json:"email"`
+		Username string `json:"username"`
+		Mobile   string `json:"mobile"`
+		RoleId   int64  `json:"role_id"`
+		Token    string `json:"token"`
+	}
+	UserInfoReq {
+		Id int64 `json:"id"`
+	}
+	UserDestroyReq {
+		Id int64 `json:"id"`
+	}
+	UserInfoResp {
+		BaseResp
+		Data UserInfo `json:"data"`
+	}
+	UserInfo {
+		Id        int64    `json:"id"`
+		Username  string   `json:"username"`
+		Email     string   `json:"email"`
+		Mobile    string   `json:"mobile"`
+		State     int64    `json:"state"`
+		CreatedAt int64    `json:"created_at"`
+		Role      RoleInfo `json:"role"`
+	}
+
+	RoleInfo {
+		Id       int64  `json:"id"`
+		RoleName string `json:"roleName"`
+		State    int64  `json:"state"`
+	}
+
+	RoleInfoReq {
+		Id int64 `json:"id"`
+	}
+
+	RoleDestroyReq {
+		Id int64 `json:"id"`
+	}
+
+	RoleInfoResp {
+		BaseResp
+		Data RoleInfo `json:"data"`
+	}
+
+	UserListReq {
+		Username string `json:"username"`
+		Email    string `json:"email"`
+		State    int64  `json:"state"`
+		Page     int64  `json:"page"`
+		PageSize int64  `json:"page_size"`
+	}
+	UserListResp {
+		BaseResp
+		Total int64      `json:"total"`
+		Data  []UserInfo `json:"data"`
+	}
+
+	RoleListReq {
+		RoleName string `json:"role_name"`
+		State    int64  `json:"state"`
+	}
+	RoleListResp {
+		BaseResp
+		Data []RoleInfo `json:"data"`
+	}
+)
+
+service rbac-api {
+	@doc "用户登陆"
+	@handler login
+	post /login (Login) returns (LoginResp)
+}
+
+@server(
+	jwt: Auth
+	middleware : AuthMiddleware
+)
+service rbac-api {
+	@doc "个人信息"
+	@handler profile
+	get /profile returns (UserInfoResp)
+}
+
+@server(
+	jwt: Auth
+	middleware : AuthMiddleware,PermissionMiddleware
+)
+service rbac-api {
+	@doc "角色列表"
+	@handler userList
+	get /user/list (UserListReq) returns (UserListResp)
+	
+	@doc "用户创建"
+	@handler userCreate
+	post /user/create (UserCreateReq) returns (BaseResp)
+	
+	@doc "用户修改"
+	@handler userUpdate
+	post /user/update (UserUpdateReq) returns (BaseResp)
+	
+	@doc "用户信息"
+	@handler getUserInfo
+	get /user/info (UserInfoReq) returns (UserInfoResp)
+	
+	@doc "用户删除"
+	@handler UserDestroy
+	post /user/destroy (UserDestroyReq) returns (BaseResp)
+	
+	@doc "角色列表"
+	@handler roleList
+	get /role/list (RoleListReq) returns (RoleListResp)
+	
+	@doc "角色创建"
+	@handler roleCreate
+	post /role/create (RoleCreateReq) returns (BaseResp)
+	
+	@doc "角色修改"
+	@handler roleUpdate
+	post /role/update (RoleUpdateReq) returns (BaseResp)
+	
+	@doc "角色信息"
+	@handler getRoleInfo
+	get /role/info (RoleInfoReq) returns (RoleInfoResp)
+	
+	@doc "角色删除"
+	@handler RoleDestroy
+	post /role/destroy (RoleDestroyReq) returns (BaseResp)
+}

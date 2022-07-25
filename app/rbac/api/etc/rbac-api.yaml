@@ -1,0 +1,27 @@
+Name: rbac-api
+Host: 0.0.0.0
+Port: 18888
+
+Database:
+  Driver: "mysql"
+  User: "root"
+  Pass: "root"
+  Host: "192.168.120.61"
+  Port: 3306
+  DbName: "business"
+  Charset: "utf8mb4"
+
+Cache:
+  - Host: "192.168.120.61:6379"
+    Type: "node"
+    Pass: ""
+
+Auth:
+  AccessSecret: "ADS_BUSINESS"
+  Expire: 259200 # 秒
+
+RpcConf:
+  Etcd:
+    Hosts:
+      - "192.168.120.61:23790"
+    Key: "rbac.rpc"
