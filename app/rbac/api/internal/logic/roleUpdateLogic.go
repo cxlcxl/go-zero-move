@@ -25,6 +25,9 @@ func NewRoleUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RoleUp
 }
 
 func (l *RoleUpdateLogic) RoleUpdate(req *types.RoleUpdateReq) (resp *types.BaseResp, err error) {
+	if err = l.svcCtx.Validator.StructCtx(l.ctx, req); err != nil {
+		return nil, err
+	}
 	_, err = l.svcCtx.RbacClient.RoleUpdate(l.ctx, &rbaccenter.RoleUpdateReq{
 		Id:       req.Id,
 		RoleName: req.RoleName,

@@ -1,17 +1,21 @@
 package validators
 
-// Validator 定义验证器类型
-type Validator func() error
+import (
+	chinese "github.com/go-playground/locales/zh"
+	ut "github.com/go-playground/universal-translator"
+	"github.com/go-playground/validator/v10"
+	vzh "github.com/go-playground/validator/v10/translations/zh"
+)
 
 // New 创建验证器
-func New(vs ...Validator) error {
-	if len(vs) == 0 {
-		return nil
+func New() *validator.Validate {
+	zh := chinese.New()
+	uni := ut.New(zh, zh)
+	trans, _ := uni.GetTranslator("zh")
+	v := validator.New()
+	for s, f := range vs {
+		_ = v.RegisterValidation(s, f)
 	}
-	for _, v := range vs {
-		if err := v(); err != nil {
-			return err
-		}
-	}
-	return nil
+	_ = vzh.RegisterDefaultTranslations(v, trans)
+	return v
 }

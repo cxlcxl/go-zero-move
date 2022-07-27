@@ -1,0 +1,13 @@
+Name: account-api
+Host: 0.0.0.0
+Port: 18003
+
+AccountRpcConf:
+  Etcd:
+    Hosts:
+      - "192.168.120.61:23790"
+    Key: "account.rpc"
+
+Auth:
+  AccessSecret: "ADS_BUSINESS"
+  Expire: 259200 # 秒

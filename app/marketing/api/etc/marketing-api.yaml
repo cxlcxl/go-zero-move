@@ -1,0 +1,7 @@
+Name: marketing-api
+Host: 0.0.0.0
+Port: 18002
+
+Auth:
+  AccessSecret: "ADS_BUSINESS"
+  Expire: 259200 # 秒

@@ -1,13 +1,5 @@
 package validators
 
-import "errors"
-
-var (
-	passwordError = errors.New("密码格式不正确")
-	emailError    = errors.New("邮箱格式不正确")
-	emptyError    = errors.New("必填参数不可为空")
-)
-
 const (
 	passwordRule = "^[a-zA-z]+[a-zA-Z0-9@.&!#?,%$]{5,17}$"
 	// 配置代码

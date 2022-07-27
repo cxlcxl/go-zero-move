@@ -5,7 +5,6 @@ import (
 	model2 "business/app/rbac/rpc/model"
 	"business/app/rbac/rpc/rbac"
 	"business/common/utils"
-	"business/common/validators"
 	"business/common/vars"
 	"context"
 	"errors"
@@ -28,13 +27,6 @@ func NewUserCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserCr
 }
 
 func (l *UserCreateLogic) UserCreate(in *rbac.UserCreateReq) (*rbac.BaseResp, error) {
-	if err := validators.New(
-		validators.Email(in.Email),
-		validators.Password(in.Pass),
-		validators.Empty(in.Username),
-	); err != nil {
-		return nil, err
-	}
 	user, err := l.svcCtx.UserModel.FindOneByEmail(l.ctx, in.Email)
 	if err != nil && err != model2.ErrNotFound {
 		return nil, err

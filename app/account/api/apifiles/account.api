@@ -1,0 +1,43 @@
+syntax = "v1"
+
+type (
+	BaseResp {
+		Code int64  `json:"code"`
+		Msg  string `json:"msg"`
+	}
+	AccountInfoReq {
+		Id int64 `json:"id"`
+	}
+	AccountInfo {
+		Id               int64         `json:"id"`
+		AccountName      string        `json:"account_nName"`
+		AccountId        string        `json:"account_id"`
+		AccountType      int64         `json:"account_type"`
+		Email            string        `json:"email"`
+		State            int64         `json:"state"`
+		AreatedAt        int64         `json:"created_at"`
+		UpdatedAt        int64         `json:"updated_at"`
+		AccountClientIds []ActClientId `json:"account_client_ids"`
+	}
+	ActClientId {
+		Id       int64  `json:"id"`
+		ClientId int64  `json:"client_id"`
+		Secret   string `json:"secret"`
+		Comment  string `json:"comment"`
+	}
+	GetAccountInfoResp {
+		BaseResp
+		Data AccountInfo `json:"data"`
+	}
+)
+
+@server(
+	prefix: /account
+	jwt: Auth
+	middleware : AuthMiddleware,PermissionMiddleware
+)
+service account-api {
+	@doc "账户信息"
+	@handler getAccountInfo
+	get /info(AccountInfoReq) returns (GetAccountInfoResp)
+}

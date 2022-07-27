@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option go_package = "./marketing";
+
+package marketing;
+
+message PromotionCreateReq{
+  string campaign_name = 1;
+  string product_type = 2;
+  int64 daily_budget = 3;
+  string advertiser_id = 4;
+  string marketing_goal = 5;
+}
+
+message BaseResp {
+  int64 code = 1;
+}
+
+service MarketingCenter{
+  rpc RoleCreate(PromotionCreateReq) returns(BaseResp);
+}

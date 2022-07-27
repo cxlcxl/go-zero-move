@@ -4,7 +4,6 @@ import (
 	"business/app/rbac/rpc/internal/svc"
 	"business/app/rbac/rpc/rbac"
 	"business/common/utils"
-	"business/common/validators"
 	"context"
 	"errors"
 
@@ -26,9 +25,6 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 }
 
 func (l *LoginLogic) Login(in *rbac.LoginReq) (*rbac.LoginResp, error) {
-	if err := validators.New(validators.Email(in.Email), validators.Password(in.Pass)); err != nil {
-		return nil, err
-	}
 	user, err := l.svcCtx.UserModel.FindOneByEmail(l.ctx, in.Email)
 	if err != nil {
 		return nil, err

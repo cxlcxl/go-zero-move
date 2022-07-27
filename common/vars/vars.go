@@ -16,6 +16,12 @@ const (
 	ResponseCodeTokenExpire
 )
 
+const (
+	_ = iota
+	AccountTypeAds
+	AccountTypeReport
+)
+
 var (
 	ResponseMsg = map[int]string{
 		ResponseCodeOk:           "OK",
@@ -27,5 +33,10 @@ var (
 		ResponseCodeEmptyToken:   "缺少 TOKEN",
 		ResponseCodeTokenErr:     "TOKEN 错误",
 		ResponseCodeTokenExpire:  "TOKEN 过期",
+	}
+	// AccountType 账号类型
+	AccountType = map[int]string{
+		AccountTypeAds:    "ADS",
+		AccountTypeReport: "变现",
 	}
 )

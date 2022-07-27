@@ -6,7 +6,6 @@ import (
 	"business/app/rbac/rpc/rbac"
 	"business/app/rbac/rpc/rbaccenter"
 	"business/common/utils"
-	"business/common/validators"
 	"business/common/vars"
 	"context"
 	"github.com/golang-jwt/jwt/v4"
@@ -30,8 +29,8 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 }
 
 func (l *LoginLogic) Login(req *types.Login) (resp *types.LoginResp, err error) {
-	if err = validators.New(validators.Email(req.Email), validators.Password(req.Pass)); err != nil {
-		return
+	if err = l.svcCtx.Validator.StructCtx(l.ctx, req); err != nil {
+		return nil, err
 	}
 	res, err := l.svcCtx.RbacClient.Login(l.ctx, &rbaccenter.LoginReq{Email: req.Email, Pass: req.Pass})
 	if err != nil {

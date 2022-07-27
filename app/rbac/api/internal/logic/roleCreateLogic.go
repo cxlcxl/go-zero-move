@@ -27,6 +27,9 @@ func NewRoleCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RoleCr
 }
 
 func (l *RoleCreateLogic) RoleCreate(req *types.RoleCreateReq) (resp *types.BaseResp, err error) {
+	if err = l.svcCtx.Validator.StructCtx(l.ctx, req); err != nil {
+		return nil, err
+	}
 	_, err = l.svcCtx.RbacClient.RoleCreate(l.ctx, &rbaccenter.RoleCreateReq{
 		RoleName: req.RoleName,
 		Sys:      req.Sys,

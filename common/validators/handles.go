@@ -1,47 +1,20 @@
 package validators
 
-import "regexp"
+import (
+	"github.com/go-playground/validator/v10"
+	"regexp"
+)
 
-// Password 检查密码
-func Password(d string) Validator {
-	return func() error {
-		ok, err := regexp.MatchString(passwordRule, d)
-		if err != nil {
-			return err
-		}
-		if !ok {
-			return passwordError
-		}
-		return nil
-	}
+var vs = map[string]func(l validator.FieldLevel) bool{
+	"password": password,
 }
 
-// Email 邮箱
-func Email(d string) Validator {
-	return func() error {
-		ok, err := regexp.MatchString(emailRule, d)
-		if err != nil {
-			return err
-		}
-		if !ok {
-			return emailError
-		}
-		return nil
+// 检查密码
+func password(l validator.FieldLevel) bool {
+	pass := l.Field().String()
+	ok, err := regexp.MatchString(passwordRule, pass)
+	if err != nil {
+		return false
 	}
-}
-
-func Empty(d interface{}) Validator {
-	return func() error {
-		switch d.(type) {
-		case string:
-			if d == "" {
-				return emptyError
-			}
-		case int64, int, int32, uint, uint32, uint64:
-			if d == 0 {
-				return emptyError
-			}
-		}
-		return nil
-	}
+	return ok
 }

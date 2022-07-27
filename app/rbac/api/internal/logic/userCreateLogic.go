@@ -3,7 +3,6 @@ package logic
 import (
 	"business/app/rbac/rpc/rbaccenter"
 	"business/common/utils"
-	"business/common/validators"
 	"business/common/vars"
 	"context"
 
@@ -28,11 +27,7 @@ func NewUserCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserCr
 }
 
 func (l *UserCreateLogic) UserCreate(req *types.UserCreateReq) (resp *types.BaseResp, err error) {
-	if err = validators.New(
-		validators.Email(req.Email),
-		validators.Password(req.Pass),
-		validators.Empty(req.Username),
-	); err != nil {
+	if err = l.svcCtx.Validator.StructCtx(l.ctx, req); err != nil {
 		return nil, err
 	}
 	_, err = l.svcCtx.RbacClient.UserCreate(l.ctx, &rbaccenter.UserCreateReq{

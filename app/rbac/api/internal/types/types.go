@@ -7,39 +7,39 @@ type BaseResp struct {
 }
 
 type UserBase struct {
-	Username string `json:"username"`
-	Email    string `json:"email"`
-	Mobile   string `json:"mobile"`
+	Username string `json:"username" validate:"required"`
+	Email    string `json:"email" validate:"required,email"`
+	Mobile   string `json:"mobile" validate:"required"`
 }
 
 type UserCreateReq struct {
 	UserBase
-	Pass   string `json:"pass"`
-	RoleId int64  `json:"role_id"`
+	Pass   string `json:"pass" validate:"required,password"`
+	RoleId int64  `json:"role_id" validate:"required"`
 }
 
 type RoleCreateReq struct {
-	RoleName string `json:"role_name"`
-	Sys      int64  `json:"sys"`
+	RoleName string `json:"role_name" validate:"required"`
+	Sys      int64  `json:"sys" validate:"numeric"`
 }
 
 type UserUpdateReq struct {
-	Id int64 `json:"id"`
+	Id int64 `json:"id" validate:"required"`
 	UserBase
-	Pass   string `json:"pass"`
-	State  int64  `json:"state"`
-	RoleId int64  `json:"role_id"`
+	Pass   string `json:"pass" validate:"omitempty,password"`
+	State  int64  `json:"state" validate:"numeric"`
+	RoleId int64  `json:"role_id" validate:"required"`
 }
 
 type RoleUpdateReq struct {
-	Id       int64  `json:"id"`
-	RoleName string `json:"roleName"`
-	State    int64  `json:"state"`
+	Id       int64  `json:"id" validate:"required"`
+	RoleName string `json:"roleName" validate:"required"`
+	State    int64  `json:"state" validate:"numeric"`
 }
 
 type Login struct {
-	Email string `json:"email"`
-	Pass  string `json:"pass"`
+	Email string `json:"email" validate:"required,email"`
+	Pass  string `json:"pass" validate:"required,password"`
 }
 
 type LoginResp struct {

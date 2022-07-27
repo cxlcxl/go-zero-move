@@ -1,6 +1,6 @@
 Name: rbac-api
 Host: 0.0.0.0
-Port: 18888
+Port: 18001
 
 Database:
   Driver: "mysql"
