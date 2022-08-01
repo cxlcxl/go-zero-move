@@ -9,7 +9,7 @@ type BaseResp struct {
 type UserBase struct {
 	Username string `json:"username" validate:"required"`
 	Email    string `json:"email" validate:"required,email"`
-	Mobile   string `json:"mobile" validate:"required"`
+	Mobile   string `json:"mobile"`
 }
 
 type UserCreateReq struct {
@@ -33,7 +33,7 @@ type UserUpdateReq struct {
 
 type RoleUpdateReq struct {
 	Id       int64  `json:"id" validate:"required"`
-	RoleName string `json:"roleName" validate:"required"`
+	RoleName string `json:"role_name" validate:"required"`
 	State    int64  `json:"state" validate:"numeric"`
 }
 
@@ -69,6 +69,16 @@ type UserInfoResp struct {
 	Data UserInfo `json:"data"`
 }
 
+type ProfileResp struct {
+	BaseResp
+	Data ProfileInfo `json:"data"`
+}
+
+type ProfileInfo struct {
+	UserInfo
+	Permissions []string `json:"permissions"`
+}
+
 type UserInfo struct {
 	Id        int64    `json:"id"`
 	Username  string   `json:"username"`
@@ -81,7 +91,7 @@ type UserInfo struct {
 
 type RoleInfo struct {
 	Id       int64  `json:"id"`
-	RoleName string `json:"roleName"`
+	RoleName string `json:"role_name"`
 	State    int64  `json:"state"`
 }
 

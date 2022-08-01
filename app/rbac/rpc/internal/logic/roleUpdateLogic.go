@@ -7,6 +7,7 @@ import (
 	"business/common/vars"
 	"context"
 	"github.com/zeromicro/go-zero/core/logx"
+	"time"
 )
 
 type RoleUpdateLogic struct {
@@ -24,7 +25,7 @@ func NewRoleUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RoleUp
 }
 
 func (l *RoleUpdateLogic) RoleUpdate(in *rbac.RoleUpdateReq) (*rbac.BaseResp, error) {
-	if err := l.svcCtx.RoleModel.Update(l.ctx, &model.Roles{RoleName: in.RoleName, Id: in.Id, State: in.State}); err != nil {
+	if err := l.svcCtx.RoleModel.Update(l.ctx, &model.Roles{RoleName: in.RoleName, Id: in.Id, State: in.State, UpdatedAt: time.Now()}); err != nil {
 		return nil, err
 	}
 	return &rbac.BaseResp{Code: vars.ResponseCodeOk}, nil

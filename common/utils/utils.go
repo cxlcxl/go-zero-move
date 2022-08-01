@@ -80,10 +80,10 @@ func Sha1(s string) string {
 }
 
 // HttpBuildQuery 参数转化
-func HttpBuildQuery(params map[string]interface{}) string {
+func HttpBuildQuery(params map[string]string) string {
 	v := make(url.Values)
 	for key, val := range params {
-		v.Set(key, val.(string))
+		v.Set(key, val)
 	}
 	return v.Encode()
 }

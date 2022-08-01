@@ -5,3 +5,7 @@ Port: 18002
 Auth:
   AccessSecret: "ADS_BUSINESS"
   Expire: 259200 # 秒
+
+AccountRpcClient:
+  Endpoints:
+    - "127.0.0.1:28003"

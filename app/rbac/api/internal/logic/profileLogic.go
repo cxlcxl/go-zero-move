@@ -1,8 +1,6 @@
 package logic
 
 import (
-	"business/app/rbac/api/internal/svc"
-	"business/app/rbac/api/internal/types"
 	"business/app/rbac/rpc/rbaccenter"
 	"business/common/utils"
 	"business/common/vars"
@@ -11,6 +9,9 @@ import (
 	"errors"
 	"github.com/jinzhu/copier"
 	"strconv"
+
+	"business/app/rbac/api/internal/svc"
+	"business/app/rbac/api/internal/types"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -29,7 +30,7 @@ func NewProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ProfileLo
 	}
 }
 
-func (l *ProfileLogic) Profile() (resp *types.UserInfoResp, err error) {
+func (l *ProfileLogic) Profile() (resp *types.ProfileResp, err error) {
 	id, ok := l.ctx.Value("id").(json.Number)
 	if !ok {
 		return nil, errors.New("个人信息获取失败")
@@ -47,11 +48,15 @@ func (l *ProfileLogic) Profile() (resp *types.UserInfoResp, err error) {
 	if err != nil {
 		return nil, vars.DataCopierError
 	}
-	return &types.UserInfoResp{
+
+	return &types.ProfileResp{
 		BaseResp: types.BaseResp{
 			Code: vars.ResponseCodeOk,
 			Msg:  vars.ResponseMsg[vars.ResponseCodeOk],
 		},
-		Data: user,
+		Data: types.ProfileInfo{
+			UserInfo:    user,
+			Permissions: []string{},
+		},
 	}, nil
 }

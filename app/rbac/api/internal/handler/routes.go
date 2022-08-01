@@ -21,25 +21,27 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	)
 
 	server.AddRoutes(
-		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.AuthMiddleware},
-			[]rest.Route{
-				{
-					Method:  http.MethodGet,
-					Path:    "/profile",
-					Handler: profileHandler(serverCtx),
-				},
-			}...,
-		),
+		[]rest.Route{
+			{
+				Method:  http.MethodGet,
+				Path:    "/profile",
+				Handler: profileHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/logout",
+				Handler: logoutHandler(serverCtx),
+			},
+		},
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 	)
 
 	server.AddRoutes(
 		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.AuthMiddleware, serverCtx.PermissionMiddleware},
+			[]rest.Middleware{serverCtx.PermissionMiddleware},
 			[]rest.Route{
 				{
-					Method:  http.MethodGet,
+					Method:  http.MethodPost,
 					Path:    "/user/list",
 					Handler: userListHandler(serverCtx),
 				},
@@ -54,7 +56,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: userUpdateHandler(serverCtx),
 				},
 				{
-					Method:  http.MethodGet,
+					Method:  http.MethodPost,
 					Path:    "/user/info",
 					Handler: getUserInfoHandler(serverCtx),
 				},
@@ -64,7 +66,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: UserDestroyHandler(serverCtx),
 				},
 				{
-					Method:  http.MethodGet,
+					Method:  http.MethodPost,
 					Path:    "/role/list",
 					Handler: roleListHandler(serverCtx),
 				},
@@ -79,7 +81,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: roleUpdateHandler(serverCtx),
 				},
 				{
-					Method:  http.MethodGet,
+					Method:  http.MethodPost,
 					Path:    "/role/info",
 					Handler: getRoleInfoHandler(serverCtx),
 				},

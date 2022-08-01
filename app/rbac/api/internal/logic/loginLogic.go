@@ -40,6 +40,7 @@ func (l *LoginLogic) Login(req *types.Login) (resp *types.LoginResp, err error) 
 	if e != nil {
 		return nil, e
 	}
+
 	return &types.LoginResp{
 		BaseResp: types.BaseResp{Code: vars.ResponseCodeOk, Msg: vars.ResponseMsg[vars.ResponseCodeOk]},
 		Data: types.LoginTokenResp{

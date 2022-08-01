@@ -1,0 +1,22 @@
+Name: marketing.rpc
+ListenOn: 127.0.0.1:28002
+Mode: dev
+
+#Etcd:
+#  Hosts:
+#  - 127.0.0.1:2379
+#  Key: marketing.rpc
+
+Database:
+  Driver: "mysql"
+  Host: "192.168.120.61"
+  Port: 3306
+  User: "root"
+  Pass: "root"
+  DbName: "business"
+  Charset: "utf8mb4"
+
+Cache:
+  - Host: "192.168.120.61:6379"
+    Type: "node"
+    Pass: ""

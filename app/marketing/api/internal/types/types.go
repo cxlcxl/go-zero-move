@@ -6,6 +6,24 @@ type BaseResp struct {
 	Msg  string `json:"msg"`
 }
 
+type AuthCodeUrlReq struct {
+}
+
+type AuthCodeUrlResp struct {
+	BaseResp
+	AuthCodeUrl string `json:"auth_code_url"`
+}
+
+type AccessTokenReq struct {
+	AuthorizationCode string `json:"authorization_code"`
+	State             string `json:"state"`
+}
+
+type AccessTokenResp struct {
+	BaseResp
+	AccessToken string `json:"access_token"`
+}
+
 type PromotionCreateReq struct {
 	CampaignName  string `json:"campaign_name" validate:"required"` // 计划名称
 	ProductType   string `json:"product_type" validate:"required"`  // 推广产品

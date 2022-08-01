@@ -8,7 +8,7 @@ type (
 	UserBase {
 		Username string `json:"username" validate:"required"`
 		Email    string `json:"email" validate:"required,email"`
-		Mobile   string `json:"mobile" validate:"required"`
+		Mobile   string `json:"mobile"`
 	}
 	UserCreateReq {
 		UserBase
@@ -28,7 +28,7 @@ type (
 	}
 	RoleUpdateReq {
 		Id       int64  `json:"id" validate:"required"`
-		RoleName string `json:"roleName" validate:"required"`
+		RoleName string `json:"role_name" validate:"required"`
 		State    int64  `json:"state" validate:"numeric"`
 	}
 	Login {
@@ -57,6 +57,14 @@ type (
 		BaseResp
 		Data UserInfo `json:"data"`
 	}
+	ProfileResp {
+		BaseResp
+		Data ProfileInfo `json:"data"`
+	}
+	ProfileInfo {
+		UserInfo
+		Permissions []string `json:"permissions"`
+	}
 	UserInfo {
 		Id        int64    `json:"id"`
 		Username  string   `json:"username"`
@@ -69,7 +77,7 @@ type (
 
 	RoleInfo {
 		Id       int64  `json:"id"`
-		RoleName string `json:"roleName"`
+		RoleName string `json:"role_name"`
 		State    int64  `json:"state"`
 	}
 
@@ -117,22 +125,25 @@ service rbac-api {
 
 @server(
 	jwt: Auth
-	middleware : AuthMiddleware
 )
 service rbac-api {
 	@doc "个人信息"
 	@handler profile
-	get /profile returns (UserInfoResp)
+	get /profile returns (ProfileResp)
+	
+	@doc "退出登录"
+	@handler logout
+	post /logout returns (BaseResp)
 }
 
 @server(
 	jwt: Auth
-	middleware : AuthMiddleware,PermissionMiddleware
+	middleware : PermissionMiddleware
 )
 service rbac-api {
 	@doc "角色列表"
 	@handler userList
-	get /user/list (UserListReq) returns (UserListResp)
+	post /user/list (UserListReq) returns (UserListResp)
 	
 	@doc "用户创建"
 	@handler userCreate
@@ -144,7 +155,7 @@ service rbac-api {
 	
 	@doc "用户信息"
 	@handler getUserInfo
-	get /user/info (UserInfoReq) returns (UserInfoResp)
+	post /user/info (UserInfoReq) returns (UserInfoResp)
 	
 	@doc "用户删除"
 	@handler UserDestroy
@@ -152,7 +163,7 @@ service rbac-api {
 	
 	@doc "角色列表"
 	@handler roleList
-	get /role/list (RoleListReq) returns (RoleListResp)
+	post /role/list (RoleListReq) returns (RoleListResp)
 	
 	@doc "角色创建"
 	@handler roleCreate
@@ -164,7 +175,7 @@ service rbac-api {
 	
 	@doc "角色信息"
 	@handler getRoleInfo
-	get /role/info (RoleInfoReq) returns (RoleInfoResp)
+	post /role/info (RoleInfoReq) returns (RoleInfoResp)
 	
 	@doc "角色删除"
 	@handler RoleDestroy

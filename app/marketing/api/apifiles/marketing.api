@@ -5,6 +5,22 @@ type (
 		Code int64  `json:"code"`
 		Msg  string `json:"msg"`
 	}
+	AuthCodeUrlReq {
+		//https://login.cloud.huawei.com/oauth2/v2/authorize
+		//https://login.cloud.huawei.com/oauth2/v2/token
+	}
+	AuthCodeUrlResp {
+		BaseResp
+		AuthCodeUrl string `json:"auth_code_url"`
+	}
+	AccessTokenReq {
+		AuthorizationCode string `json:"authorization_code"`
+		State             string `json:"state"`
+	}
+	AccessTokenResp {
+		BaseResp
+		AccessToken string `json:"access_token"`
+	}
 	PromotionCreateReq {
 		CampaignName  string `json:"campaign_name" validate:"required"` // 计划名称
 		ProductType   string `json:"product_type" validate:"required"`  // 推广产品
@@ -53,10 +69,19 @@ type (
 )
 
 @server(
+	prefix: marketing
 	jwt: Auth
 	middleware : AuthMiddleware,PermissionMiddleware
 )
 service marketing-api {
+	@doc "获取授权码"
+	@handler authorizeCode
+	post /code (AuthCodeUrlReq) returns (AuthCodeUrlResp)
+
+	@doc "获取授权码"
+	@handler accessToken
+	post /token (AccessTokenReq) returns (AccessTokenResp)
+	
 	@doc "创建计划"
 	@handler promotionCreate
 	post /promotion/create (PromotionCreateReq) returns (PromotionCreateResp)

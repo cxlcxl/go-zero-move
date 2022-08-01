@@ -16,6 +16,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Route{
 				{
 					Method:  http.MethodPost,
+					Path:    "/code",
+					Handler: authorizeCodeHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/token",
+					Handler: accessTokenHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
 					Path:    "/promotion/create",
 					Handler: promotionCreateHandler(serverCtx),
 				},
@@ -27,5 +37,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			}...,
 		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+		rest.WithPrefix("/marketing"),
 	)
 }

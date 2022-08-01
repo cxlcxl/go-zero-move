@@ -12,7 +12,6 @@ import (
 
 type ServiceContext struct {
 	Config               config.Config
-	AuthMiddleware       rest.Middleware
 	PermissionMiddleware rest.Middleware
 	RbacClient           rbaccenter.RbacCenter
 	Validator            *validator.Validate
@@ -21,7 +20,6 @@ type ServiceContext struct {
 func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
 		Config:               c,
-		AuthMiddleware:       middleware.NewAuthMiddleware().Handle,
 		PermissionMiddleware: middleware.NewPermissionMiddleware().Handle,
 		RbacClient:           rbaccenter.NewRbacCenter(zrpc.MustNewClient(c.RpcConf)),
 		Validator:            validators.New(),
