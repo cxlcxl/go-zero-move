@@ -20,7 +20,7 @@ var (
 	tokensFieldNames          = builder.RawFieldNames(&Tokens{})
 	tokensRows                = strings.Join(tokensFieldNames, ",")
 	tokensRowsExpectAutoSet   = strings.Join(stringx.Remove(tokensFieldNames, "`id`", "`create_time`", "`update_time`", "`create_at`", "`update_at`"), ",")
-	tokensRowsWithPlaceHolder = strings.Join(stringx.Remove(tokensFieldNames, "`id`", "`create_time`", "`update_time`", "`create_at`", "`update_at`"), "=?,") + "=?"
+	tokensRowsWithPlaceHolder = strings.Join(stringx.Remove(tokensFieldNames, "`id`", "`create_time`", "`update_time`", "`created_at`", "`update_at`"), "=?,") + "=?"
 
 	cacheTokensIdPrefix       = "cache:tokens:id:"
 	cacheTokensClientIdPrefix = "cache:tokens:clientId:"
@@ -131,7 +131,7 @@ func (m *defaultTokensModel) Update(ctx context.Context, newData *Tokens) error 
 	tokensIdKey := fmt.Sprintf("%s%v", cacheTokensIdPrefix, data.Id)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tokensRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.ClientId, newData.AccessToken, newData.RefreshToken, newData.ExpiredAt, newData.CreatedAt, newData.UpdatedAt, newData.TokenType, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.ClientId, newData.AccessToken, newData.RefreshToken, newData.ExpiredAt, newData.UpdatedAt, newData.TokenType, newData.Id)
 	}, tokensClientIdKey, tokensIdKey)
 	return err
 }

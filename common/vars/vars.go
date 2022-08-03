@@ -1,7 +1,8 @@
 package vars
 
 const (
-	MaxPageSize uint64 = 100
+	MaxPageSize    uint64 = 100
+	SysCachePrefix string = "business:cache:"
 )
 
 const (
@@ -22,6 +23,11 @@ const (
 	AccountTypeReport
 )
 
+const (
+	CommonStateVoid = iota
+	CommonStateValid
+)
+
 var (
 	ResponseMsg = map[int]string{
 		ResponseCodeOk:           "OK",
@@ -38,5 +44,10 @@ var (
 	AccountType = map[int]string{
 		AccountTypeAds:    "ADS",
 		AccountTypeReport: "变现",
+	}
+	// CommonState 通用数据库状态字段
+	CommonState = map[int]string{
+		CommonStateVoid:  "停用",
+		CommonStateValid: "正常",
 	}
 )

@@ -6,22 +6,78 @@ type BaseResp struct {
 	Msg  string `json:"msg"`
 }
 
-type AuthCodeUrlReq struct {
-}
-
-type AuthCodeUrlResp struct {
-	BaseResp
-	AuthCodeUrl string `json:"auth_code_url"`
-}
-
 type AccessTokenReq struct {
 	AuthorizationCode string `json:"authorization_code"`
 	State             string `json:"state"`
 }
 
+type RefreshTokenReq struct {
+	ClientId int64 `json:"client_id"`
+}
+
 type AccessTokenResp struct {
 	BaseResp
 	AccessToken string `json:"access_token"`
+}
+
+type AccountListReq struct {
+	AccountId   string `json:"account_id"`
+	AccountName string `json:"account_name"`
+	AccountType int64  `json:"account_type"`
+	Page        int64  `json:"page"`
+	PageSize    int64  `json:"page_size"`
+	State       int64  `json:"state"`
+}
+
+type AccountListResp struct {
+	BaseResp
+	Total        int64          `json:"total"`
+	AccountTypes map[int]string `json:"account_types"`
+	State        map[int]string `json:"state"`
+	Data         []AccountInfo  `json:"data"`
+}
+
+type AccountInfo struct {
+	Id           int64  `json:"id"`
+	AccountName  string `json:"account_name"`
+	AccountType  int64  `json:"account_type"`
+	AdvertiserId string `json:"advertiser_id"`
+	DeveloperId  string `json:"developer_id"`
+	ClientId     int64  `json:"client_id"`
+	Secret       string `json:"secret"`
+	State        int64  `json:"state"`
+	IsAuth       int64  `json:"is_auth"`
+	CreatedAt    int64  `json:"created_at"`
+	UpdatedAt    int64  `json:"updated_at"`
+}
+
+type AccountPost struct {
+	AccountName  string `json:"account_name" validate:"required"`
+	AccountType  int64  `json:"account_type" validate:"required"`
+	AdvertiserId string `json:"advertiser_id" validate:"required"`
+	DeveloperId  string `json:"developer_id"`
+	ClientId     int64  `json:"client_id"`
+	Secret       string `json:"secret"`
+	State        int64  `json:"state"`
+}
+
+type AccountUpdateReq struct {
+	Id int64 `json:"id" validate:"required"`
+	AccountPost
+}
+
+type AccountInfoReq struct {
+	Id int64 `json:"id" validate:"required,numberic"`
+}
+
+type AccountInfoResp struct {
+	BaseResp
+	Data AccountInfo `json:"data"`
+}
+
+type AuthResp struct {
+	BaseResp
+	Data string `json:"data"`
 }
 
 type PromotionCreateReq struct {

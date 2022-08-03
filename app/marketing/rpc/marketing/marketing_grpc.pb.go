@@ -26,6 +26,7 @@ type MarketingCenterClient interface {
 	AccountCreate(ctx context.Context, in *AccountCreateReq, opts ...grpc.CallOption) (*BaseResp, error)
 	AccountUpdate(ctx context.Context, in *AccountUpdateReq, opts ...grpc.CallOption) (*BaseResp, error)
 	GetAccountInfo(ctx context.Context, in *AccountInfoReq, opts ...grpc.CallOption) (*AccountInfo, error)
+	GetAccountSecretByClientId(ctx context.Context, in *GetTokenReq, opts ...grpc.CallOption) (*AccountInfo, error)
 	AccountList(ctx context.Context, in *AccountListReq, opts ...grpc.CallOption) (*AccountListResp, error)
 	GetToken(ctx context.Context, in *GetTokenReq, opts ...grpc.CallOption) (*TokenInfo, error)
 	SetToken(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*BaseResp, error)
@@ -61,6 +62,15 @@ func (c *marketingCenterClient) AccountUpdate(ctx context.Context, in *AccountUp
 func (c *marketingCenterClient) GetAccountInfo(ctx context.Context, in *AccountInfoReq, opts ...grpc.CallOption) (*AccountInfo, error) {
 	out := new(AccountInfo)
 	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/GetAccountInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketingCenterClient) GetAccountSecretByClientId(ctx context.Context, in *GetTokenReq, opts ...grpc.CallOption) (*AccountInfo, error) {
+	out := new(AccountInfo)
+	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/GetAccountSecretByClientId", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -111,6 +121,7 @@ type MarketingCenterServer interface {
 	AccountCreate(context.Context, *AccountCreateReq) (*BaseResp, error)
 	AccountUpdate(context.Context, *AccountUpdateReq) (*BaseResp, error)
 	GetAccountInfo(context.Context, *AccountInfoReq) (*AccountInfo, error)
+	GetAccountSecretByClientId(context.Context, *GetTokenReq) (*AccountInfo, error)
 	AccountList(context.Context, *AccountListReq) (*AccountListResp, error)
 	GetToken(context.Context, *GetTokenReq) (*TokenInfo, error)
 	SetToken(context.Context, *TokenInfo) (*BaseResp, error)
@@ -130,6 +141,9 @@ func (UnimplementedMarketingCenterServer) AccountUpdate(context.Context, *Accoun
 }
 func (UnimplementedMarketingCenterServer) GetAccountInfo(context.Context, *AccountInfoReq) (*AccountInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAccountInfo not implemented")
+}
+func (UnimplementedMarketingCenterServer) GetAccountSecretByClientId(context.Context, *GetTokenReq) (*AccountInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAccountSecretByClientId not implemented")
 }
 func (UnimplementedMarketingCenterServer) AccountList(context.Context, *AccountListReq) (*AccountListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AccountList not implemented")
@@ -206,6 +220,24 @@ func _MarketingCenter_GetAccountInfo_Handler(srv interface{}, ctx context.Contex
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MarketingCenterServer).GetAccountInfo(ctx, req.(*AccountInfoReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MarketingCenter_GetAccountSecretByClientId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTokenReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketingCenterServer).GetAccountSecretByClientId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/marketing.MarketingCenter/GetAccountSecretByClientId",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketingCenterServer).GetAccountSecretByClientId(ctx, req.(*GetTokenReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -300,6 +332,10 @@ var MarketingCenter_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAccountInfo",
 			Handler:    _MarketingCenter_GetAccountInfo_Handler,
+		},
+		{
+			MethodName: "GetAccountSecretByClientId",
+			Handler:    _MarketingCenter_GetAccountSecretByClientId_Handler,
 		},
 		{
 			MethodName: "AccountList",

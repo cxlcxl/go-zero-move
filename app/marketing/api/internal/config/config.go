@@ -7,10 +7,31 @@ import (
 
 type Config struct {
 	rest.RestConf
+
 	Auth struct {
 		AccessSecret string
 		Expire       int64
 	}
 
-	AccountRpcClient zrpc.RpcClientConf
+	Redis struct {
+		Host string
+		Pass string
+	}
+
+	MarketingRpcClient zrpc.RpcClientConf
+
+	MarketingApis struct {
+		Authorize struct {
+			Refresh     string
+			CodeUrl     string
+			TokenUrl    string
+			RedirectUri string
+			Scope       string
+		}
+		Promotion struct {
+			Query  string
+			Create string
+			Update string
+		}
+	}
 }

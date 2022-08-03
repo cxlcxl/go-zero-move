@@ -23,6 +23,7 @@ service MarketingCenter{
   rpc AccountCreate(AccountCreateReq) returns(BaseResp);
   rpc AccountUpdate(AccountUpdateReq) returns(BaseResp);
   rpc GetAccountInfo(AccountInfoReq) returns(AccountInfo);
+  rpc GetAccountSecretByClientId(GetTokenReq) returns(AccountInfo);
   rpc AccountList(AccountListReq) returns(AccountListResp);
   rpc GetToken(GetTokenReq) returns(TokenInfo);
   rpc SetToken(TokenInfo) returns(BaseResp);

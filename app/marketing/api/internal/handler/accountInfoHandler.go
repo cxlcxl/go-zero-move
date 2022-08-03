@@ -9,16 +9,16 @@ import (
 	"github.com/zeromicro/go-zero/rest/httpx"
 )
 
-func authorizeCodeHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func accountInfoHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.AuthCodeUrlReq
+		var req types.AccountInfoReq
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.Error(w, err)
 			return
 		}
 
-		l := logic.NewAuthorizeCodeLogic(r.Context(), svcCtx)
-		resp, err := l.AuthorizeCode(&req)
+		l := logic.NewAccountInfoLogic(r.Context(), svcCtx)
+		resp, err := l.AccountInfo(&req)
 		if err != nil {
 			httpx.Error(w, err)
 		} else {

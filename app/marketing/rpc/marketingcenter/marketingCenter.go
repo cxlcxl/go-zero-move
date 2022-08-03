@@ -14,21 +14,22 @@ import (
 
 type (
 	BaseResp           = marketing.BaseResp
+	PromotionCreateReq = marketing.PromotionCreateReq
 	AccountCreateReq   = marketing.AccountCreateReq
 	AccountUpdateReq   = marketing.AccountUpdateReq
 	AccountInfoReq     = marketing.AccountInfoReq
-	AccountListReq     = marketing.AccountListReq
 	AccountInfo        = marketing.AccountInfo
 	AccountListResp    = marketing.AccountListResp
-	TokenInfo          = marketing.TokenInfo
 	GetTokenReq        = marketing.GetTokenReq
-	PromotionCreateReq = marketing.PromotionCreateReq
+	TokenInfo          = marketing.TokenInfo
+	AccountListReq     = marketing.AccountListReq
 
 	MarketingCenter interface {
 		//  账户板块 RPC 服务
 		AccountCreate(ctx context.Context, in *AccountCreateReq, opts ...grpc.CallOption) (*BaseResp, error)
 		AccountUpdate(ctx context.Context, in *AccountUpdateReq, opts ...grpc.CallOption) (*BaseResp, error)
 		GetAccountInfo(ctx context.Context, in *AccountInfoReq, opts ...grpc.CallOption) (*AccountInfo, error)
+		GetAccountSecretByClientId(ctx context.Context, in *GetTokenReq, opts ...grpc.CallOption) (*AccountInfo, error)
 		AccountList(ctx context.Context, in *AccountListReq, opts ...grpc.CallOption) (*AccountListResp, error)
 		GetToken(ctx context.Context, in *GetTokenReq, opts ...grpc.CallOption) (*TokenInfo, error)
 		SetToken(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*BaseResp, error)
@@ -60,6 +61,11 @@ func (m *defaultMarketingCenter) AccountUpdate(ctx context.Context, in *AccountU
 func (m *defaultMarketingCenter) GetAccountInfo(ctx context.Context, in *AccountInfoReq, opts ...grpc.CallOption) (*AccountInfo, error) {
 	client := marketing.NewMarketingCenterClient(m.cli.Conn())
 	return client.GetAccountInfo(ctx, in, opts...)
+}
+
+func (m *defaultMarketingCenter) GetAccountSecretByClientId(ctx context.Context, in *GetTokenReq, opts ...grpc.CallOption) (*AccountInfo, error) {
+	client := marketing.NewMarketingCenterClient(m.cli.Conn())
+	return client.GetAccountSecretByClientId(ctx, in, opts...)
 }
 
 func (m *defaultMarketingCenter) AccountList(ctx context.Context, in *AccountListReq, opts ...grpc.CallOption) (*AccountListResp, error) {

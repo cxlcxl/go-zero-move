@@ -2,8 +2,10 @@ package model
 
 import (
 	"context"
+	"fmt"
 	"github.com/Masterminds/squirrel"
 	"github.com/zeromicro/go-zero/core/stores/cache"
+	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
@@ -15,6 +17,8 @@ type (
 	AccountsModel interface {
 		accountsModel
 		AccountList(ctx context.Context, accountType, state int64, accountName string, offset, limit uint64) (ls []*Accounts, total int64, err error)
+		FindOneByClientId(ctx context.Context, clientId int64) (*Accounts, error)
+		SetIsAuth(ctx context.Context, clientId int64) error
 	}
 
 	customAccountsModel struct {
@@ -65,4 +69,30 @@ func (m *defaultAccountsModel) actListCount(ctx context.Context, accountType, st
 		return 0, err
 	}
 	return
+}
+
+func (m *defaultAccountsModel) FindOneByClientId(ctx context.Context, clientId int64) (*Accounts, error) {
+	accountsClientIdKey := fmt.Sprintf("%s%v", cacheAccountsClientIdPrefix, clientId)
+	var resp Accounts
+	err := m.QueryRowIndexCtx(ctx, &resp, accountsClientIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v interface{}) (i interface{}, e error) {
+		query := fmt.Sprintf("select %s from %s where `client_id` = ? limit 1", accountsRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, clientId); err != nil {
+			return nil, err
+		}
+		return resp.Id, nil
+	}, m.queryPrimary)
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
+func (m *defaultAccountsModel) SetIsAuth(ctx context.Context, clientId int64) error {
+	query := fmt.Sprintf("update %s set `is_auth` = 1 where `client_id` = ?", m.table)
+	_, err := m.ExecNoCacheCtx(ctx, query, clientId)
+	return err
 }

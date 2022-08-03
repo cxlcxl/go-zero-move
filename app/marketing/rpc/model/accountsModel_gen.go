@@ -24,6 +24,7 @@ var (
 
 	cacheAccountsIdPrefix           = "cache:accounts:id:"
 	cacheAccountsAdvertiserIdPrefix = "cache:accounts:advertiserId:"
+	cacheAccountsClientIdPrefix     = "cache:accounts:clientId:"
 )
 
 type (
@@ -49,6 +50,7 @@ type (
 		AccountName  string    `db:"account_name"`  // 账户名
 		ClientId     int64     `db:"client_id"`     // 客户端ID
 		Secret       string    `db:"secret"`        // 密钥
+		IsAuth       int64     `db:"is_auth"`       // 是否已认证
 		CreatedAt    time.Time `db:"created_at"`    // 添加时间
 		UpdatedAt    time.Time `db:"updated_at"`    // 最后一次修改时间
 	}
@@ -117,8 +119,8 @@ func (m *defaultAccountsModel) Insert(ctx context.Context, data *Accounts) (sql.
 	accountsAdvertiserIdKey := fmt.Sprintf("%s%v", cacheAccountsAdvertiserIdPrefix, data.AdvertiserId)
 	accountsIdKey := fmt.Sprintf("%s%v", cacheAccountsIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, accountsRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.AdvertiserId, data.DeveloperId, data.AccountType, data.State, data.AccountName, data.ClientId, data.Secret, data.CreatedAt, data.UpdatedAt)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, accountsRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.AdvertiserId, data.DeveloperId, data.AccountType, data.State, data.AccountName, data.ClientId, data.Secret, data.IsAuth, data.CreatedAt, data.UpdatedAt)
 	}, accountsAdvertiserIdKey, accountsIdKey)
 	return ret, err
 }
@@ -133,7 +135,7 @@ func (m *defaultAccountsModel) Update(ctx context.Context, newData *Accounts) er
 	accountsIdKey := fmt.Sprintf("%s%v", cacheAccountsIdPrefix, data.Id)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, accountsRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.AdvertiserId, newData.DeveloperId, newData.AccountType, newData.State, newData.AccountName, newData.ClientId, newData.Secret, newData.UpdatedAt, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.AdvertiserId, newData.DeveloperId, newData.AccountType, newData.State, newData.AccountName, newData.ClientId, newData.Secret, newData.IsAuth, newData.UpdatedAt, newData.Id)
 	}, accountsAdvertiserIdKey, accountsIdKey)
 	return err
 }

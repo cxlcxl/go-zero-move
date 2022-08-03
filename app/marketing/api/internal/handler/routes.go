@@ -16,13 +16,13 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Route{
 				{
 					Method:  http.MethodPost,
-					Path:    "/code",
-					Handler: authorizeCodeHandler(serverCtx),
+					Path:    "/token",
+					Handler: accessTokenHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodPost,
-					Path:    "/token",
-					Handler: accessTokenHandler(serverCtx),
+					Path:    "/refresh",
+					Handler: refreshTokenHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodPost,
@@ -33,6 +33,31 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/promotion/list",
 					Handler: promotionListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/account/list",
+					Handler: accountListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/account/auth",
+					Handler: accountAuthHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/account/info",
+					Handler: accountInfoHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/account/create",
+					Handler: accountCreateHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/account/update",
+					Handler: accountUpdateHandler(serverCtx),
 				},
 			}...,
 		),

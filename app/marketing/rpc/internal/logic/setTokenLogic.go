@@ -31,13 +31,14 @@ func (l *SetTokenLogic) SetToken(in *marketing.TokenInfo) (*marketing.BaseResp, 
 	if err != nil {
 		return nil, err
 	}
+	expire := time.Now().Unix() + in.ExpiredAt - 20
 	if token != nil {
 		err = l.svcCtx.TokenModel.Update(l.ctx, &model.Tokens{
 			Id:           token.Id,
 			ClientId:     in.ClientId,
 			AccessToken:  in.AccessToken,
 			RefreshToken: in.RefreshToken,
-			ExpiredAt:    time.Now().Add(time.Duration(in.ExpiredAt)),
+			ExpiredAt:    time.Unix(expire, 0),
 			UpdatedAt:    time.Now(),
 			TokenType:    in.TokenType,
 		})
@@ -46,7 +47,7 @@ func (l *SetTokenLogic) SetToken(in *marketing.TokenInfo) (*marketing.BaseResp, 
 			ClientId:     in.ClientId,
 			AccessToken:  in.AccessToken,
 			RefreshToken: in.RefreshToken,
-			ExpiredAt:    time.Now().Add(time.Duration(in.ExpiredAt)),
+			ExpiredAt:    time.Unix(expire, 0),
 			CreatedAt:    time.Now(),
 			UpdatedAt:    time.Now(),
 			TokenType:    in.TokenType,
@@ -55,6 +56,7 @@ func (l *SetTokenLogic) SetToken(in *marketing.TokenInfo) (*marketing.BaseResp, 
 	if err != nil {
 		return nil, err
 	}
+	_ = l.svcCtx.AccountModel.SetIsAuth(l.ctx, in.ClientId)
 	return &marketing.BaseResp{
 		Code: vars.ResponseCodeOk,
 	}, nil

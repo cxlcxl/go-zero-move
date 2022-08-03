@@ -1,7 +1,5 @@
 import axios from 'axios'
-import { MessageBox, Message } from 'element-ui'
-import store from '@/store'
-import { getToken } from '@/utils/auth'
+import {requestConfigs, requestError, responseError, responseSuccessful} from "@/interceptors"
 
 const marketingService = axios.create({
   baseURL: process.env.VUE_APP_MARKETING_API, // url = base url + request url
@@ -10,45 +8,9 @@ const marketingService = axios.create({
 })
 
 // request interceptor
-marketingService.interceptors.request.use(
-  config => {
-    if (store.getters.token) {
-      config.headers['Authorization'] = 'Bearer ' + getToken()
-    }
-    return config
-  },
-  error => {
-    return Promise.reject(error)
-  }
-)
+marketingService.interceptors.request.use(requestConfigs, requestError)
 
 // response interceptor
-marketingService.interceptors.response.use(
-  response => {
-    const res = response.data
-
-    if (res.code !== 0) {
-      Message({
-        message: res.msg || 'Error',
-        type: 'error',
-        duration: 5 * 1000
-      })
-
-      return Promise.reject(new Error(res.msg || 'Error'))
-    } else {
-      return res
-    }
-  },
-  error => {
-    const err = error.response
-    const errMsg = err.data ? err.status + ': ' + err.data : '接口调用异常，请重试'
-    Message({
-      message: errMsg,
-      type: 'error',
-      duration: 5 * 1000
-    })
-    return Promise.reject(err)
-  }
-)
+marketingService.interceptors.response.use(responseSuccessful, responseError)
 
 export default marketingService

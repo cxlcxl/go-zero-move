@@ -21,20 +21,23 @@ export default {
   },
   methods: {
     initCallback() {
-      console.log(this.$route.query)
       if (this.$route.query.error) {
         this.$message.error(this.$route.query.error_description)
         return
       }
-      this.$message.success(this.$route.query.authorization_code)
       if (!this.$route.query.authorization_code || this.$route.query.authorization_code === '') {
+        window.close()
         this.$message.error("回调请求失败，请重试")
         return
       }
       getAccessToken(this.$route.query).then(res => {
-        console.log(res)
+        this.$message.success("回调成功，3s 后自动关闭页面，您可手动关闭")
+        this.loadingMsg = "回调成功，3s 后自动关闭页面，您可手动关闭"
+        setTimeout(function () {
+          window.close()
+        }, 5000)
       }).catch(err => {
-        console.log(err)
+        window.close()
       })
     },
   }

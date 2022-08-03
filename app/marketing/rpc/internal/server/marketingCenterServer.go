@@ -38,6 +38,11 @@ func (s *MarketingCenterServer) GetAccountInfo(ctx context.Context, in *marketin
 	return l.GetAccountInfo(in)
 }
 
+func (s *MarketingCenterServer) GetAccountSecretByClientId(ctx context.Context, in *marketing.GetTokenReq) (*marketing.AccountInfo, error) {
+	l := logic.NewGetAccountSecretByClientIdLogic(ctx, s.svcCtx)
+	return l.GetAccountSecretByClientId(in)
+}
+
 func (s *MarketingCenterServer) AccountList(ctx context.Context, in *marketing.AccountListReq) (*marketing.AccountListResp, error) {
 	l := logic.NewAccountListLogic(ctx, s.svcCtx)
 	return l.AccountList(in)

@@ -5,22 +5,72 @@ type (
 		Code int64  `json:"code"`
 		Msg  string `json:"msg"`
 	}
-	AuthCodeUrlReq {
-		//https://login.cloud.huawei.com/oauth2/v2/authorize
-		//https://login.cloud.huawei.com/oauth2/v2/token
-	}
-	AuthCodeUrlResp {
-		BaseResp
-		AuthCodeUrl string `json:"auth_code_url"`
-	}
 	AccessTokenReq {
 		AuthorizationCode string `json:"authorization_code"`
 		State             string `json:"state"`
+	}
+	RefreshTokenReq {
+		ClientId int64 `json:"client_id"`
 	}
 	AccessTokenResp {
 		BaseResp
 		AccessToken string `json:"access_token"`
 	}
+
+	// 账户部分
+	AccountListReq {
+		AccountId   string `json:"account_id"`
+		AccountName string `json:"account_name"`
+		AccountType int64  `json:"account_type"`
+		Page        int64  `json:"page"`
+		PageSize    int64  `json:"page_size"`
+		State       int64  `json:"state"`
+	}
+	AccountListResp {
+		BaseResp
+		Total        int64          `json:"total"`
+		AccountTypes map[int]string `json:"account_types"`
+		State        map[int]string `json:"state"`
+		Data         []AccountInfo  `json:"data"`
+	}
+	AccountInfo {
+		Id           int64  `json:"id"`
+		AccountName  string `json:"account_name"`
+		AccountType  int64  `json:"account_type"`
+		AdvertiserId string `json:"advertiser_id"`
+		DeveloperId  string `json:"developer_id"`
+		ClientId     int64  `json:"client_id"`
+		Secret       string `json:"secret"`
+		State        int64  `json:"state"`
+		IsAuth       int64  `json:"is_auth"`
+		CreatedAt    int64  `json:"created_at"`
+		UpdatedAt    int64  `json:"updated_at"`
+	}
+	AccountPost {
+		AccountName  string `json:"account_name" validate:"required"`
+		AccountType  int64  `json:"account_type" validate:"required"`
+		AdvertiserId string `json:"advertiser_id" validate:"required"`
+		DeveloperId  string `json:"developer_id"`
+		ClientId     int64  `json:"client_id"`
+		Secret       string `json:"secret"`
+		State        int64  `json:"state"`
+	}
+	AccountUpdateReq {
+		Id int64 `json:"id" validate:"required"`
+		AccountPost
+	}
+	AccountInfoReq {
+		Id int64 `json:"id" validate:"required,numberic"`
+	}
+	AccountInfoResp {
+		BaseResp
+		Data AccountInfo `json:"data"`
+	}
+	AuthResp {
+		BaseResp
+		Data string `json:"data"`
+	}
+
 	PromotionCreateReq {
 		CampaignName  string `json:"campaign_name" validate:"required"` // 计划名称
 		ProductType   string `json:"product_type" validate:"required"`  // 推广产品
@@ -75,12 +125,12 @@ type (
 )
 service marketing-api {
 	@doc "获取授权码"
-	@handler authorizeCode
-	post /code (AuthCodeUrlReq) returns (AuthCodeUrlResp)
-
-	@doc "获取授权码"
 	@handler accessToken
 	post /token (AccessTokenReq) returns (AccessTokenResp)
+	
+	@doc "刷新授权"
+	@handler refreshToken
+	post /refresh (RefreshTokenReq) returns (BaseResp)
 	
 	@doc "创建计划"
 	@handler promotionCreate
@@ -89,4 +139,25 @@ service marketing-api {
 	@doc "计划列表"
 	@handler promotionList
 	post /promotion/list (PromotionListReq) returns (PromotionListResp)
+	
+	// 账户部分
+	@doc "账户列表"
+	@handler accountList
+	post /account/list (AccountListReq) returns (AccountListResp);
+	
+	@doc "账户认证"
+	@handler accountAuth
+	post /account/auth (AccountInfoReq) returns (AuthResp);
+	
+	@doc "账户信息"
+	@handler accountInfo
+	post /account/info (AccountInfoReq) returns (AccountInfoResp);
+	
+	@doc "账户创建"
+	@handler accountCreate
+	post /account/create (AccountPost) returns (BaseResp);
+	
+	@doc "账户修改"
+	@handler accountUpdate
+	post /account/update (AccountUpdateReq) returns (BaseResp);
 }

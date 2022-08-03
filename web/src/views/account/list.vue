@@ -3,15 +3,17 @@
     <el-col :span="24" class="search-container">
       <el-form ref="_search" :model="search" inline size="small">
         <el-form-item>
-          <el-input v-model="search.account_id" class="w230" clearable placeholder="AccountID"/>
-        </el-form-item>
-        <el-form-item>
           <el-input v-model="search.account_name" class="w200" clearable placeholder="账户名"/>
         </el-form-item>
         <el-form-item>
-          <el-select v-model="search.account_type" class="w120" clearable>
-            <el-option label="账号类型" :value="0"/>
+          <el-select v-model="search.account_type" class="w130">
+            <el-option label="全部账户类型" :value="0"/>
             <el-option v-for="(key, val) in account_types" :label="key" :value="Number(val)"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-select v-model="search.state" class="w100">
+            <el-option v-for="(key, val) in accountList.state" :label="key" :value="Number(val)"/>
           </el-select>
         </el-form-item>
         <el-form-item label="">
@@ -20,7 +22,7 @@
       </el-form>
     </el-col>
     <el-col :span="24">
-      <el-button type="primary" icon="el-icon-plus" size="mini" @click="add">添加账号&客户</el-button>
+      <el-button type="primary" icon="el-icon-plus" size="mini" @click="add">添加账户</el-button>
     </el-col>
     <el-col :span="24">
       <el-table v-loading="loadings.pageLoading" :data="accountList.list" highlight-current-row stripe border size="mini"
@@ -30,25 +32,28 @@
         <el-table-column label="账号类型" width="100" align="center" show-overflow-tooltip>
           <template slot-scope="scope">{{ account_types[scope.row.account_type] }}</template>
         </el-table-column>
-        <el-table-column prop="email" label="邮箱" width="180"/>
-        <el-table-column prop="account_id" label="AccountID" width="160"/>
+        <el-table-column prop="advertiser_id" label="广告主ID" width="160"/>
+        <el-table-column prop="developer_id" label="开发者ID" width="160"/>
         <el-table-column prop="created_at" label="添加时间" width="140" align="center"/>
         <el-table-column label="状态" width="80" align="center">
           <template slot-scope="scope">
             <span :class="(scope.row.state === 0 ? 'text-error' : '')">{{scope.row.state|stateFilter(accountList.state)}}</span>
           </template>
         </el-table-column>
-        <el-table-column label="ClientID" min-width="300" show-overflow-tooltip>
+        <el-table-column label="ClientID" show-overflow-tooltip>
+          <template slot-scope="scope">{{scope.row.client_id}} / {{scope.row.secret}}</template>
+        </el-table-column>
+        <el-table-column label="认证状态" width="100" align="center">
           <template slot-scope="scope">
-            <p v-for="item in scope.row.account_client_ids">
-              {{item.client_id}} / {{item.secret}} / {{item.comment}}
-            </p>
+            <span v-if="scope.row.is_auth === 1" class="text-success">已认证</span>
+            <span v-else>待认证</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="操作" width="100">
+        <el-table-column align="center" label="操作" width="130">
           <template slot-scope="scope">
             <el-button-group class="table-operate">
-              <el-button type="primary" plain @click.native.prevent="editRow(scope.row)">编辑</el-button>
+              <el-button type="primary" plain @click.native.prevent="editRow(scope.row.id)">编辑</el-button>
+              <el-button type="primary" plain @click.native.prevent="doAuth(scope.row.id, scope.row.is_auth)">认证</el-button>
             </el-button-group>
           </template>
         </el-table-column>
@@ -64,7 +69,7 @@
 </template>
 
 <script>
-  import {accountList, accountDestroy} from '@a/account'
+  import {accountList, accountAuth} from '@a/account'
   import AccountCreate from './components/add-act'
   import AccountUpdate from './components/edit-act'
   import Page from '@c/Page'
@@ -116,6 +121,7 @@
             this.accountList.list = res.data
             this.accountList.total = res.total
             this.account_types = res.account_types
+            this.accountList.state = res.state
             this.loadings.pageLoading = false
           }).catch(() => {
             this.loadings.pageLoading = false
@@ -127,35 +133,20 @@
       add() {
         this.$refs.accountCreate.initCreate()
       },
-      accountInfo(row) {
-        this.$refs.account.initAccountInfo(row.id)
+      editRow(id) {
+        this.$refs.accountUpdate.initUpdate(id)
       },
-      editRow(row) {
-        this.$refs.accountUpdate.initUpdate({
-          id: row.id,
-          account_name: row.account_name,
-          platform_id: row.platform_id,
-          account_type: row.account_type,
-          provider_account_id: row.provider_account_id,
-        })
-      },
-      changeContract(row) {
-        this.$refs.contract.initUpdate({
-          id: row.id,
-          customer_id: row.customer_id,
-          contract_id: row.contract_id,
-        })
-      },
-      destroyRow(row) {
-        this.$confirm('确认作废此账号么?', '警告', {
+      doAuth(id, is_auth) {
+        let msg = is_auth === 1 ? '此账户已做授权认证，确定重新认证此账户授权信息吗?' : '确认认证此账号么?'
+        this.$confirm(msg, '确认信息', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          type: 'error'
+          type: 'success'
         }).then(() => {
           this.loadings.pageLoading = true
-          accountDestroy(row.id).then(() => {
-            this.$message.success('作废成功')
-            this.getAccountList()
+          accountAuth(id).then(res => {
+            this.loadings.pageLoading = false
+            window.open(res.data)
           }).catch(err => {
             this.loadings.pageLoading = false
           })

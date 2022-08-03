@@ -82,7 +82,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: rbac-api
-  minReplicas: 3
+  minReplicas: 2
   maxReplicas: 10
   metrics:
   - type: Resource
@@ -104,7 +104,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: rbac-api
-  minReplicas: 3
+  minReplicas: 2
   maxReplicas: 10
   metrics:
   - type: Resource

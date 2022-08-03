@@ -9,7 +9,6 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/hex"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/shopspring/decimal"
@@ -17,7 +16,6 @@ import (
 	"math/rand"
 	"mime/multipart"
 	"net/http"
-	"net/url"
 	"strings"
 	"time"
 )
@@ -79,25 +77,6 @@ func Sha1(s string) string {
 	return hex.EncodeToString(hash.Sum(nil))
 }
 
-// HttpBuildQuery 参数转化
-func HttpBuildQuery(params map[string]string) string {
-	v := make(url.Values)
-	for key, val := range params {
-		v.Set(key, val)
-	}
-	return v.Encode()
-}
-
-// JsonParamsQuery 参数转化
-func JsonParamsQuery(params map[string]interface{}) string {
-	jsonString, err := json.Marshal(params)
-	if err != nil {
-		fmt.Println(err)
-		return ""
-	}
-	return string(jsonString)
-}
-
 // GetFileExt 获取文件后缀
 func GetFileExt(fp multipart.File) string {
 	buffer := make([]byte, 32)
@@ -123,9 +102,13 @@ func BufferConcat(s []string) string {
 	return buf.String()
 }
 
-// PostHttpRequest http 请求
-func PostHttpRequest(host, data string, headers map[string]string) ([]byte, error) {
-	req, err := http.NewRequest("POST", host, strings.NewReader(data))
+// HttpRequest http 请求
+func HttpRequest(host, data, method string, headers map[string]string) ([]byte, error) {
+	m := strings.ToUpper(method)
+	if m != "POST" && m != "GET" {
+		return nil, errors.New("不允许的请求方法")
+	}
+	req, err := http.NewRequest(m, host, strings.NewReader(data))
 	if err != nil {
 		return nil, err
 	}

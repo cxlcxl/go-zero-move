@@ -1,14 +1,16 @@
 package logic
 
 import (
-	"business/app/account/rpc/accountcenter"
 	"business/app/marketing/api/internal/svc"
 	"business/app/marketing/api/internal/types"
+	"business/app/marketing/rpc/marketingcenter"
+	"business/common/curl"
 	"business/common/utils"
 	"business/common/vars"
 	"context"
-	"encoding/json"
 	"errors"
+	"fmt"
+	"strconv"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -38,29 +40,42 @@ type AT struct {
 }
 
 func (l *AccessTokenLogic) AccessToken(req *types.AccessTokenReq) (resp *types.AccessTokenResp, err error) {
-	clientId := "104661969"
-	host := `https://login.cloud.huawei.com/oauth2/v2/token`
-	data := utils.HttpBuildQuery(map[string]string{
-		"grant_type":    "authorization_code",
-		"code":          req.AuthorizationCode,
-		"client_id":     clientId,
-		"client_secret": "ac77ad1f48b543f5730dd85c3cc9f53ffeafbcced09908a07809a935e211e946",
-		"redirect_uri":  "http://localhost:19527/#/marketing/callback",
-	})
-	bs, err := utils.PostHttpRequest(host, data, map[string]string{"Content-Type": "application/x-www-form-urlencoded"})
+	if err = l.svcCtx.Validator.StructCtx(l.ctx, req); err != nil {
+		return nil, err
+	}
+	clientId, err := l.svcCtx.RedisCache.Get(vars.SysCachePrefix + "authorize:" + req.State)
 	if err != nil {
 		return nil, err
 	}
-	var at AT
-	err = json.Unmarshal(bs, &at)
+	_, _ = l.svcCtx.RedisCache.Del(vars.SysCachePrefix + "authorize:" + req.State)
+	clientIdToInt, err := strconv.ParseInt(clientId, 0, 64)
 	if err != nil {
+		return nil, errors.New("参数已过期，请重新发起认证")
+	}
+	info, err := l.svcCtx.MarketingRpcClient.GetAccountSecretByClientId(l.ctx, &marketingcenter.GetTokenReq{
+		ClientId: clientIdToInt,
+	})
+	if err != nil {
+		return nil, utils.RpcError(err, "请求错误")
+	}
+	data := map[string]string{
+		"grant_type":    "authorization_code",
+		"code":          req.AuthorizationCode,
+		"client_id":     clientId,
+		"client_secret": info.Secret,
+		"redirect_uri":  l.svcCtx.Config.MarketingApis.Authorize.RedirectUri,
+	}
+	post := curl.New(l.svcCtx.Config.MarketingApis.Authorize.TokenUrl).Post().QueryData(data)
+	var at AT
+	if err = post.Request(&at, curl.FormHeader()); err != nil {
 		return nil, err
 	}
 	if at.Error != 0 {
 		return nil, errors.New("华为接口调用失败：" + at.ErrorDescription)
 	}
-	_, err = l.svcCtx.AccountRpcClient.SetToken(l.ctx, &accountcenter.TokenInfo{
-		ClientId:     104661969,
+	fmt.Println(at)
+	_, err = l.svcCtx.MarketingRpcClient.SetToken(l.ctx, &marketingcenter.TokenInfo{
+		ClientId:     clientIdToInt,
 		AccessToken:  at.AccessToken,
 		RefreshToken: at.RefreshToken,
 		ExpiredAt:    at.ExpiresIn,

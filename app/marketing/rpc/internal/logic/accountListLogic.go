@@ -41,6 +41,7 @@ func (l *AccountListLogic) AccountList(in *marketing.AccountListReq) (*marketing
 				ClientId:     a.ClientId,
 				Secret:       a.Secret,
 				State:        a.State,
+				IsAuth:       a.IsAuth,
 				CreatedAt:    a.CreatedAt.Unix(),
 				UpdatedAt:    a.UpdatedAt.Unix(),
 			})

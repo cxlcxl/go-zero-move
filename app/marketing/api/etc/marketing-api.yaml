@@ -6,6 +6,22 @@ Auth:
   AccessSecret: "ADS_BUSINESS"
   Expire: 259200 # 秒
 
-AccountRpcClient:
+MarketingRpcClient:
   Endpoints:
-    - "127.0.0.1:28003"
+    - "127.0.0.1:28002"
+
+Redis:
+  Host: "192.168.120.61:6379"
+  Pass:
+
+MarketingApis:
+  Authorize:
+    CodeUrl: "https://login.cloud.huawei.com/oauth2/v2/authorize"
+    TokenUrl: "https://login.cloud.huawei.com/oauth2/v2/token"
+    RedirectUri: "http://localhost:19527/#/marketing/callback"
+    Refresh: "https://oauth-login.cloud.huawei.com/oauth2/v2/token"
+    Scope: "https://ads.cloud.huawei.com/promotion https://ads.cloud.huawei.com/report"
+  Promotion:
+    Query: "https://ads-dra.cloud.huawei.com/ads/v1/promotion/campaign/query"
+    Create: "https://ads-dra.cloud.huawei.com/ads/v1/promotion/campaign/create"
+    Update: "https://ads-dra.cloud.huawei.com/ads/v1/promotion/campaign/update"

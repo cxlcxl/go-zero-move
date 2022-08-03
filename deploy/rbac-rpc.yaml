@@ -6,7 +6,7 @@ metadata:
   labels:
     app: rbac-rpc
 spec:
-  replicas: 3
+  replicas: 2
   revisionHistoryLimit: 5
   selector:
     matchLabels:
@@ -78,7 +78,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: rbac-rpc
-  minReplicas: 3
+  minReplicas: 2
   maxReplicas: 10
   metrics:
   - type: Resource
@@ -100,7 +100,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: rbac-rpc
-  minReplicas: 3
+  minReplicas: 2
   maxReplicas: 10
   metrics:
   - type: Resource

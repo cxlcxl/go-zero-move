@@ -1,16 +1,8 @@
-import request from '@/interceptors/account'
+import request from '@/interceptors/marketing'
 
 export function accountUpdate(data) {
   return request({
-    url: '/account/update',
-    method: 'post',
-    data
-  })
-}
-
-export function changeContract(data) {
-  return request({
-    url: '/account/change-contract',
+    url: '/marketing/account/update',
     method: 'post',
     data
   })
@@ -18,7 +10,7 @@ export function changeContract(data) {
 
 export function accountCreate(data) {
   return request({
-    url: '/account/create',
+    url: '/marketing/account/create',
     method: 'post',
     data
   })
@@ -26,7 +18,7 @@ export function accountCreate(data) {
 
 export function accountList(data) {
   return request({
-    url: '/account/list',
+    url: '/marketing/account/list',
     method: 'post',
     data
   })
@@ -34,25 +26,16 @@ export function accountList(data) {
 
 export function accountInfo(account_id) {
   return request({
-    url: '/account/info',
+    url: '/marketing/account/info',
     method: 'post',
-    params: {id: account_id}
+    data: {id: account_id}
   })
 }
 
-export function getAccounts(account_id) {
+export function accountAuth(account_id) {
   return request({
-    url: '/account-balances/' + account_id,
-    method: 'post'
-  })
-}
-
-export function accountDestroy(account_id) {
-  return request({
-    url: '/account/destroy',
+    url: '/marketing/account/auth',
     method: 'post',
-    data: {
-      id: account_id
-    }
+    data: {id: account_id}
   })
 }

@@ -1,21 +1,28 @@
 <template>
-  <dialog-panel title="账号修改" confirm-text="保存" :visible="visible" @cancel="cancel" @confirm="save" :confirm-loading="loading">
+  <dialog-panel title="账户信息修改" confirm-text="保存" :visible="visible" @cancel="cancel" @confirm="save" :confirm-loading="loading">
     <el-form :model="accountForm" ref="accountForm" label-width="120px" size="small" :rules="userRules">
       <el-form-item label="账号名称" prop="account_name">
         <el-input v-model="accountForm.account_name" placeholder="请填写账号名称"/>
       </el-form-item>
-      <el-form-item label="平台账号ID" prop="platform_id">
-        <el-input v-model="accountForm.platform_id" placeholder="请填写广告平台系统账号 ID"/>
+      <el-form-item label="广告主 ID" prop="advertiser_id">
+        <el-input v-model="accountForm.advertiser_id" placeholder="请填写广告主 ID"/>
       </el-form-item>
       <el-form-item label="账号类型" prop="account_type">
         <el-select v-model="accountForm.account_type" style="width: 100%;">
           <el-option v-for="(key, val) in accountTypes" :label="key" :value="Number(val)"/>
         </el-select>
       </el-form-item>
-      <el-form-item label="开户服务商" prop="provider_account_id">
-        <el-select v-model="accountForm.provider_account_id" style="width: 100%;" clearable>
-          <el-option v-for="(key, val) in provider" :label="key" :value="Number(val)"/>
-        </el-select>
+      <el-form-item label="状态" prop="state">
+        <el-switch v-model="accountForm.state" :active-value="1" :inactive-value="0"/>
+      </el-form-item>
+      <el-form-item label="开发者 ID" prop="developer_id">
+        <el-input v-model="accountForm.developer_id" placeholder="请填写开发者 ID"/>
+      </el-form-item>
+      <el-form-item label="ClientID" prop="client_id">
+        <el-input v-model="accountForm.client_id"/>
+      </el-form-item>
+      <el-form-item label="Secret" prop="secret">
+        <el-input v-model="accountForm.secret"/>
       </el-form-item>
     </el-form>
   </dialog-panel>
@@ -23,7 +30,7 @@
 
 <script>
   import DialogPanel from '@c/DialogPanel'
-  import {accountUpdate} from '@a/account'
+  import {accountInfo, accountUpdate} from '@a/account'
 
   export default {
     components: {
@@ -37,28 +44,35 @@
       return {
         visible: false,
         loading: false,
-        remoteLoading: false,
         accountForm: {
           id: 0,
           account_name: '',
-          platform_id: '',
+          advertiser_id: '',
+          client_id: 0,
+          developer_id: '',
+          secret: '',
+          account_type: 1,
+          state: 1,
         },
         userRules: {
-          account_name: {required: true, message: '请填写账号名称'},
-          platform_id: {required: true, message: '请填写广告平台系统账号 ID'},
-          account_type: {required: true, message: '请选择账号类型'},
+          account_name: {required: true, message: '请填写账户名称'},
+          advertiser_id: {required: true, message: '请填写广告主 ID'},
+          account_type: {required: true, message: '请选择账户类型'},
+          state: {required: true, message: '请选择'},
         },
-        customers: []
       }
     },
     methods: {
-      initUpdate(row) {
-        this.accountForm = row
-        this.visible = true
+      initUpdate(id) {
+        accountInfo(id).then(res => {
+          this.accountForm = res.data
+          this.visible = true
+        }).catch(() => {
+          this.$message.error("用户信息请求错误")
+        })
       },
       cancel() {
         this.$refs.accountForm.resetFields()
-        this.customers = []
         this.visible = false
       },
       save() {
