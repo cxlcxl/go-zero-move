@@ -5,6 +5,7 @@ import (
 	"business/common/utils"
 	"business/common/vars"
 	"context"
+	"errors"
 
 	"business/app/marketing/api/internal/svc"
 	"business/app/marketing/api/internal/types"
@@ -30,6 +31,9 @@ func (l *AccountUpdateLogic) AccountUpdate(req *types.AccountUpdateReq) (resp *t
 	if err = l.svcCtx.Validator.StructCtx(l.ctx, req); err != nil {
 		return nil, err
 	}
+	if req.Id == req.ParentId {
+		return nil, errors.New("上级服务商不可是本账户")
+	}
 	_, err = l.svcCtx.MarketingRpcClient.AccountUpdate(l.ctx, &marketingcenter.AccountUpdateReq{
 		Id:           req.Id,
 		AccountName:  req.AccountName,
@@ -39,6 +43,7 @@ func (l *AccountUpdateLogic) AccountUpdate(req *types.AccountUpdateReq) (resp *t
 		State:        req.State,
 		ClientId:     req.ClientId,
 		Secret:       req.Secret,
+		ParentId:     req.ParentId,
 	})
 	if err != nil {
 		return nil, utils.RpcError(err, "")

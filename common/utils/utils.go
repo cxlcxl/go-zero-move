@@ -185,7 +185,7 @@ func WhereIn(s interface{}) (w string, args []interface{}, err error) {
 			args = append(args, s.([]string)[i])
 		}
 	case []int64:
-		for i := range s.([]string) {
+		for i := range s.([]int64) {
 			query = append(query, "?")
 			args = append(args, s.([]int64)[i])
 		}

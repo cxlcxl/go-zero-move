@@ -30,6 +30,7 @@ type MarketingCenterClient interface {
 	AccountList(ctx context.Context, in *AccountListReq, opts ...grpc.CallOption) (*AccountListResp, error)
 	AccountSearch(ctx context.Context, in *AccountSearchReq, opts ...grpc.CallOption) (*AccountSearchResp, error)
 	GetAccountsByAccountIds(ctx context.Context, in *GetByAccountIdsReq, opts ...grpc.CallOption) (*AccountSearchResp, error)
+	GetDefaultAccountList(ctx context.Context, in *DefaultListReq, opts ...grpc.CallOption) (*AccountSearchResp, error)
 	GetToken(ctx context.Context, in *GetTokenReq, opts ...grpc.CallOption) (*TokenInfo, error)
 	SetToken(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*BaseResp, error)
 	PromotionCreate(ctx context.Context, in *PromotionCreateReq, opts ...grpc.CallOption) (*BaseResp, error)
@@ -106,6 +107,15 @@ func (c *marketingCenterClient) GetAccountsByAccountIds(ctx context.Context, in 
 	return out, nil
 }
 
+func (c *marketingCenterClient) GetDefaultAccountList(ctx context.Context, in *DefaultListReq, opts ...grpc.CallOption) (*AccountSearchResp, error) {
+	out := new(AccountSearchResp)
+	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/GetDefaultAccountList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *marketingCenterClient) GetToken(ctx context.Context, in *GetTokenReq, opts ...grpc.CallOption) (*TokenInfo, error) {
 	out := new(TokenInfo)
 	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/GetToken", in, out, opts...)
@@ -145,6 +155,7 @@ type MarketingCenterServer interface {
 	AccountList(context.Context, *AccountListReq) (*AccountListResp, error)
 	AccountSearch(context.Context, *AccountSearchReq) (*AccountSearchResp, error)
 	GetAccountsByAccountIds(context.Context, *GetByAccountIdsReq) (*AccountSearchResp, error)
+	GetDefaultAccountList(context.Context, *DefaultListReq) (*AccountSearchResp, error)
 	GetToken(context.Context, *GetTokenReq) (*TokenInfo, error)
 	SetToken(context.Context, *TokenInfo) (*BaseResp, error)
 	PromotionCreate(context.Context, *PromotionCreateReq) (*BaseResp, error)
@@ -175,6 +186,9 @@ func (UnimplementedMarketingCenterServer) AccountSearch(context.Context, *Accoun
 }
 func (UnimplementedMarketingCenterServer) GetAccountsByAccountIds(context.Context, *GetByAccountIdsReq) (*AccountSearchResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAccountsByAccountIds not implemented")
+}
+func (UnimplementedMarketingCenterServer) GetDefaultAccountList(context.Context, *DefaultListReq) (*AccountSearchResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDefaultAccountList not implemented")
 }
 func (UnimplementedMarketingCenterServer) GetToken(context.Context, *GetTokenReq) (*TokenInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetToken not implemented")
@@ -324,6 +338,24 @@ func _MarketingCenter_GetAccountsByAccountIds_Handler(srv interface{}, ctx conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MarketingCenter_GetDefaultAccountList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DefaultListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketingCenterServer).GetDefaultAccountList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/marketing.MarketingCenter/GetDefaultAccountList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketingCenterServer).GetDefaultAccountList(ctx, req.(*DefaultListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _MarketingCenter_GetToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetTokenReq)
 	if err := dec(in); err != nil {
@@ -412,6 +444,10 @@ var MarketingCenter_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAccountsByAccountIds",
 			Handler:    _MarketingCenter_GetAccountsByAccountIds_Handler,
+		},
+		{
+			MethodName: "GetDefaultAccountList",
+			Handler:    _MarketingCenter_GetDefaultAccountList_Handler,
 		},
 		{
 			MethodName: "GetToken",

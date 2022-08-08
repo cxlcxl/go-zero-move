@@ -36,6 +36,7 @@ func (l *AccountCreateLogic) AccountCreate(in *marketing.AccountCreateReq) (*mar
 		AccountName:  in.AccountName,
 		ClientId:     in.ClientId,
 		Secret:       in.Secret,
+		ParentId:     in.ParentId,
 		CreatedAt:    now,
 		UpdatedAt:    now,
 	})

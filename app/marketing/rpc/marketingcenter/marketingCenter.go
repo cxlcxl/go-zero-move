@@ -26,6 +26,7 @@ type (
 	GetByAccountIdsReq = marketing.GetByAccountIdsReq
 	AccountSearchResp  = marketing.AccountSearchResp
 	AccountSearchReq   = marketing.AccountSearchReq
+	DefaultListReq     = marketing.DefaultListReq
 
 	MarketingCenter interface {
 		//  账户板块 RPC 服务
@@ -36,6 +37,7 @@ type (
 		AccountList(ctx context.Context, in *AccountListReq, opts ...grpc.CallOption) (*AccountListResp, error)
 		AccountSearch(ctx context.Context, in *AccountSearchReq, opts ...grpc.CallOption) (*AccountSearchResp, error)
 		GetAccountsByAccountIds(ctx context.Context, in *GetByAccountIdsReq, opts ...grpc.CallOption) (*AccountSearchResp, error)
+		GetDefaultAccountList(ctx context.Context, in *DefaultListReq, opts ...grpc.CallOption) (*AccountSearchResp, error)
 		GetToken(ctx context.Context, in *GetTokenReq, opts ...grpc.CallOption) (*TokenInfo, error)
 		SetToken(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*BaseResp, error)
 		PromotionCreate(ctx context.Context, in *PromotionCreateReq, opts ...grpc.CallOption) (*BaseResp, error)
@@ -86,6 +88,11 @@ func (m *defaultMarketingCenter) AccountSearch(ctx context.Context, in *AccountS
 func (m *defaultMarketingCenter) GetAccountsByAccountIds(ctx context.Context, in *GetByAccountIdsReq, opts ...grpc.CallOption) (*AccountSearchResp, error) {
 	client := marketing.NewMarketingCenterClient(m.cli.Conn())
 	return client.GetAccountsByAccountIds(ctx, in, opts...)
+}
+
+func (m *defaultMarketingCenter) GetDefaultAccountList(ctx context.Context, in *DefaultListReq, opts ...grpc.CallOption) (*AccountSearchResp, error) {
+	client := marketing.NewMarketingCenterClient(m.cli.Conn())
+	return client.GetDefaultAccountList(ctx, in, opts...)
 }
 
 func (m *defaultMarketingCenter) GetToken(ctx context.Context, in *GetTokenReq, opts ...grpc.CallOption) (*TokenInfo, error) {

@@ -74,6 +74,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/account/search",
 					Handler: accountSearchHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/account/default",
+					Handler: accountDefaultListHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),

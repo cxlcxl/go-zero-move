@@ -37,6 +37,7 @@ func (l *GetAccountByClientIdLogic) GetAccountByClientId(in *marketing.GetTokenR
 		ClientId:     info.ClientId,
 		Secret:       info.Secret,
 		State:        info.State,
+		ParentId:     info.ParentId,
 		CreatedAt:    info.CreatedAt.Unix(),
 		UpdatedAt:    info.UpdatedAt.Unix(),
 	}, nil

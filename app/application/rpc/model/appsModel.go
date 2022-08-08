@@ -38,7 +38,7 @@ func (m *defaultAppsModel) AppList(ctx context.Context, appId, appName string, a
 	if err != nil {
 		return nil, 0, err
 	}
-	query := squirrel.Select(appsRows).From(m.table)
+	query := squirrel.Select(appsRows).From(m.table).OrderBy("updated_at desc")
 	if len(appId) > 0 {
 		query = query.Where("app_id like ?", "%"+appId+"%")
 	}

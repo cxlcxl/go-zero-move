@@ -42,6 +42,7 @@ func (l *AccountListLogic) AccountList(in *marketing.AccountListReq) (*marketing
 				Secret:       a.Secret,
 				State:        a.State,
 				IsAuth:       a.IsAuth,
+				ParentId:     a.ParentId,
 				CreatedAt:    a.CreatedAt.Unix(),
 				UpdatedAt:    a.UpdatedAt.Unix(),
 			})

@@ -27,6 +27,7 @@ service MarketingCenter{
   rpc AccountList(AccountListReq) returns(AccountListResp);
   rpc AccountSearch(AccountSearchReq) returns(AccountSearchResp);
   rpc GetAccountsByAccountIds(GetByAccountIdsReq) returns(AccountSearchResp);
+  rpc GetDefaultAccountList(DefaultListReq) returns(AccountSearchResp);
   rpc GetToken(GetTokenReq) returns(TokenInfo);
   rpc SetToken(TokenInfo) returns(BaseResp);
 

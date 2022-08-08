@@ -60,6 +60,13 @@ module.exports = {
           ['^' + process.env.VUE_APP_MARKETING_API]: ''
         }
       },
+      [process.env.VUE_APP_APPLICATION_API] : {
+        target: process.env.VUE_APP_APPLICATION_API,
+        changeOrigin: true,
+        pathRewrite: {
+          ['^' + process.env.VUE_APP_APPLICATION_API]: ''
+        }
+      },
     }/* ,
     before: require('./mock/mock-server.js') */
   },

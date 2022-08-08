@@ -58,6 +58,11 @@ func (s *MarketingCenterServer) GetAccountsByAccountIds(ctx context.Context, in 
 	return l.GetAccountsByAccountIds(in)
 }
 
+func (s *MarketingCenterServer) GetDefaultAccountList(ctx context.Context, in *marketing.DefaultListReq) (*marketing.AccountSearchResp, error) {
+	l := logic.NewGetDefaultAccountListLogic(ctx, s.svcCtx)
+	return l.GetDefaultAccountList(in)
+}
+
 func (s *MarketingCenterServer) GetToken(ctx context.Context, in *marketing.GetTokenReq) (*marketing.TokenInfo, error) {
 	l := logic.NewGetTokenLogic(ctx, s.svcCtx)
 	return l.GetToken(in)

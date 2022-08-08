@@ -36,6 +36,7 @@ func (l *AccountUpdateLogic) AccountUpdate(in *marketing.AccountUpdateReq) (*mar
 		AccountName:  in.AccountName,
 		ClientId:     in.ClientId,
 		Secret:       in.Secret,
+		ParentId:     in.ParentId,
 		UpdatedAt:    time.Now(),
 	})
 	if err != nil {

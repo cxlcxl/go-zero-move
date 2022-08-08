@@ -27,8 +27,8 @@
     <el-col :span="24">
       <el-table v-loading="loadings.pageLoading" :data="accountList.list" highlight-current-row stripe border size="mini"
                 style="margin-top: 15px">
-        <el-table-column prop="id" label="ID" width="60" align="center"/>
-        <el-table-column prop="account_name" label="账号名称" width="150" show-overflow-tooltip/>
+        <el-table-column prop="id" label="ID" width="80" align="center"/>
+        <el-table-column prop="account_name" label="账号名称" min-width="150" show-overflow-tooltip/>
         <el-table-column label="账号类型" width="100" align="center" show-overflow-tooltip>
           <template slot-scope="scope">{{ account_types[scope.row.account_type] }}</template>
         </el-table-column>
@@ -39,8 +39,7 @@
             <span :class="(scope.row.state === 0 ? 'text-error' : '')">{{scope.row.state|stateFilter(accountList.state)}}</span>
           </template>
         </el-table-column>
-        <el-table-column label="ClientID" prop="client_id" width="100"/>
-        <el-table-column label="Secret" prop="secret" show-overflow-tooltip/>
+        <el-table-column label="ClientID" prop="client_id" width="120"/>
         <el-table-column label="认证状态" width="100" align="center">
           <template slot-scope="scope">
             <span v-if="scope.row.is_auth === 1" class="text-success">已认证</span>
@@ -183,7 +182,7 @@
         this.getAccountList()
       },
       handlePageSize(p) {
-        this.search.limit = p
+        this.search.page_size = p
         this.getAccountList()
       }
     }

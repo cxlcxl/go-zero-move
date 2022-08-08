@@ -12,9 +12,6 @@
           <el-option v-for="(key, val) in accountTypes" :label="key" :value="Number(val)"/>
         </el-select>
       </el-form-item>
-      <el-form-item label="状态" prop="state">
-        <el-switch v-model="accountForm.state" :active-value="1" :inactive-value="0"/>
-      </el-form-item>
       <el-form-item label="开发者 ID" prop="developer_id">
         <el-input v-model="accountForm.developer_id" placeholder="请填写开发者 ID"/>
       </el-form-item>
@@ -24,13 +21,19 @@
       <el-form-item label="Secret" prop="secret">
         <el-input v-model="accountForm.secret"/>
       </el-form-item>
+      <el-form-item prop="parent_id" label="上级服务商账户">
+        <el-select v-model="accountForm.parent_id" remote filterable placeholder="可输入名称查询" 
+          :remote-method="remoteMethod" :loading="remoteLoading" style="width: 100%;">
+          <el-option v-for="item in accounts" :label="item.account_name" :value="Number(item.id)"/>
+        </el-select>
+      </el-form-item>
     </el-form>
   </dialog-panel>
 </template>
 
 <script>
   import DialogPanel from '@c/DialogPanel'
-  import {accountCreate} from "@a/account"
+  import {accountCreate, searchAccounts, defaultAccounts} from "@a/account"
 
   export default {
     components: {
@@ -43,8 +46,10 @@
       return {
         visible: false,
         loading: false,
+        remoteLoading: false,
         accountForm: {
           id: 0,
+          parent_id: 0,
           account_name: '',
           advertiser_id: '',
           client_id: '',
@@ -53,17 +58,27 @@
           account_type: 1,
           state: 1,
         },
+        accounts: [],
         userRules: {
           account_name: {required: true, message: '请填写账户名称'},
           advertiser_id: {required: true, message: '请填写广告主 ID'},
           account_type: {required: true, message: '请选择账户类型'},
-          state: {required: true, message: '请选择'},
         },
       }
     },
     methods: {
       initCreate() {
-        this.visible = true
+        defaultAccounts().then(res => {
+          this.visible = true
+          if (Array.isArray(res.data)) {
+            this.accounts = res.data
+          } else {
+            this.accounts = []
+          }
+          this.accounts.push({id: 0, account_name: '无上级服务商账户'})
+        }).catch(err => {
+          this.$message.error("请求错误")
+        })
       },
       cancel() {
         this.$refs.accountForm.resetFields()
@@ -73,6 +88,7 @@
         this.$refs.accountForm.validate(v => {
           if (v) {
             this.loading = true
+            this.$set(this.accountForm, 'parent_id', Number(this.accountForm.parent_id))
             accountCreate(this.accountForm).then(res => {
               this.$message.success("创建成功")
               this.$emit('success')
@@ -86,7 +102,24 @@
             return false
           }
         })
-      }
+      },
+      remoteMethod(query) {
+        if (query.trim() !== '') {
+          this.remoteLoading = true;
+          searchAccounts(query).then(res => {
+            this.remoteLoading = false
+            if (Array.isArray(res.data)) {
+              this.accounts = res.data
+            } else {
+              this.accounts = []
+            }
+          }).catch(() => {
+            this.remoteLoading = false
+          })
+        } else {
+          this.options = [];
+        }
+      },
     }
   }
 </script>

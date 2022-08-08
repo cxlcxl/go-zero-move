@@ -11,6 +11,7 @@ message AccountCreateReq{
   string developer_id = 4;
   string client_id = 5;
   string secret = 6;
+  int64 parent_id = 7;
 }
 message AccountUpdateReq{
   int64 id = 1;
@@ -21,6 +22,7 @@ message AccountUpdateReq{
   int64 state = 6;
   string client_id = 7;
   string secret = 8;
+  int64 parent_id = 9;
 }
 
 message GetTokenReq {
@@ -57,6 +59,7 @@ message AccountInfo {
   int64 is_auth = 9;
   int64 created_at = 10;
   int64 updated_at = 11;
+  int64 parent_id = 12;
 }
 message AccountListResp{
   int64 total = 1;
@@ -71,3 +74,4 @@ message GetByAccountIdsReq{
 message AccountSearchResp{
   repeated AccountInfo accounts = 1;
 }
+message DefaultListReq {}

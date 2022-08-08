@@ -41,7 +41,7 @@ func (m *defaultAccountsModel) AccountList(ctx context.Context, accountType, sta
 	if total == 0 || err != nil {
 		return
 	}
-	sql := squirrel.Select(accountsRows).From(m.table).Where("state = ?", state)
+	sql := squirrel.Select(accountsRows).From(m.table).Where("state = ?", state).OrderBy("updated_at desc")
 	if len(accountName) > 0 {
 		sql = sql.Where("account_name like ?", "%"+accountName+"%")
 	}
@@ -101,7 +101,12 @@ func (m *defaultAccountsModel) SetIsAuth(ctx context.Context, clientId string) e
 }
 
 func (m *defaultAccountsModel) RemoteAccounts(ctx context.Context, accountName string) (accounts []*Accounts, err error) {
-	query := squirrel.Select(accountsRows).From(m.table).Where("state = 1").Where("account_name like ?", "%"+accountName+"%")
+	query := squirrel.Select(accountsRows).From(m.table).Where("state = 1")
+	if accountName != "" {
+		query = query.Where("account_name like ?", "%"+accountName+"%")
+	} else {
+		query = query.OrderBy("updated_at desc").Offset(0).Limit(20)
+	}
 	sql, args, err := query.ToSql()
 	if err != nil {
 		return

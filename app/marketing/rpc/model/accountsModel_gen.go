@@ -43,14 +43,15 @@ type (
 
 	Accounts struct {
 		Id           int64     `db:"id"`
+		ParentId     int64     `db:"parent_id"`     // 所属上级服务商
 		AdvertiserId string    `db:"advertiser_id"` // 广告主账户ID
 		DeveloperId  string    `db:"developer_id"`  // 开发者ID
 		AccountType  int64     `db:"account_type"`  // 账户类型
 		State        int64     `db:"state"`         // 状态
 		AccountName  string    `db:"account_name"`  // 账户名
 		ClientId     string    `db:"client_id"`     // 客户端ID
-		Secret       string    `db:"secret"`        // 密钥
 		IsAuth       int64     `db:"is_auth"`       // 是否已认证
+		Secret       string    `db:"secret"`        // 密钥
 		CreatedAt    time.Time `db:"created_at"`    // 添加时间
 		UpdatedAt    time.Time `db:"updated_at"`    // 最后一次修改时间
 	}
@@ -119,8 +120,8 @@ func (m *defaultAccountsModel) Insert(ctx context.Context, data *Accounts) (sql.
 	accountsAdvertiserIdKey := fmt.Sprintf("%s%v", cacheAccountsAdvertiserIdPrefix, data.AdvertiserId)
 	accountsIdKey := fmt.Sprintf("%s%v", cacheAccountsIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, accountsRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.AdvertiserId, data.DeveloperId, data.AccountType, data.State, data.AccountName, data.ClientId, data.Secret, data.IsAuth, data.CreatedAt, data.UpdatedAt)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, accountsRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.ParentId, data.AdvertiserId, data.DeveloperId, data.AccountType, data.State, data.AccountName, data.ClientId, data.IsAuth, data.Secret, data.CreatedAt, data.UpdatedAt)
 	}, accountsAdvertiserIdKey, accountsIdKey)
 	return ret, err
 }
@@ -135,7 +136,7 @@ func (m *defaultAccountsModel) Update(ctx context.Context, newData *Accounts) er
 	accountsIdKey := fmt.Sprintf("%s%v", cacheAccountsIdPrefix, data.Id)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, accountsRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.AdvertiserId, newData.DeveloperId, newData.AccountType, newData.State, newData.AccountName, newData.ClientId, newData.Secret, newData.IsAuth, newData.UpdatedAt, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.ParentId, newData.AdvertiserId, newData.DeveloperId, newData.AccountType, newData.State, newData.AccountName, newData.ClientId, newData.IsAuth, newData.Secret, newData.UpdatedAt, newData.Id)
 	}, accountsAdvertiserIdKey, accountsIdKey)
 	return err
 }

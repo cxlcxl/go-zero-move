@@ -89,6 +89,7 @@ type AccountListResp struct {
 
 type AccountInfo struct {
 	Id           int64  `json:"id"`
+	ParentId     int64  `json:"parent_id"`
 	AccountName  string `json:"account_name"`
 	AccountType  int64  `json:"account_type"`
 	AdvertiserId string `json:"advertiser_id"`
@@ -102,6 +103,7 @@ type AccountInfo struct {
 }
 
 type AccountPost struct {
+	ParentId     int64  `json:"parent_id"`
 	AccountName  string `json:"account_name" validate:"required"`
 	AccountType  int64  `json:"account_type" validate:"required"`
 	AdvertiserId string `json:"advertiser_id" validate:"required"`

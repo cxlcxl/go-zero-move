@@ -37,6 +37,7 @@ func (l *AccountCreateLogic) AccountCreate(req *types.AccountPost) (resp *types.
 		DeveloperId:  req.DeveloperId,
 		ClientId:     req.ClientId,
 		Secret:       req.Secret,
+		ParentId:     req.ParentId,
 	})
 	if err != nil {
 		return nil, utils.RpcError(err, "")

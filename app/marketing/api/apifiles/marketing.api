@@ -99,6 +99,7 @@ type (
 	}
 	AccountInfo {
 		Id           int64  `json:"id"`
+		ParentId     int64  `json:"parent_id"`
 		AccountName  string `json:"account_name"`
 		AccountType  int64  `json:"account_type"`
 		AdvertiserId string `json:"advertiser_id"`
@@ -111,6 +112,7 @@ type (
 		UpdatedAt    int64  `json:"updated_at"`
 	}
 	AccountPost {
+		ParentId     int64  `json:"parent_id"`
 		AccountName  string `json:"account_name" validate:"required"`
 		AccountType  int64  `json:"account_type" validate:"required"`
 		AdvertiserId string `json:"advertiser_id" validate:"required"`
@@ -181,4 +183,8 @@ service marketing-api {
 	@doc "账户搜索"
 	@handler accountSearch
 	get /account/search (AccountSearchReq) returns(AccountSearchResp)
+	
+	@doc "默认展示部分账户信息"
+	@handler accountDefaultList
+	get /account/default returns(AccountSearchResp)
 }
