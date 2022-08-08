@@ -26,8 +26,10 @@ type MarketingCenterClient interface {
 	AccountCreate(ctx context.Context, in *AccountCreateReq, opts ...grpc.CallOption) (*BaseResp, error)
 	AccountUpdate(ctx context.Context, in *AccountUpdateReq, opts ...grpc.CallOption) (*BaseResp, error)
 	GetAccountInfo(ctx context.Context, in *AccountInfoReq, opts ...grpc.CallOption) (*AccountInfo, error)
-	GetAccountSecretByClientId(ctx context.Context, in *GetTokenReq, opts ...grpc.CallOption) (*AccountInfo, error)
+	GetAccountByClientId(ctx context.Context, in *GetTokenReq, opts ...grpc.CallOption) (*AccountInfo, error)
 	AccountList(ctx context.Context, in *AccountListReq, opts ...grpc.CallOption) (*AccountListResp, error)
+	AccountSearch(ctx context.Context, in *AccountSearchReq, opts ...grpc.CallOption) (*AccountSearchResp, error)
+	GetAccountsByAccountIds(ctx context.Context, in *GetByAccountIdsReq, opts ...grpc.CallOption) (*AccountSearchResp, error)
 	GetToken(ctx context.Context, in *GetTokenReq, opts ...grpc.CallOption) (*TokenInfo, error)
 	SetToken(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*BaseResp, error)
 	PromotionCreate(ctx context.Context, in *PromotionCreateReq, opts ...grpc.CallOption) (*BaseResp, error)
@@ -68,9 +70,9 @@ func (c *marketingCenterClient) GetAccountInfo(ctx context.Context, in *AccountI
 	return out, nil
 }
 
-func (c *marketingCenterClient) GetAccountSecretByClientId(ctx context.Context, in *GetTokenReq, opts ...grpc.CallOption) (*AccountInfo, error) {
+func (c *marketingCenterClient) GetAccountByClientId(ctx context.Context, in *GetTokenReq, opts ...grpc.CallOption) (*AccountInfo, error) {
 	out := new(AccountInfo)
-	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/GetAccountSecretByClientId", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/GetAccountByClientId", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -80,6 +82,24 @@ func (c *marketingCenterClient) GetAccountSecretByClientId(ctx context.Context, 
 func (c *marketingCenterClient) AccountList(ctx context.Context, in *AccountListReq, opts ...grpc.CallOption) (*AccountListResp, error) {
 	out := new(AccountListResp)
 	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/AccountList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketingCenterClient) AccountSearch(ctx context.Context, in *AccountSearchReq, opts ...grpc.CallOption) (*AccountSearchResp, error) {
+	out := new(AccountSearchResp)
+	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/AccountSearch", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketingCenterClient) GetAccountsByAccountIds(ctx context.Context, in *GetByAccountIdsReq, opts ...grpc.CallOption) (*AccountSearchResp, error) {
+	out := new(AccountSearchResp)
+	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/GetAccountsByAccountIds", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -121,8 +141,10 @@ type MarketingCenterServer interface {
 	AccountCreate(context.Context, *AccountCreateReq) (*BaseResp, error)
 	AccountUpdate(context.Context, *AccountUpdateReq) (*BaseResp, error)
 	GetAccountInfo(context.Context, *AccountInfoReq) (*AccountInfo, error)
-	GetAccountSecretByClientId(context.Context, *GetTokenReq) (*AccountInfo, error)
+	GetAccountByClientId(context.Context, *GetTokenReq) (*AccountInfo, error)
 	AccountList(context.Context, *AccountListReq) (*AccountListResp, error)
+	AccountSearch(context.Context, *AccountSearchReq) (*AccountSearchResp, error)
+	GetAccountsByAccountIds(context.Context, *GetByAccountIdsReq) (*AccountSearchResp, error)
 	GetToken(context.Context, *GetTokenReq) (*TokenInfo, error)
 	SetToken(context.Context, *TokenInfo) (*BaseResp, error)
 	PromotionCreate(context.Context, *PromotionCreateReq) (*BaseResp, error)
@@ -142,11 +164,17 @@ func (UnimplementedMarketingCenterServer) AccountUpdate(context.Context, *Accoun
 func (UnimplementedMarketingCenterServer) GetAccountInfo(context.Context, *AccountInfoReq) (*AccountInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAccountInfo not implemented")
 }
-func (UnimplementedMarketingCenterServer) GetAccountSecretByClientId(context.Context, *GetTokenReq) (*AccountInfo, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAccountSecretByClientId not implemented")
+func (UnimplementedMarketingCenterServer) GetAccountByClientId(context.Context, *GetTokenReq) (*AccountInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAccountByClientId not implemented")
 }
 func (UnimplementedMarketingCenterServer) AccountList(context.Context, *AccountListReq) (*AccountListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AccountList not implemented")
+}
+func (UnimplementedMarketingCenterServer) AccountSearch(context.Context, *AccountSearchReq) (*AccountSearchResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AccountSearch not implemented")
+}
+func (UnimplementedMarketingCenterServer) GetAccountsByAccountIds(context.Context, *GetByAccountIdsReq) (*AccountSearchResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAccountsByAccountIds not implemented")
 }
 func (UnimplementedMarketingCenterServer) GetToken(context.Context, *GetTokenReq) (*TokenInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetToken not implemented")
@@ -224,20 +252,20 @@ func _MarketingCenter_GetAccountInfo_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MarketingCenter_GetAccountSecretByClientId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MarketingCenter_GetAccountByClientId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetTokenReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MarketingCenterServer).GetAccountSecretByClientId(ctx, in)
+		return srv.(MarketingCenterServer).GetAccountByClientId(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/marketing.MarketingCenter/GetAccountSecretByClientId",
+		FullMethod: "/marketing.MarketingCenter/GetAccountByClientId",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MarketingCenterServer).GetAccountSecretByClientId(ctx, req.(*GetTokenReq))
+		return srv.(MarketingCenterServer).GetAccountByClientId(ctx, req.(*GetTokenReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -256,6 +284,42 @@ func _MarketingCenter_AccountList_Handler(srv interface{}, ctx context.Context, 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MarketingCenterServer).AccountList(ctx, req.(*AccountListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MarketingCenter_AccountSearch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AccountSearchReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketingCenterServer).AccountSearch(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/marketing.MarketingCenter/AccountSearch",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketingCenterServer).AccountSearch(ctx, req.(*AccountSearchReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MarketingCenter_GetAccountsByAccountIds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetByAccountIdsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketingCenterServer).GetAccountsByAccountIds(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/marketing.MarketingCenter/GetAccountsByAccountIds",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketingCenterServer).GetAccountsByAccountIds(ctx, req.(*GetByAccountIdsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -334,12 +398,20 @@ var MarketingCenter_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _MarketingCenter_GetAccountInfo_Handler,
 		},
 		{
-			MethodName: "GetAccountSecretByClientId",
-			Handler:    _MarketingCenter_GetAccountSecretByClientId_Handler,
+			MethodName: "GetAccountByClientId",
+			Handler:    _MarketingCenter_GetAccountByClientId_Handler,
 		},
 		{
 			MethodName: "AccountList",
 			Handler:    _MarketingCenter_AccountList_Handler,
+		},
+		{
+			MethodName: "AccountSearch",
+			Handler:    _MarketingCenter_AccountSearch_Handler,
+		},
+		{
+			MethodName: "GetAccountsByAccountIds",
+			Handler:    _MarketingCenter_GetAccountsByAccountIds_Handler,
 		},
 		{
 			MethodName: "GetToken",

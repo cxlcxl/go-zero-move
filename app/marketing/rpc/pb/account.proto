@@ -9,7 +9,7 @@ message AccountCreateReq{
   int64 account_type = 2;
   string advertiser_id = 3;
   string developer_id = 4;
-  int64 client_id = 5;
+  string client_id = 5;
   string secret = 6;
 }
 message AccountUpdateReq{
@@ -19,16 +19,16 @@ message AccountUpdateReq{
   string advertiser_id = 4;
   string developer_id = 5;
   int64 state = 6;
-  int64 client_id = 7;
+  string client_id = 7;
   string secret = 8;
 }
 
 message GetTokenReq {
-  int64 client_id = 1;
+  string client_id = 1;
 }
 
 message TokenInfo{
-  int64 client_id = 1;
+  string client_id = 1;
   string access_token = 2;
   string refresh_token = 3;
   int64 expired_at = 4;
@@ -51,7 +51,7 @@ message AccountInfo {
   int64 account_type = 3;
   string advertiser_id = 4;
   string developer_id = 5;
-  int64 client_id = 6;
+  string client_id = 6;
   string secret = 7;
   int64 state = 8;
   int64 is_auth = 9;
@@ -61,4 +61,13 @@ message AccountInfo {
 message AccountListResp{
   int64 total = 1;
   repeated AccountInfo accounts = 2;
+}
+message AccountSearchReq{
+  string account_name = 1;
+}
+message GetByAccountIdsReq{
+  repeated int64 ids = 1;
+}
+message AccountSearchResp{
+  repeated AccountInfo accounts = 1;
 }

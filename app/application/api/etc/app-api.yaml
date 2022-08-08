@@ -1,0 +1,15 @@
+Name: app-api
+Host: 0.0.0.0
+Port: 18003
+
+Auth:
+  AccessSecret: "ADS_BUSINESS"
+  Expire: 259200 # 秒
+
+AppRpcConf:
+  Endpoints:
+    - "127.0.0.1:28003"
+
+AccountRpcConf:
+  Endpoints:
+    - "127.0.0.1:28002"

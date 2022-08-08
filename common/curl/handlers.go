@@ -7,21 +7,21 @@ import (
 	"strings"
 )
 
-type QueryHandlers func(*Curl)
+type HeaderHandlers func(*Curl)
 
-func FormHeader() QueryHandlers {
+func FormHeader() HeaderHandlers {
 	return func(c *Curl) {
 		c.request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	}
 }
 
-func JsonHeader() QueryHandlers {
+func JsonHeader() HeaderHandlers {
 	return func(c *Curl) {
 		c.request.Header.Add("Content-Type", "application/json")
 	}
 }
 
-func Authorization(token string) QueryHandlers {
+func Authorization(token string) HeaderHandlers {
 	return func(c *Curl) {
 		c.request.Header.Add("Authorization", token)
 	}

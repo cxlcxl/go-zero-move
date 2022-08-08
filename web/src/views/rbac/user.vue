@@ -37,7 +37,9 @@
             {{ scope.row.state === 1 ? '正常' : '停用' }}
           </template>
         </el-table-column>
-        <el-table-column prop="created_at" label="注册时间" width="160"/>
+        <el-table-column prop="created_at" label="添加时间" width="140" align="center">
+          <template slot-scope="scope">{{scope.row.created_at|timeFormat}}</template>
+        </el-table-column>
         <el-table-column align="center" label="操作" fixed="right" width="100">
           <template slot-scope="scope">
             <el-button-group class="table-operate">
@@ -57,11 +59,12 @@
 </template>
 
 <script>
-  import {list, userClose} from '@a/user'
+  import {list} from '@a/user'
   import {roleList} from '@a/role'
   import UserCreate from './components/add-user'
   import UserUpdate from './components/edit-user'
   import Page from '@c/Page'
+  import { parseTime } from '@/utils'
 
   export default {
     // name: 'UserList',
@@ -102,6 +105,9 @@
           r.push(item.role_name)
         })
         return r.join("、")
+      },
+      timeFormat(timestamp) {
+        return parseTime(timestamp)
       }
     },
     mounted() {

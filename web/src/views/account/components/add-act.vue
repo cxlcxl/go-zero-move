@@ -47,7 +47,7 @@
           id: 0,
           account_name: '',
           advertiser_id: '',
-          client_id: 0,
+          client_id: '',
           developer_id: '',
           secret: '',
           account_type: 1,

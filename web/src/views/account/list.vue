@@ -27,33 +27,35 @@
     <el-col :span="24">
       <el-table v-loading="loadings.pageLoading" :data="accountList.list" highlight-current-row stripe border size="mini"
                 style="margin-top: 15px">
-        <el-table-column prop="id" label="ID" width="70" align="center"/>
+        <el-table-column prop="id" label="ID" width="60" align="center"/>
         <el-table-column prop="account_name" label="账号名称" width="150" show-overflow-tooltip/>
         <el-table-column label="账号类型" width="100" align="center" show-overflow-tooltip>
           <template slot-scope="scope">{{ account_types[scope.row.account_type] }}</template>
         </el-table-column>
         <el-table-column prop="advertiser_id" label="广告主ID" width="160"/>
         <el-table-column prop="developer_id" label="开发者ID" width="160"/>
-        <el-table-column prop="created_at" label="添加时间" width="140" align="center"/>
         <el-table-column label="状态" width="80" align="center">
           <template slot-scope="scope">
             <span :class="(scope.row.state === 0 ? 'text-error' : '')">{{scope.row.state|stateFilter(accountList.state)}}</span>
           </template>
         </el-table-column>
-        <el-table-column label="ClientID" show-overflow-tooltip>
-          <template slot-scope="scope">{{scope.row.client_id}} / {{scope.row.secret}}</template>
-        </el-table-column>
+        <el-table-column label="ClientID" prop="client_id" width="100"/>
+        <el-table-column label="Secret" prop="secret" show-overflow-tooltip/>
         <el-table-column label="认证状态" width="100" align="center">
           <template slot-scope="scope">
             <span v-if="scope.row.is_auth === 1" class="text-success">已认证</span>
             <span v-else>待认证</span>
           </template>
         </el-table-column>
+        <el-table-column prop="created_at" label="添加时间" width="140" align="center">
+          <template slot-scope="scope">{{scope.row.created_at|timeFormat}}</template>
+        </el-table-column>
         <el-table-column align="center" label="操作" width="130">
           <template slot-scope="scope">
             <el-button-group class="table-operate">
               <el-button type="primary" plain @click.native.prevent="editRow(scope.row.id)">编辑</el-button>
-              <el-button type="primary" plain @click.native.prevent="doAuth(scope.row.id, scope.row.is_auth)">认证</el-button>
+              <el-button type="primary" plain @click.native.prevent="doRefresh(scope.row.client_id)" v-if="scope.row.is_auth === 1">刷新</el-button>
+              <el-button type="primary" plain @click.native.prevent="doAuth(scope.row.id)" v-else>认证</el-button>
             </el-button-group>
           </template>
         </el-table-column>
@@ -69,10 +71,11 @@
 </template>
 
 <script>
-  import {accountList, accountAuth} from '@a/account'
+  import {accountList, accountAuth, refreshAuth} from '@a/account'
   import AccountCreate from './components/add-act'
   import AccountUpdate from './components/edit-act'
   import Page from '@c/Page'
+  import {parseTime} from '@/utils'
 
   export default {
     // name: 'CustomerAccountList',
@@ -109,6 +112,9 @@
     filters: {
       stateFilter(s, state) {
         return state[s]
+      },
+      timeFormat(timestamp) {
+        return parseTime(timestamp)
       }
     },
     methods: {
@@ -136,9 +142,24 @@
       editRow(id) {
         this.$refs.accountUpdate.initUpdate(id)
       },
-      doAuth(id, is_auth) {
-        let msg = is_auth === 1 ? '此账户已做授权认证，确定重新认证此账户授权信息吗?' : '确认认证此账号么?'
-        this.$confirm(msg, '确认信息', {
+      doRefresh(client_id) {
+        this.$confirm('确定刷新此账户的认证信息吗?', '确认信息', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'success'
+        }).then(() => {
+          this.loadings.pageLoading = true
+          refreshAuth(client_id).then(res => {
+            this.loadings.pageLoading = false
+            this.$message.success("刷新成功")
+          }).catch(err => {
+            this.loadings.pageLoading = false
+          })
+        }).catch(() => {
+        })
+      },
+      doAuth(id) {
+        this.$confirm('确认认证此账号么?', '确认信息', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'success'

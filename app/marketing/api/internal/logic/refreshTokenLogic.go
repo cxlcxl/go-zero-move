@@ -8,7 +8,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"strconv"
 
 	"business/app/marketing/api/internal/svc"
 	"business/app/marketing/api/internal/types"
@@ -31,21 +30,21 @@ func NewRefreshTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Refr
 }
 
 func (l *RefreshTokenLogic) RefreshToken(req *types.RefreshTokenReq) (resp *types.BaseResp, err error) {
-	if req.ClientId == 0 {
+	if req.ClientId == "" {
 		return nil, errors.New("请求有误")
 	}
 	token, err := l.svcCtx.MarketingRpcClient.GetToken(l.ctx, &marketingcenter.GetTokenReq{ClientId: req.ClientId})
 	if err != nil {
 		return nil, utils.RpcError(err, "此 ClientId 尚未进行认证，请先认证")
 	}
-	info, err := l.svcCtx.MarketingRpcClient.GetAccountSecretByClientId(l.ctx, &marketingcenter.GetTokenReq{ClientId: req.ClientId})
+	info, err := l.svcCtx.MarketingRpcClient.GetAccountByClientId(l.ctx, &marketingcenter.GetTokenReq{ClientId: req.ClientId})
 	if err != nil {
 		return nil, utils.RpcError(err, "")
 	}
 	data := map[string]string{
 		"grant_type":    "refresh_token",
 		"refresh_token": token.RefreshToken,
-		"client_id":     strconv.Itoa(int(req.ClientId)),
+		"client_id":     req.ClientId,
 		"client_secret": info.Secret,
 	}
 	post := curl.New(l.svcCtx.Config.MarketingApis.Authorize.Refresh).Post().QueryData(data)

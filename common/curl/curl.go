@@ -10,24 +10,24 @@ import (
 const (
 	AllowMethodGet  = "GET"
 	AllowMethodPost = "POST"
+	AllowMethodPut  = "PUT"
 )
 
 type Curl struct {
-	host       string
-	request    *http.Request
-	isJsonData bool
-	data       io.Reader
-	method     string
+	host    string
+	request *http.Request
+	data    io.Reader
+	method  string
 }
 
 func New(host string) *Curl {
 	return &Curl{
-		host:       host,
-		isJsonData: false,
+		host:   host,
+		method: AllowMethodGet,
 	}
 }
 
-func (c *Curl) Request(v interface{}, headers ...QueryHandlers) (err error) {
+func (c *Curl) Request(v interface{}, headers ...HeaderHandlers) (err error) {
 	if c.method == "" {
 		return NotSetMethod
 	}
@@ -62,5 +62,10 @@ func (c *Curl) Get() *Curl {
 
 func (c *Curl) Post() *Curl {
 	c.method = AllowMethodPost
+	return c
+}
+
+func (c *Curl) Put() *Curl {
+	c.method = AllowMethodPut
 	return c
 }

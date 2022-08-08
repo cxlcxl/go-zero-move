@@ -38,14 +38,24 @@ func (s *MarketingCenterServer) GetAccountInfo(ctx context.Context, in *marketin
 	return l.GetAccountInfo(in)
 }
 
-func (s *MarketingCenterServer) GetAccountSecretByClientId(ctx context.Context, in *marketing.GetTokenReq) (*marketing.AccountInfo, error) {
-	l := logic.NewGetAccountSecretByClientIdLogic(ctx, s.svcCtx)
-	return l.GetAccountSecretByClientId(in)
+func (s *MarketingCenterServer) GetAccountByClientId(ctx context.Context, in *marketing.GetTokenReq) (*marketing.AccountInfo, error) {
+	l := logic.NewGetAccountByClientIdLogic(ctx, s.svcCtx)
+	return l.GetAccountByClientId(in)
 }
 
 func (s *MarketingCenterServer) AccountList(ctx context.Context, in *marketing.AccountListReq) (*marketing.AccountListResp, error) {
 	l := logic.NewAccountListLogic(ctx, s.svcCtx)
 	return l.AccountList(in)
+}
+
+func (s *MarketingCenterServer) AccountSearch(ctx context.Context, in *marketing.AccountSearchReq) (*marketing.AccountSearchResp, error) {
+	l := logic.NewAccountSearchLogic(ctx, s.svcCtx)
+	return l.AccountSearch(in)
+}
+
+func (s *MarketingCenterServer) GetAccountsByAccountIds(ctx context.Context, in *marketing.GetByAccountIdsReq) (*marketing.AccountSearchResp, error) {
+	l := logic.NewGetAccountsByAccountIdsLogic(ctx, s.svcCtx)
+	return l.GetAccountsByAccountIds(in)
 }
 
 func (s *MarketingCenterServer) GetToken(ctx context.Context, in *marketing.GetTokenReq) (*marketing.TokenInfo, error) {

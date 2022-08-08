@@ -19,10 +19,10 @@
         <el-input v-model="accountForm.developer_id" placeholder="请填写开发者 ID"/>
       </el-form-item>
       <el-form-item label="ClientID" prop="client_id">
-        <el-input v-model="accountForm.client_id"/>
+        <el-input v-model="accountForm.client_id" :disabled="lockSecret"/>
       </el-form-item>
       <el-form-item label="Secret" prop="secret">
-        <el-input v-model="accountForm.secret"/>
+        <el-input v-model="accountForm.secret" :disabled="lockSecret"/>
       </el-form-item>
     </el-form>
   </dialog-panel>
@@ -44,11 +44,13 @@
       return {
         visible: false,
         loading: false,
+        lockSecret: false,
         accountForm: {
           id: 0,
           account_name: '',
           advertiser_id: '',
-          client_id: 0,
+          client_id: '',
+          is_auth: 0,
           developer_id: '',
           secret: '',
           account_type: 1,
@@ -66,6 +68,7 @@
       initUpdate(id) {
         accountInfo(id).then(res => {
           this.accountForm = res.data
+          this.lockSecret = this.accountForm.is_auth === 1
           this.visible = true
         }).catch(() => {
           this.$message.error("用户信息请求错误")

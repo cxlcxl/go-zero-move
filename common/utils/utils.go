@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"business/app/rbac/rpc/model"
 	"business/common/vars"
 	"bytes"
 	"crypto/md5"
@@ -12,6 +11,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/shopspring/decimal"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"io/ioutil"
 	"math/rand"
 	"mime/multipart"
@@ -125,17 +125,17 @@ func HttpRequest(host, data, method string, headers map[string]string) ([]byte, 
 
 // RpcError 拆出 RPC 返回的错误
 func RpcError(err error, emptyErrMsg string) error {
-	if strings.Contains(err.Error(), "=") {
-		errs := strings.Split(err.Error(), "=")
-		e := strings.TrimSpace(errs[len(errs)-1])
-		if strings.Contains(e, model.ErrNotFound.Error()) {
-			return errors.New(emptyErrMsg)
-		} else {
-			return errors.New(e)
-		}
+	if IsErrNotFound(err) {
+		return errors.New(emptyErrMsg)
 	} else {
-		return err
+		errs := strings.Split(err.Error(), "=")
+		return errors.New(strings.TrimSpace(errs[len(errs)-1]))
 	}
+}
+
+// IsErrNotFound 拆出 RPC 返回的错误
+func IsErrNotFound(err error) bool {
+	return strings.Contains(err.Error(), sqlx.ErrNotFound.Error())
 }
 
 // Pagination 分页信息
@@ -173,4 +173,25 @@ func GetDsn(user, pass, host, name, charset string, port int64) string {
 	return fmt.Sprintf(
 		"%s:%s@tcp(%s:%d)/%s?charset=%s&parseTime=True&loc=Local", user, pass, host, port, name, charset,
 	)
+}
+
+// WhereIn where in 条件组合
+func WhereIn(s interface{}) (w string, args []interface{}, err error) {
+	query := make([]string, 0)
+	switch s.(type) {
+	case []string:
+		for i := range s.([]string) {
+			query = append(query, "?")
+			args = append(args, s.([]string)[i])
+		}
+	case []int64:
+		for i := range s.([]string) {
+			query = append(query, "?")
+			args = append(args, s.([]int64)[i])
+		}
+	default:
+		return "", nil, errors.New("不支持的类型")
+	}
+
+	return "(" + strings.Join(query, ",") + ")", args, nil
 }

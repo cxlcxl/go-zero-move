@@ -16,26 +16,34 @@ export function accountCreate(data) {
   })
 }
 
-export function accountList(data) {
+export function accountList(params) {
   return request({
     url: '/marketing/account/list',
-    method: 'post',
-    data
+    method: 'get',
+    params
   })
 }
 
 export function accountInfo(account_id) {
   return request({
     url: '/marketing/account/info',
-    method: 'post',
-    data: {id: account_id}
+    method: 'get',
+    params: {id: account_id}
   })
 }
 
 export function accountAuth(account_id) {
   return request({
     url: '/marketing/account/auth',
+    method: 'get',
+    params: {id: account_id}
+  })
+}
+
+export function refreshAuth(client_id) {
+  return request({
+    url: '/marketing/refresh',
     method: 'post',
-    data: {id: account_id}
+    data: {client_id}
   })
 }

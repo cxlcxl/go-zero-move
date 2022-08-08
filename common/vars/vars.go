@@ -24,6 +24,14 @@ const (
 )
 
 const (
+	_ = iota
+	AppChannelGallery
+	AppChannelGooglePlay
+	AppChannelAppStore
+	AppChannelOther
+)
+
+const (
 	CommonStateVoid = iota
 	CommonStateValid
 )
@@ -49,5 +57,12 @@ var (
 	CommonState = map[int]string{
 		CommonStateVoid:  "停用",
 		CommonStateValid: "正常",
+	}
+	// AppChannel 系统平台(渠道)
+	AppChannel = map[int]string{
+		AppChannelGallery:    "AppGallery",
+		AppChannelGooglePlay: "GooglePlay",
+		AppChannelAppStore:   "AppStore",
+		AppChannelOther:      "Other",
 	}
 )

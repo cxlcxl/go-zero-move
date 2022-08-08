@@ -16,6 +16,26 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Route{
 				{
 					Method:  http.MethodPost,
+					Path:    "/promotion/create",
+					Handler: promotionCreateHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/promotion/list",
+					Handler: promotionListHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+		rest.WithPrefix("/marketing"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware, serverCtx.PermissionMiddleware},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
 					Path:    "/token",
 					Handler: accessTokenHandler(serverCtx),
 				},
@@ -25,27 +45,17 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: refreshTokenHandler(serverCtx),
 				},
 				{
-					Method:  http.MethodPost,
-					Path:    "/promotion/create",
-					Handler: promotionCreateHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodPost,
-					Path:    "/promotion/list",
-					Handler: promotionListHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodPost,
+					Method:  http.MethodGet,
 					Path:    "/account/list",
 					Handler: accountListHandler(serverCtx),
 				},
 				{
-					Method:  http.MethodPost,
+					Method:  http.MethodGet,
 					Path:    "/account/auth",
 					Handler: accountAuthHandler(serverCtx),
 				},
 				{
-					Method:  http.MethodPost,
+					Method:  http.MethodGet,
 					Path:    "/account/info",
 					Handler: accountInfoHandler(serverCtx),
 				},
@@ -58,6 +68,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/account/update",
 					Handler: accountUpdateHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/account/search",
+					Handler: accountSearchHandler(serverCtx),
 				},
 			}...,
 		),

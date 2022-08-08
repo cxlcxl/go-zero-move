@@ -29,7 +29,7 @@ type AccountCreateReq struct {
 	AccountType  int64  `protobuf:"varint,2,opt,name=account_type,json=accountType,proto3" json:"account_type,omitempty"`
 	AdvertiserId string `protobuf:"bytes,3,opt,name=advertiser_id,json=advertiserId,proto3" json:"advertiser_id,omitempty"`
 	DeveloperId  string `protobuf:"bytes,4,opt,name=developer_id,json=developerId,proto3" json:"developer_id,omitempty"`
-	ClientId     int64  `protobuf:"varint,5,opt,name=client_id,json=clientId,proto3" json:"client_id,omitempty"`
+	ClientId     string `protobuf:"bytes,5,opt,name=client_id,json=clientId,proto3" json:"client_id,omitempty"`
 	Secret       string `protobuf:"bytes,6,opt,name=secret,proto3" json:"secret,omitempty"`
 }
 
@@ -93,11 +93,11 @@ func (x *AccountCreateReq) GetDeveloperId() string {
 	return ""
 }
 
-func (x *AccountCreateReq) GetClientId() int64 {
+func (x *AccountCreateReq) GetClientId() string {
 	if x != nil {
 		return x.ClientId
 	}
-	return 0
+	return ""
 }
 
 func (x *AccountCreateReq) GetSecret() string {
@@ -118,7 +118,7 @@ type AccountUpdateReq struct {
 	AdvertiserId string `protobuf:"bytes,4,opt,name=advertiser_id,json=advertiserId,proto3" json:"advertiser_id,omitempty"`
 	DeveloperId  string `protobuf:"bytes,5,opt,name=developer_id,json=developerId,proto3" json:"developer_id,omitempty"`
 	State        int64  `protobuf:"varint,6,opt,name=state,proto3" json:"state,omitempty"`
-	ClientId     int64  `protobuf:"varint,7,opt,name=client_id,json=clientId,proto3" json:"client_id,omitempty"`
+	ClientId     string `protobuf:"bytes,7,opt,name=client_id,json=clientId,proto3" json:"client_id,omitempty"`
 	Secret       string `protobuf:"bytes,8,opt,name=secret,proto3" json:"secret,omitempty"`
 }
 
@@ -196,11 +196,11 @@ func (x *AccountUpdateReq) GetState() int64 {
 	return 0
 }
 
-func (x *AccountUpdateReq) GetClientId() int64 {
+func (x *AccountUpdateReq) GetClientId() string {
 	if x != nil {
 		return x.ClientId
 	}
-	return 0
+	return ""
 }
 
 func (x *AccountUpdateReq) GetSecret() string {
@@ -215,7 +215,7 @@ type GetTokenReq struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ClientId int64 `protobuf:"varint,1,opt,name=client_id,json=clientId,proto3" json:"client_id,omitempty"`
+	ClientId string `protobuf:"bytes,1,opt,name=client_id,json=clientId,proto3" json:"client_id,omitempty"`
 }
 
 func (x *GetTokenReq) Reset() {
@@ -250,11 +250,11 @@ func (*GetTokenReq) Descriptor() ([]byte, []int) {
 	return file_pb_account_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *GetTokenReq) GetClientId() int64 {
+func (x *GetTokenReq) GetClientId() string {
 	if x != nil {
 		return x.ClientId
 	}
-	return 0
+	return ""
 }
 
 type TokenInfo struct {
@@ -262,7 +262,7 @@ type TokenInfo struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ClientId     int64  `protobuf:"varint,1,opt,name=client_id,json=clientId,proto3" json:"client_id,omitempty"`
+	ClientId     string `protobuf:"bytes,1,opt,name=client_id,json=clientId,proto3" json:"client_id,omitempty"`
 	AccessToken  string `protobuf:"bytes,2,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
 	RefreshToken string `protobuf:"bytes,3,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
 	ExpiredAt    int64  `protobuf:"varint,4,opt,name=expired_at,json=expiredAt,proto3" json:"expired_at,omitempty"`
@@ -301,11 +301,11 @@ func (*TokenInfo) Descriptor() ([]byte, []int) {
 	return file_pb_account_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *TokenInfo) GetClientId() int64 {
+func (x *TokenInfo) GetClientId() string {
 	if x != nil {
 		return x.ClientId
 	}
-	return 0
+	return ""
 }
 
 func (x *TokenInfo) GetAccessToken() string {
@@ -472,7 +472,7 @@ type AccountInfo struct {
 	AccountType  int64  `protobuf:"varint,3,opt,name=account_type,json=accountType,proto3" json:"account_type,omitempty"`
 	AdvertiserId string `protobuf:"bytes,4,opt,name=advertiser_id,json=advertiserId,proto3" json:"advertiser_id,omitempty"`
 	DeveloperId  string `protobuf:"bytes,5,opt,name=developer_id,json=developerId,proto3" json:"developer_id,omitempty"`
-	ClientId     int64  `protobuf:"varint,6,opt,name=client_id,json=clientId,proto3" json:"client_id,omitempty"`
+	ClientId     string `protobuf:"bytes,6,opt,name=client_id,json=clientId,proto3" json:"client_id,omitempty"`
 	Secret       string `protobuf:"bytes,7,opt,name=secret,proto3" json:"secret,omitempty"`
 	State        int64  `protobuf:"varint,8,opt,name=state,proto3" json:"state,omitempty"`
 	IsAuth       int64  `protobuf:"varint,9,opt,name=is_auth,json=isAuth,proto3" json:"is_auth,omitempty"`
@@ -547,11 +547,11 @@ func (x *AccountInfo) GetDeveloperId() string {
 	return ""
 }
 
-func (x *AccountInfo) GetClientId() int64 {
+func (x *AccountInfo) GetClientId() string {
 	if x != nil {
 		return x.ClientId
 	}
-	return 0
+	return ""
 }
 
 func (x *AccountInfo) GetSecret() string {
@@ -644,6 +644,147 @@ func (x *AccountListResp) GetAccounts() []*AccountInfo {
 	return nil
 }
 
+type AccountSearchReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	AccountName string `protobuf:"bytes,1,opt,name=account_name,json=accountName,proto3" json:"account_name,omitempty"`
+}
+
+func (x *AccountSearchReq) Reset() {
+	*x = AccountSearchReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pb_account_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AccountSearchReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AccountSearchReq) ProtoMessage() {}
+
+func (x *AccountSearchReq) ProtoReflect() protoreflect.Message {
+	mi := &file_pb_account_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AccountSearchReq.ProtoReflect.Descriptor instead.
+func (*AccountSearchReq) Descriptor() ([]byte, []int) {
+	return file_pb_account_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *AccountSearchReq) GetAccountName() string {
+	if x != nil {
+		return x.AccountName
+	}
+	return ""
+}
+
+type GetByAccountIdsReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Ids []int64 `protobuf:"varint,1,rep,packed,name=ids,proto3" json:"ids,omitempty"`
+}
+
+func (x *GetByAccountIdsReq) Reset() {
+	*x = GetByAccountIdsReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pb_account_proto_msgTypes[9]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetByAccountIdsReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetByAccountIdsReq) ProtoMessage() {}
+
+func (x *GetByAccountIdsReq) ProtoReflect() protoreflect.Message {
+	mi := &file_pb_account_proto_msgTypes[9]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetByAccountIdsReq.ProtoReflect.Descriptor instead.
+func (*GetByAccountIdsReq) Descriptor() ([]byte, []int) {
+	return file_pb_account_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *GetByAccountIdsReq) GetIds() []int64 {
+	if x != nil {
+		return x.Ids
+	}
+	return nil
+}
+
+type AccountSearchResp struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Accounts []*AccountInfo `protobuf:"bytes,1,rep,name=accounts,proto3" json:"accounts,omitempty"`
+}
+
+func (x *AccountSearchResp) Reset() {
+	*x = AccountSearchResp{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pb_account_proto_msgTypes[10]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AccountSearchResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AccountSearchResp) ProtoMessage() {}
+
+func (x *AccountSearchResp) ProtoReflect() protoreflect.Message {
+	mi := &file_pb_account_proto_msgTypes[10]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AccountSearchResp.ProtoReflect.Descriptor instead.
+func (*AccountSearchResp) Descriptor() ([]byte, []int) {
+	return file_pb_account_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *AccountSearchResp) GetAccounts() []*AccountInfo {
+	if x != nil {
+		return x.Accounts
+	}
+	return nil
+}
+
 var File_pb_account_proto protoreflect.FileDescriptor
 
 var file_pb_account_proto_rawDesc = []byte{
@@ -660,7 +801,7 @@ var file_pb_account_proto_rawDesc = []byte{
 	0x0c, 0x64, 0x65, 0x76, 0x65, 0x6c, 0x6f, 0x70, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x04, 0x20,
 	0x01, 0x28, 0x09, 0x52, 0x0b, 0x64, 0x65, 0x76, 0x65, 0x6c, 0x6f, 0x70, 0x65, 0x72, 0x49, 0x64,
 	0x12, 0x1b, 0x0a, 0x09, 0x63, 0x6c, 0x69, 0x65, 0x6e, 0x74, 0x5f, 0x69, 0x64, 0x18, 0x05, 0x20,
-	0x01, 0x28, 0x03, 0x52, 0x08, 0x63, 0x6c, 0x69, 0x65, 0x6e, 0x74, 0x49, 0x64, 0x12, 0x16, 0x0a,
+	0x01, 0x28, 0x09, 0x52, 0x08, 0x63, 0x6c, 0x69, 0x65, 0x6e, 0x74, 0x49, 0x64, 0x12, 0x16, 0x0a,
 	0x06, 0x73, 0x65, 0x63, 0x72, 0x65, 0x74, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x73,
 	0x65, 0x63, 0x72, 0x65, 0x74, 0x22, 0xfb, 0x01, 0x0a, 0x10, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e,
 	0x74, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x52, 0x65, 0x71, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64,
@@ -676,13 +817,13 @@ var file_pb_account_proto_rawDesc = []byte{
 	0x65, 0x6c, 0x6f, 0x70, 0x65, 0x72, 0x49, 0x64, 0x12, 0x14, 0x0a, 0x05, 0x73, 0x74, 0x61, 0x74,
 	0x65, 0x18, 0x06, 0x20, 0x01, 0x28, 0x03, 0x52, 0x05, 0x73, 0x74, 0x61, 0x74, 0x65, 0x12, 0x1b,
 	0x0a, 0x09, 0x63, 0x6c, 0x69, 0x65, 0x6e, 0x74, 0x5f, 0x69, 0x64, 0x18, 0x07, 0x20, 0x01, 0x28,
-	0x03, 0x52, 0x08, 0x63, 0x6c, 0x69, 0x65, 0x6e, 0x74, 0x49, 0x64, 0x12, 0x16, 0x0a, 0x06, 0x73,
+	0x09, 0x52, 0x08, 0x63, 0x6c, 0x69, 0x65, 0x6e, 0x74, 0x49, 0x64, 0x12, 0x16, 0x0a, 0x06, 0x73,
 	0x65, 0x63, 0x72, 0x65, 0x74, 0x18, 0x08, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x73, 0x65, 0x63,
 	0x72, 0x65, 0x74, 0x22, 0x2a, 0x0a, 0x0b, 0x47, 0x65, 0x74, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x52,
 	0x65, 0x71, 0x12, 0x1b, 0x0a, 0x09, 0x63, 0x6c, 0x69, 0x65, 0x6e, 0x74, 0x5f, 0x69, 0x64, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x08, 0x63, 0x6c, 0x69, 0x65, 0x6e, 0x74, 0x49, 0x64, 0x22,
+	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x63, 0x6c, 0x69, 0x65, 0x6e, 0x74, 0x49, 0x64, 0x22,
 	0xae, 0x01, 0x0a, 0x09, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x49, 0x6e, 0x66, 0x6f, 0x12, 0x1b, 0x0a,
-	0x09, 0x63, 0x6c, 0x69, 0x65, 0x6e, 0x74, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03,
+	0x09, 0x63, 0x6c, 0x69, 0x65, 0x6e, 0x74, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
 	0x52, 0x08, 0x63, 0x6c, 0x69, 0x65, 0x6e, 0x74, 0x49, 0x64, 0x12, 0x21, 0x0a, 0x0c, 0x61, 0x63,
 	0x63, 0x65, 0x73, 0x73, 0x5f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09,
 	0x52, 0x0b, 0x61, 0x63, 0x63, 0x65, 0x73, 0x73, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x12, 0x23, 0x0a,
@@ -716,7 +857,7 @@ var file_pb_account_proto_rawDesc = []byte{
 	0x0c, 0x64, 0x65, 0x76, 0x65, 0x6c, 0x6f, 0x70, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x05, 0x20,
 	0x01, 0x28, 0x09, 0x52, 0x0b, 0x64, 0x65, 0x76, 0x65, 0x6c, 0x6f, 0x70, 0x65, 0x72, 0x49, 0x64,
 	0x12, 0x1b, 0x0a, 0x09, 0x63, 0x6c, 0x69, 0x65, 0x6e, 0x74, 0x5f, 0x69, 0x64, 0x18, 0x06, 0x20,
-	0x01, 0x28, 0x03, 0x52, 0x08, 0x63, 0x6c, 0x69, 0x65, 0x6e, 0x74, 0x49, 0x64, 0x12, 0x16, 0x0a,
+	0x01, 0x28, 0x09, 0x52, 0x08, 0x63, 0x6c, 0x69, 0x65, 0x6e, 0x74, 0x49, 0x64, 0x12, 0x16, 0x0a,
 	0x06, 0x73, 0x65, 0x63, 0x72, 0x65, 0x74, 0x18, 0x07, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x73,
 	0x65, 0x63, 0x72, 0x65, 0x74, 0x12, 0x14, 0x0a, 0x05, 0x73, 0x74, 0x61, 0x74, 0x65, 0x18, 0x08,
 	0x20, 0x01, 0x28, 0x03, 0x52, 0x05, 0x73, 0x74, 0x61, 0x74, 0x65, 0x12, 0x17, 0x0a, 0x07, 0x69,
@@ -730,9 +871,19 @@ var file_pb_account_proto_rawDesc = []byte{
 	0x20, 0x01, 0x28, 0x03, 0x52, 0x05, 0x74, 0x6f, 0x74, 0x61, 0x6c, 0x12, 0x32, 0x0a, 0x08, 0x61,
 	0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x16, 0x2e,
 	0x6d, 0x61, 0x72, 0x6b, 0x65, 0x74, 0x69, 0x6e, 0x67, 0x2e, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e,
-	0x74, 0x49, 0x6e, 0x66, 0x6f, 0x52, 0x08, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x73, 0x42,
-	0x0d, 0x5a, 0x0b, 0x2e, 0x2f, 0x6d, 0x61, 0x72, 0x6b, 0x65, 0x74, 0x69, 0x6e, 0x67, 0x62, 0x06,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x74, 0x49, 0x6e, 0x66, 0x6f, 0x52, 0x08, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x73, 0x22,
+	0x35, 0x0a, 0x10, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x53, 0x65, 0x61, 0x72, 0x63, 0x68,
+	0x52, 0x65, 0x71, 0x12, 0x21, 0x0a, 0x0c, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x5f, 0x6e,
+	0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x61, 0x63, 0x63, 0x6f, 0x75,
+	0x6e, 0x74, 0x4e, 0x61, 0x6d, 0x65, 0x22, 0x26, 0x0a, 0x12, 0x47, 0x65, 0x74, 0x42, 0x79, 0x41,
+	0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x49, 0x64, 0x73, 0x52, 0x65, 0x71, 0x12, 0x10, 0x0a, 0x03,
+	0x69, 0x64, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x03, 0x52, 0x03, 0x69, 0x64, 0x73, 0x22, 0x47,
+	0x0a, 0x11, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x53, 0x65, 0x61, 0x72, 0x63, 0x68, 0x52,
+	0x65, 0x73, 0x70, 0x12, 0x32, 0x0a, 0x08, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x73, 0x18,
+	0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x16, 0x2e, 0x6d, 0x61, 0x72, 0x6b, 0x65, 0x74, 0x69, 0x6e,
+	0x67, 0x2e, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x49, 0x6e, 0x66, 0x6f, 0x52, 0x08, 0x61,
+	0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x73, 0x42, 0x0d, 0x5a, 0x0b, 0x2e, 0x2f, 0x6d, 0x61, 0x72,
+	0x6b, 0x65, 0x74, 0x69, 0x6e, 0x67, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -747,24 +898,28 @@ func file_pb_account_proto_rawDescGZIP() []byte {
 	return file_pb_account_proto_rawDescData
 }
 
-var file_pb_account_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_pb_account_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_pb_account_proto_goTypes = []interface{}{
-	(*AccountCreateReq)(nil), // 0: marketing.AccountCreateReq
-	(*AccountUpdateReq)(nil), // 1: marketing.AccountUpdateReq
-	(*GetTokenReq)(nil),      // 2: marketing.GetTokenReq
-	(*TokenInfo)(nil),        // 3: marketing.TokenInfo
-	(*AccountListReq)(nil),   // 4: marketing.AccountListReq
-	(*AccountInfoReq)(nil),   // 5: marketing.AccountInfoReq
-	(*AccountInfo)(nil),      // 6: marketing.AccountInfo
-	(*AccountListResp)(nil),  // 7: marketing.AccountListResp
+	(*AccountCreateReq)(nil),   // 0: marketing.AccountCreateReq
+	(*AccountUpdateReq)(nil),   // 1: marketing.AccountUpdateReq
+	(*GetTokenReq)(nil),        // 2: marketing.GetTokenReq
+	(*TokenInfo)(nil),          // 3: marketing.TokenInfo
+	(*AccountListReq)(nil),     // 4: marketing.AccountListReq
+	(*AccountInfoReq)(nil),     // 5: marketing.AccountInfoReq
+	(*AccountInfo)(nil),        // 6: marketing.AccountInfo
+	(*AccountListResp)(nil),    // 7: marketing.AccountListResp
+	(*AccountSearchReq)(nil),   // 8: marketing.AccountSearchReq
+	(*GetByAccountIdsReq)(nil), // 9: marketing.GetByAccountIdsReq
+	(*AccountSearchResp)(nil),  // 10: marketing.AccountSearchResp
 }
 var file_pb_account_proto_depIdxs = []int32{
 	6, // 0: marketing.AccountListResp.accounts:type_name -> marketing.AccountInfo
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	6, // 1: marketing.AccountSearchResp.accounts:type_name -> marketing.AccountInfo
+	2, // [2:2] is the sub-list for method output_type
+	2, // [2:2] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_pb_account_proto_init() }
@@ -869,6 +1024,42 @@ func file_pb_account_proto_init() {
 				return nil
 			}
 		}
+		file_pb_account_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AccountSearchReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pb_account_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetByAccountIdsReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pb_account_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AccountSearchResp); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -876,7 +1067,7 @@ func file_pb_account_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_pb_account_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

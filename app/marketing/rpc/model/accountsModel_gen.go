@@ -48,7 +48,7 @@ type (
 		AccountType  int64     `db:"account_type"`  // 账户类型
 		State        int64     `db:"state"`         // 状态
 		AccountName  string    `db:"account_name"`  // 账户名
-		ClientId     int64     `db:"client_id"`     // 客户端ID
+		ClientId     string    `db:"client_id"`     // 客户端ID
 		Secret       string    `db:"secret"`        // 密钥
 		IsAuth       int64     `db:"is_auth"`       // 是否已认证
 		CreatedAt    time.Time `db:"created_at"`    // 添加时间

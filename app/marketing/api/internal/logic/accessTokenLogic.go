@@ -10,7 +10,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"strconv"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -48,13 +47,7 @@ func (l *AccessTokenLogic) AccessToken(req *types.AccessTokenReq) (resp *types.A
 		return nil, err
 	}
 	_, _ = l.svcCtx.RedisCache.Del(vars.SysCachePrefix + "authorize:" + req.State)
-	clientIdToInt, err := strconv.ParseInt(clientId, 0, 64)
-	if err != nil {
-		return nil, errors.New("参数已过期，请重新发起认证")
-	}
-	info, err := l.svcCtx.MarketingRpcClient.GetAccountSecretByClientId(l.ctx, &marketingcenter.GetTokenReq{
-		ClientId: clientIdToInt,
-	})
+	info, err := l.svcCtx.MarketingRpcClient.GetAccountByClientId(l.ctx, &marketingcenter.GetTokenReq{ClientId: clientId})
 	if err != nil {
 		return nil, utils.RpcError(err, "请求错误")
 	}
@@ -75,7 +68,7 @@ func (l *AccessTokenLogic) AccessToken(req *types.AccessTokenReq) (resp *types.A
 	}
 	fmt.Println(at)
 	_, err = l.svcCtx.MarketingRpcClient.SetToken(l.ctx, &marketingcenter.TokenInfo{
-		ClientId:     clientIdToInt,
+		ClientId:     clientId,
 		AccessToken:  at.AccessToken,
 		RefreshToken: at.RefreshToken,
 		ExpiredAt:    at.ExpiresIn,

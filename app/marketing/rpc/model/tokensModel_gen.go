@@ -30,7 +30,7 @@ type (
 	tokensModel interface {
 		Insert(ctx context.Context, data *Tokens) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*Tokens, error)
-		FindOneByClientId(ctx context.Context, clientId int64) (*Tokens, error)
+		FindOneByClientId(ctx context.Context, clientId string) (*Tokens, error)
 		Update(ctx context.Context, newData *Tokens) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -42,7 +42,7 @@ type (
 
 	Tokens struct {
 		Id           int64     `db:"id"`
-		ClientId     int64     `db:"client_id"` // 客户端ID
+		ClientId     string    `db:"client_id"` // 客户端ID
 		AccessToken  string    `db:"access_token"`
 		RefreshToken string    `db:"refresh_token"`
 		ExpiredAt    time.Time `db:"expired_at"` // access_token 过期时间
@@ -91,7 +91,7 @@ func (m *defaultTokensModel) FindOne(ctx context.Context, id int64) (*Tokens, er
 	}
 }
 
-func (m *defaultTokensModel) FindOneByClientId(ctx context.Context, clientId int64) (*Tokens, error) {
+func (m *defaultTokensModel) FindOneByClientId(ctx context.Context, clientId string) (*Tokens, error) {
 	tokensClientIdKey := fmt.Sprintf("%s%v", cacheTokensClientIdPrefix, clientId)
 	var resp Tokens
 	err := m.QueryRowIndexCtx(ctx, &resp, tokensClientIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v interface{}) (i interface{}, e error) {

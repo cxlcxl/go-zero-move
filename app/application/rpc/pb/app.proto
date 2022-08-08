@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package apps;
+
+option go_package = "./apps";
+
+message AppInfo{
+  int64 id = 1;
+  string app_name = 2;
+  string app_id = 3;
+  int64 account_id = 4;
+  string pkg_name = 5;
+  int64 channel = 6;
+  int64 app_type = 7;
+  string tags = 8;
+  int64 created_at = 9;
+  int64 updated_at = 10;
+}
+
+message AppInfoReq {
+  int64 id = 1;
+}
+message GetByAppIdReq {
+  string app_id = 1;
+}
+message AppListReq {
+  string app_name = 1;
+  string app_id = 2;
+  int64 app_type = 3;
+  int64 channel = 4;
+  int64 page = 5;
+  int64 page_size = 6;
+}
+message AppListResp {
+  int64 total = 1;
+  repeated AppInfo apps = 2;
+}
+message CreateAppReq {
+  string app_name = 2;
+  string app_id = 3;
+  int64 account_id = 4;
+  string pkg_name = 5;
+  int64 channel = 6;
+  int64 app_type = 7;
+  string tags = 8;
+}
+message GetByIdsReq {
+  repeated int64 ids = 1;
+}
+message GetByAppNameReq {
+  string app_name = 1;
+}
+message GetByAppIdsReq {
+  repeated string app_ids = 1;
+}
+message AppsResp {
+  repeated AppInfo apps = 1;
+}
+message BaseResp {}
+
+service AppCenter {
+  rpc CreateApp(CreateAppReq) returns (BaseResp);
+  rpc UpdateApp(AppInfo) returns (BaseResp);
+  rpc GetAppInfo(AppInfoReq) returns (AppInfo);
+  rpc GetAppInfoByAppId(GetByAppIdReq) returns (AppInfo);
+  rpc AppList(AppListReq) returns (AppListResp);
+  rpc GetAppsByIds(GetByIdsReq) returns (AppsResp);
+  rpc GetAppsByAppName(GetByAppNameReq) returns (AppsResp);
+  rpc GetAppsByAppIds(GetByAppIdsReq) returns (AppsResp);
+}

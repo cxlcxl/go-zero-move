@@ -2,8 +2,10 @@ package logic
 
 import (
 	"business/app/marketing/rpc/marketing"
+	"business/common/utils"
 	"business/common/vars"
 	"context"
+
 	"github.com/jinzhu/copier"
 
 	"business/app/marketing/api/internal/svc"
@@ -37,6 +39,9 @@ func (l *AccountListLogic) AccountList(req *types.AccountListReq) (resp *types.A
 		Page:        req.Page,
 		PageSize:    req.PageSize,
 	})
+	if err != nil {
+		return nil, utils.RpcError(err, "未查询到数据")
+	}
 	var accounts []types.AccountInfo
 	err = copier.Copy(&accounts, list.Accounts)
 	if err != nil {

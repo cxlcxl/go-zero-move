@@ -19,18 +19,23 @@ type (
 	AccountUpdateReq   = marketing.AccountUpdateReq
 	AccountInfoReq     = marketing.AccountInfoReq
 	AccountInfo        = marketing.AccountInfo
-	AccountListResp    = marketing.AccountListResp
 	GetTokenReq        = marketing.GetTokenReq
-	TokenInfo          = marketing.TokenInfo
 	AccountListReq     = marketing.AccountListReq
+	AccountListResp    = marketing.AccountListResp
+	TokenInfo          = marketing.TokenInfo
+	GetByAccountIdsReq = marketing.GetByAccountIdsReq
+	AccountSearchResp  = marketing.AccountSearchResp
+	AccountSearchReq   = marketing.AccountSearchReq
 
 	MarketingCenter interface {
 		//  账户板块 RPC 服务
 		AccountCreate(ctx context.Context, in *AccountCreateReq, opts ...grpc.CallOption) (*BaseResp, error)
 		AccountUpdate(ctx context.Context, in *AccountUpdateReq, opts ...grpc.CallOption) (*BaseResp, error)
 		GetAccountInfo(ctx context.Context, in *AccountInfoReq, opts ...grpc.CallOption) (*AccountInfo, error)
-		GetAccountSecretByClientId(ctx context.Context, in *GetTokenReq, opts ...grpc.CallOption) (*AccountInfo, error)
+		GetAccountByClientId(ctx context.Context, in *GetTokenReq, opts ...grpc.CallOption) (*AccountInfo, error)
 		AccountList(ctx context.Context, in *AccountListReq, opts ...grpc.CallOption) (*AccountListResp, error)
+		AccountSearch(ctx context.Context, in *AccountSearchReq, opts ...grpc.CallOption) (*AccountSearchResp, error)
+		GetAccountsByAccountIds(ctx context.Context, in *GetByAccountIdsReq, opts ...grpc.CallOption) (*AccountSearchResp, error)
 		GetToken(ctx context.Context, in *GetTokenReq, opts ...grpc.CallOption) (*TokenInfo, error)
 		SetToken(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*BaseResp, error)
 		PromotionCreate(ctx context.Context, in *PromotionCreateReq, opts ...grpc.CallOption) (*BaseResp, error)
@@ -63,14 +68,24 @@ func (m *defaultMarketingCenter) GetAccountInfo(ctx context.Context, in *Account
 	return client.GetAccountInfo(ctx, in, opts...)
 }
 
-func (m *defaultMarketingCenter) GetAccountSecretByClientId(ctx context.Context, in *GetTokenReq, opts ...grpc.CallOption) (*AccountInfo, error) {
+func (m *defaultMarketingCenter) GetAccountByClientId(ctx context.Context, in *GetTokenReq, opts ...grpc.CallOption) (*AccountInfo, error) {
 	client := marketing.NewMarketingCenterClient(m.cli.Conn())
-	return client.GetAccountSecretByClientId(ctx, in, opts...)
+	return client.GetAccountByClientId(ctx, in, opts...)
 }
 
 func (m *defaultMarketingCenter) AccountList(ctx context.Context, in *AccountListReq, opts ...grpc.CallOption) (*AccountListResp, error) {
 	client := marketing.NewMarketingCenterClient(m.cli.Conn())
 	return client.AccountList(ctx, in, opts...)
+}
+
+func (m *defaultMarketingCenter) AccountSearch(ctx context.Context, in *AccountSearchReq, opts ...grpc.CallOption) (*AccountSearchResp, error) {
+	client := marketing.NewMarketingCenterClient(m.cli.Conn())
+	return client.AccountSearch(ctx, in, opts...)
+}
+
+func (m *defaultMarketingCenter) GetAccountsByAccountIds(ctx context.Context, in *GetByAccountIdsReq, opts ...grpc.CallOption) (*AccountSearchResp, error) {
+	client := marketing.NewMarketingCenterClient(m.cli.Conn())
+	return client.GetAccountsByAccountIds(ctx, in, opts...)
 }
 
 func (m *defaultMarketingCenter) GetToken(ctx context.Context, in *GetTokenReq, opts ...grpc.CallOption) (*TokenInfo, error) {
