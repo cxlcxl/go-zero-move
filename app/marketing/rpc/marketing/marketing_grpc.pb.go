@@ -22,17 +22,6 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MarketingCenterClient interface {
-	// 账户板块 RPC 服务
-	AccountCreate(ctx context.Context, in *AccountCreateReq, opts ...grpc.CallOption) (*BaseResp, error)
-	AccountUpdate(ctx context.Context, in *AccountUpdateReq, opts ...grpc.CallOption) (*BaseResp, error)
-	GetAccountInfo(ctx context.Context, in *AccountInfoReq, opts ...grpc.CallOption) (*AccountInfo, error)
-	GetAccountByClientId(ctx context.Context, in *GetTokenReq, opts ...grpc.CallOption) (*AccountInfo, error)
-	AccountList(ctx context.Context, in *AccountListReq, opts ...grpc.CallOption) (*AccountListResp, error)
-	AccountSearch(ctx context.Context, in *AccountSearchReq, opts ...grpc.CallOption) (*AccountSearchResp, error)
-	GetAccountsByAccountIds(ctx context.Context, in *GetByAccountIdsReq, opts ...grpc.CallOption) (*AccountSearchResp, error)
-	GetDefaultAccountList(ctx context.Context, in *DefaultListReq, opts ...grpc.CallOption) (*AccountSearchResp, error)
-	GetToken(ctx context.Context, in *GetTokenReq, opts ...grpc.CallOption) (*TokenInfo, error)
-	SetToken(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*BaseResp, error)
 	PromotionCreate(ctx context.Context, in *PromotionCreateReq, opts ...grpc.CallOption) (*BaseResp, error)
 }
 
@@ -42,96 +31,6 @@ type marketingCenterClient struct {
 
 func NewMarketingCenterClient(cc grpc.ClientConnInterface) MarketingCenterClient {
 	return &marketingCenterClient{cc}
-}
-
-func (c *marketingCenterClient) AccountCreate(ctx context.Context, in *AccountCreateReq, opts ...grpc.CallOption) (*BaseResp, error) {
-	out := new(BaseResp)
-	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/AccountCreate", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *marketingCenterClient) AccountUpdate(ctx context.Context, in *AccountUpdateReq, opts ...grpc.CallOption) (*BaseResp, error) {
-	out := new(BaseResp)
-	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/AccountUpdate", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *marketingCenterClient) GetAccountInfo(ctx context.Context, in *AccountInfoReq, opts ...grpc.CallOption) (*AccountInfo, error) {
-	out := new(AccountInfo)
-	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/GetAccountInfo", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *marketingCenterClient) GetAccountByClientId(ctx context.Context, in *GetTokenReq, opts ...grpc.CallOption) (*AccountInfo, error) {
-	out := new(AccountInfo)
-	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/GetAccountByClientId", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *marketingCenterClient) AccountList(ctx context.Context, in *AccountListReq, opts ...grpc.CallOption) (*AccountListResp, error) {
-	out := new(AccountListResp)
-	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/AccountList", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *marketingCenterClient) AccountSearch(ctx context.Context, in *AccountSearchReq, opts ...grpc.CallOption) (*AccountSearchResp, error) {
-	out := new(AccountSearchResp)
-	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/AccountSearch", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *marketingCenterClient) GetAccountsByAccountIds(ctx context.Context, in *GetByAccountIdsReq, opts ...grpc.CallOption) (*AccountSearchResp, error) {
-	out := new(AccountSearchResp)
-	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/GetAccountsByAccountIds", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *marketingCenterClient) GetDefaultAccountList(ctx context.Context, in *DefaultListReq, opts ...grpc.CallOption) (*AccountSearchResp, error) {
-	out := new(AccountSearchResp)
-	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/GetDefaultAccountList", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *marketingCenterClient) GetToken(ctx context.Context, in *GetTokenReq, opts ...grpc.CallOption) (*TokenInfo, error) {
-	out := new(TokenInfo)
-	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/GetToken", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *marketingCenterClient) SetToken(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*BaseResp, error) {
-	out := new(BaseResp)
-	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/SetToken", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *marketingCenterClient) PromotionCreate(ctx context.Context, in *PromotionCreateReq, opts ...grpc.CallOption) (*BaseResp, error) {
@@ -147,17 +46,6 @@ func (c *marketingCenterClient) PromotionCreate(ctx context.Context, in *Promoti
 // All implementations must embed UnimplementedMarketingCenterServer
 // for forward compatibility
 type MarketingCenterServer interface {
-	// 账户板块 RPC 服务
-	AccountCreate(context.Context, *AccountCreateReq) (*BaseResp, error)
-	AccountUpdate(context.Context, *AccountUpdateReq) (*BaseResp, error)
-	GetAccountInfo(context.Context, *AccountInfoReq) (*AccountInfo, error)
-	GetAccountByClientId(context.Context, *GetTokenReq) (*AccountInfo, error)
-	AccountList(context.Context, *AccountListReq) (*AccountListResp, error)
-	AccountSearch(context.Context, *AccountSearchReq) (*AccountSearchResp, error)
-	GetAccountsByAccountIds(context.Context, *GetByAccountIdsReq) (*AccountSearchResp, error)
-	GetDefaultAccountList(context.Context, *DefaultListReq) (*AccountSearchResp, error)
-	GetToken(context.Context, *GetTokenReq) (*TokenInfo, error)
-	SetToken(context.Context, *TokenInfo) (*BaseResp, error)
 	PromotionCreate(context.Context, *PromotionCreateReq) (*BaseResp, error)
 	mustEmbedUnimplementedMarketingCenterServer()
 }
@@ -166,36 +54,6 @@ type MarketingCenterServer interface {
 type UnimplementedMarketingCenterServer struct {
 }
 
-func (UnimplementedMarketingCenterServer) AccountCreate(context.Context, *AccountCreateReq) (*BaseResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AccountCreate not implemented")
-}
-func (UnimplementedMarketingCenterServer) AccountUpdate(context.Context, *AccountUpdateReq) (*BaseResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AccountUpdate not implemented")
-}
-func (UnimplementedMarketingCenterServer) GetAccountInfo(context.Context, *AccountInfoReq) (*AccountInfo, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAccountInfo not implemented")
-}
-func (UnimplementedMarketingCenterServer) GetAccountByClientId(context.Context, *GetTokenReq) (*AccountInfo, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAccountByClientId not implemented")
-}
-func (UnimplementedMarketingCenterServer) AccountList(context.Context, *AccountListReq) (*AccountListResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AccountList not implemented")
-}
-func (UnimplementedMarketingCenterServer) AccountSearch(context.Context, *AccountSearchReq) (*AccountSearchResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AccountSearch not implemented")
-}
-func (UnimplementedMarketingCenterServer) GetAccountsByAccountIds(context.Context, *GetByAccountIdsReq) (*AccountSearchResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAccountsByAccountIds not implemented")
-}
-func (UnimplementedMarketingCenterServer) GetDefaultAccountList(context.Context, *DefaultListReq) (*AccountSearchResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetDefaultAccountList not implemented")
-}
-func (UnimplementedMarketingCenterServer) GetToken(context.Context, *GetTokenReq) (*TokenInfo, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetToken not implemented")
-}
-func (UnimplementedMarketingCenterServer) SetToken(context.Context, *TokenInfo) (*BaseResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetToken not implemented")
-}
 func (UnimplementedMarketingCenterServer) PromotionCreate(context.Context, *PromotionCreateReq) (*BaseResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PromotionCreate not implemented")
 }
@@ -210,186 +68,6 @@ type UnsafeMarketingCenterServer interface {
 
 func RegisterMarketingCenterServer(s grpc.ServiceRegistrar, srv MarketingCenterServer) {
 	s.RegisterService(&MarketingCenter_ServiceDesc, srv)
-}
-
-func _MarketingCenter_AccountCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AccountCreateReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MarketingCenterServer).AccountCreate(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/marketing.MarketingCenter/AccountCreate",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MarketingCenterServer).AccountCreate(ctx, req.(*AccountCreateReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MarketingCenter_AccountUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AccountUpdateReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MarketingCenterServer).AccountUpdate(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/marketing.MarketingCenter/AccountUpdate",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MarketingCenterServer).AccountUpdate(ctx, req.(*AccountUpdateReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MarketingCenter_GetAccountInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AccountInfoReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MarketingCenterServer).GetAccountInfo(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/marketing.MarketingCenter/GetAccountInfo",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MarketingCenterServer).GetAccountInfo(ctx, req.(*AccountInfoReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MarketingCenter_GetAccountByClientId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetTokenReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MarketingCenterServer).GetAccountByClientId(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/marketing.MarketingCenter/GetAccountByClientId",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MarketingCenterServer).GetAccountByClientId(ctx, req.(*GetTokenReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MarketingCenter_AccountList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AccountListReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MarketingCenterServer).AccountList(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/marketing.MarketingCenter/AccountList",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MarketingCenterServer).AccountList(ctx, req.(*AccountListReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MarketingCenter_AccountSearch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AccountSearchReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MarketingCenterServer).AccountSearch(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/marketing.MarketingCenter/AccountSearch",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MarketingCenterServer).AccountSearch(ctx, req.(*AccountSearchReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MarketingCenter_GetAccountsByAccountIds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetByAccountIdsReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MarketingCenterServer).GetAccountsByAccountIds(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/marketing.MarketingCenter/GetAccountsByAccountIds",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MarketingCenterServer).GetAccountsByAccountIds(ctx, req.(*GetByAccountIdsReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MarketingCenter_GetDefaultAccountList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DefaultListReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MarketingCenterServer).GetDefaultAccountList(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/marketing.MarketingCenter/GetDefaultAccountList",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MarketingCenterServer).GetDefaultAccountList(ctx, req.(*DefaultListReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MarketingCenter_GetToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetTokenReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MarketingCenterServer).GetToken(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/marketing.MarketingCenter/GetToken",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MarketingCenterServer).GetToken(ctx, req.(*GetTokenReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MarketingCenter_SetToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TokenInfo)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MarketingCenterServer).SetToken(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/marketing.MarketingCenter/SetToken",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MarketingCenterServer).SetToken(ctx, req.(*TokenInfo))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _MarketingCenter_PromotionCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -417,46 +95,6 @@ var MarketingCenter_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "marketing.MarketingCenter",
 	HandlerType: (*MarketingCenterServer)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "AccountCreate",
-			Handler:    _MarketingCenter_AccountCreate_Handler,
-		},
-		{
-			MethodName: "AccountUpdate",
-			Handler:    _MarketingCenter_AccountUpdate_Handler,
-		},
-		{
-			MethodName: "GetAccountInfo",
-			Handler:    _MarketingCenter_GetAccountInfo_Handler,
-		},
-		{
-			MethodName: "GetAccountByClientId",
-			Handler:    _MarketingCenter_GetAccountByClientId_Handler,
-		},
-		{
-			MethodName: "AccountList",
-			Handler:    _MarketingCenter_AccountList_Handler,
-		},
-		{
-			MethodName: "AccountSearch",
-			Handler:    _MarketingCenter_AccountSearch_Handler,
-		},
-		{
-			MethodName: "GetAccountsByAccountIds",
-			Handler:    _MarketingCenter_GetAccountsByAccountIds_Handler,
-		},
-		{
-			MethodName: "GetDefaultAccountList",
-			Handler:    _MarketingCenter_GetDefaultAccountList_Handler,
-		},
-		{
-			MethodName: "GetToken",
-			Handler:    _MarketingCenter_GetToken_Handler,
-		},
-		{
-			MethodName: "SetToken",
-			Handler:    _MarketingCenter_SetToken_Handler,
-		},
 		{
 			MethodName: "PromotionCreate",
 			Handler:    _MarketingCenter_PromotionCreate_Handler,

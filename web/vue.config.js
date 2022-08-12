@@ -53,11 +53,11 @@ module.exports = {
           ['^' + process.env.VUE_APP_RBAC_API]: ''
         }
       },
-      [process.env.VUE_APP_MARKETING_API] : {
-        target: process.env.VUE_APP_MARKETING_API,
+      [process.env.VUE_APP_ACCOUNT_API] : {
+        target: process.env.VUE_APP_ACCOUNT_API,
         changeOrigin: true,
         pathRewrite: {
-          ['^' + process.env.VUE_APP_MARKETING_API]: ''
+          ['^' + process.env.VUE_APP_ACCOUNT_API]: ''
         }
       },
       [process.env.VUE_APP_APPLICATION_API] : {
@@ -65,6 +65,13 @@ module.exports = {
         changeOrigin: true,
         pathRewrite: {
           ['^' + process.env.VUE_APP_APPLICATION_API]: ''
+        }
+      },
+      [process.env.VUE_APP_MARKETING_API] : {
+        target: process.env.VUE_APP_MARKETING_API,
+        changeOrigin: true,
+        pathRewrite: {
+          ['^' + process.env.VUE_APP_MARKETING_API]: ''
         }
       },
     }/* ,

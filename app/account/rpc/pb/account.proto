@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+option go_package = "./account";
+
+package account;
+
+message AccountCreateReq{
+  string account_name = 1;
+  int64 account_type = 2;
+  string advertiser_id = 3;
+  string developer_id = 4;
+  string client_id = 5;
+  string secret = 6;
+  int64 parent_id = 7;
+}
+message AccountUpdateReq{
+  int64 id = 1;
+  string account_name = 2;
+  int64 account_type = 3;
+  string advertiser_id = 4;
+  string developer_id = 5;
+  int64 state = 6;
+  string client_id = 7;
+  string secret = 8;
+  int64 parent_id = 9;
+}
+
+message GetTokenReq {
+  string client_id = 1;
+}
+
+message TokenInfo{
+  string client_id = 1;
+  string access_token = 2;
+  string refresh_token = 3;
+  int64 expired_at = 4;
+  string token_type = 5;
+}
+
+message AccountListReq{
+  string account_name = 1;
+  int64 account_type = 2;
+  int64 state = 3;
+  int64 page = 4;
+  int64 page_size = 5;
+}
+message AccountInfoReq {
+  int64 id = 1;
+}
+message AccountInfo {
+  int64 id = 1;
+  string account_name = 2;
+  int64 account_type = 3;
+  string advertiser_id = 4;
+  string developer_id = 5;
+  string client_id = 6;
+  string secret = 7;
+  int64 state = 8;
+  int64 is_auth = 9;
+  int64 created_at = 10;
+  int64 updated_at = 11;
+  int64 parent_id = 12;
+}
+message AccountListResp{
+  int64 total = 1;
+  repeated AccountInfo accounts = 2;
+}
+message AccountSearchReq{
+  string account_name = 1;
+}
+message GetByAccountIdsReq{
+  repeated int64 ids = 1;
+}
+message AccountSearchResp{
+  repeated AccountInfo accounts = 1;
+}
+message DefaultListReq {}
+
+message BaseResp {}
+
+service AccountCenter {
+  rpc AccountCreate(AccountCreateReq) returns(BaseResp);
+  rpc AccountUpdate(AccountUpdateReq) returns(BaseResp);
+  rpc GetAccountInfo(AccountInfoReq) returns(AccountInfo);
+  rpc GetAccountByClientId(GetTokenReq) returns(AccountInfo);
+  rpc AccountList(AccountListReq) returns(AccountListResp);
+  rpc AccountSearch(AccountSearchReq) returns(AccountSearchResp);
+  rpc GetAccountsByAccountIds(GetByAccountIdsReq) returns(AccountSearchResp);
+  rpc GetDefaultAccountList(DefaultListReq) returns(AccountSearchResp);
+  rpc GetToken(GetTokenReq) returns(TokenInfo);
+  rpc SetToken(TokenInfo) returns(BaseResp);
+}

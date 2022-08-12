@@ -1,10 +1,10 @@
 package logic
 
 import (
+	"business/app/account/rpc/accountcenter"
 	"business/app/application/api/internal/svc"
 	"business/app/application/api/internal/types"
 	"business/app/application/rpc/appcenter"
-	"business/app/marketing/rpc/marketingcenter"
 	"business/common/utils"
 	"business/common/vars"
 	"context"
@@ -58,7 +58,7 @@ func (l *GetAppListLogic) GetAppList(req *types.AppListReq) (resp *types.AppList
 				AccountInfo: types.AccountInfo{},
 			})
 		}
-		accounts, err := l.svcCtx.AccountRpcClient.GetAccountsByAccountIds(l.ctx, &marketingcenter.GetByAccountIdsReq{Ids: actIds})
+		accounts, err := l.svcCtx.AccountRpcClient.GetAccountsByAccountIds(l.ctx, &accountcenter.GetByAccountIdsReq{Ids: actIds})
 		if err != nil {
 			return nil, utils.RpcError(err, "")
 		}
@@ -77,7 +77,7 @@ func (l *GetAppListLogic) GetAppList(req *types.AppListReq) (resp *types.AppList
 		},
 		AppChannel: vars.AppChannel,
 		Total:      list.Total,
-		AppType:    map[int]string{},
+		AppType:    vars.AppType,
 		Data:       apps,
 	}, nil
 }

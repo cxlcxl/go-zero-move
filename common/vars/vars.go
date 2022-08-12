@@ -32,6 +32,12 @@ const (
 )
 
 const (
+	_ = iota
+	AppAppTypeA
+	AppAppTypeB
+)
+
+const (
 	CommonStateVoid = iota
 	CommonStateValid
 )
@@ -64,5 +70,10 @@ var (
 		AppChannelGooglePlay: "GooglePlay",
 		AppChannelAppStore:   "AppStore",
 		AppChannelOther:      "Other",
+	}
+	// AppType 应用类型
+	AppType = map[int]string{
+		AppAppTypeA: "A",
+		AppAppTypeB: "B",
 	}
 )

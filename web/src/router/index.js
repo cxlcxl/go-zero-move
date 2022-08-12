@@ -67,7 +67,7 @@ export const constantRoutes = [
   },
   // http://localhost:19527/marketing/callback
   {
-    path: '/marketing/callback',
+    path: '/account/callback',
     component: () => import('@v/marketing/callback'),
     hidden: true
   }

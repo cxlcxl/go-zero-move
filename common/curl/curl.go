@@ -28,9 +28,6 @@ func New(host string) *Curl {
 }
 
 func (c *Curl) Request(v interface{}, headers ...HeaderHandlers) (err error) {
-	if c.method == "" {
-		return NotSetMethod
-	}
 	c.request, err = http.NewRequest(c.method, c.host, c.data)
 	if err != nil {
 		return err

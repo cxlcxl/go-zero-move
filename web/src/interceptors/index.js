@@ -1,6 +1,6 @@
 import { Message } from "_element-ui@2.13.2@element-ui";
 import store from "@/store";
-import { getToken } from "@/utils/auth";
+import { getToken, removeToken } from '@/utils/auth'
 
 export function responseSuccessful(response) {
   const res = response.data;
@@ -19,13 +19,13 @@ export function responseSuccessful(response) {
 
 export function responseError(error) {
   const err = error.response;
-  if (!err || err === undefined || err.status === 401) {
+  if (!err || err.status === 401) {
+    //removeToken()
     Message({
       message: "登陆信息已过期，请刷新页面重新登录",
       type: "error",
       duration: 5 * 1000,
     });
-    store.dispatch("user/logout");
     return Promise.reject(err);
   }
   const errMsg = err.data

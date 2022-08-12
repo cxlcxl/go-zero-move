@@ -1,10 +1,10 @@
 package svc
 
 import (
+	"business/app/account/rpc/accountcenter"
 	"business/app/application/api/internal/config"
 	"business/app/application/api/internal/middleware"
 	"business/app/application/rpc/appcenter"
-	"business/app/marketing/rpc/marketingcenter"
 	"business/common/validators"
 	"github.com/go-playground/validator/v10"
 	"github.com/zeromicro/go-zero/rest"
@@ -17,7 +17,7 @@ type ServiceContext struct {
 	PermissionMiddleware rest.Middleware
 	Validate             *validator.Validate
 	AppRpcClient         appcenter.AppCenter
-	AccountRpcClient     marketingcenter.MarketingCenter
+	AccountRpcClient     accountcenter.AccountCenter
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -27,6 +27,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		PermissionMiddleware: middleware.NewPermissionMiddleware().Handle,
 		Validate:             validators.New(),
 		AppRpcClient:         appcenter.NewAppCenter(zrpc.MustNewClient(c.AppRpcConf)),
-		AccountRpcClient:     marketingcenter.NewMarketingCenter(zrpc.MustNewClient(c.AccountRpcConf)),
+		AccountRpcClient:     accountcenter.NewAccountCenter(zrpc.MustNewClient(c.AccountRpcConf)),
 	}
 }

@@ -22,57 +22,6 @@ func NewMarketingCenterServer(svcCtx *svc.ServiceContext) *MarketingCenterServer
 	}
 }
 
-//  账户板块 RPC 服务
-func (s *MarketingCenterServer) AccountCreate(ctx context.Context, in *marketing.AccountCreateReq) (*marketing.BaseResp, error) {
-	l := logic.NewAccountCreateLogic(ctx, s.svcCtx)
-	return l.AccountCreate(in)
-}
-
-func (s *MarketingCenterServer) AccountUpdate(ctx context.Context, in *marketing.AccountUpdateReq) (*marketing.BaseResp, error) {
-	l := logic.NewAccountUpdateLogic(ctx, s.svcCtx)
-	return l.AccountUpdate(in)
-}
-
-func (s *MarketingCenterServer) GetAccountInfo(ctx context.Context, in *marketing.AccountInfoReq) (*marketing.AccountInfo, error) {
-	l := logic.NewGetAccountInfoLogic(ctx, s.svcCtx)
-	return l.GetAccountInfo(in)
-}
-
-func (s *MarketingCenterServer) GetAccountByClientId(ctx context.Context, in *marketing.GetTokenReq) (*marketing.AccountInfo, error) {
-	l := logic.NewGetAccountByClientIdLogic(ctx, s.svcCtx)
-	return l.GetAccountByClientId(in)
-}
-
-func (s *MarketingCenterServer) AccountList(ctx context.Context, in *marketing.AccountListReq) (*marketing.AccountListResp, error) {
-	l := logic.NewAccountListLogic(ctx, s.svcCtx)
-	return l.AccountList(in)
-}
-
-func (s *MarketingCenterServer) AccountSearch(ctx context.Context, in *marketing.AccountSearchReq) (*marketing.AccountSearchResp, error) {
-	l := logic.NewAccountSearchLogic(ctx, s.svcCtx)
-	return l.AccountSearch(in)
-}
-
-func (s *MarketingCenterServer) GetAccountsByAccountIds(ctx context.Context, in *marketing.GetByAccountIdsReq) (*marketing.AccountSearchResp, error) {
-	l := logic.NewGetAccountsByAccountIdsLogic(ctx, s.svcCtx)
-	return l.GetAccountsByAccountIds(in)
-}
-
-func (s *MarketingCenterServer) GetDefaultAccountList(ctx context.Context, in *marketing.DefaultListReq) (*marketing.AccountSearchResp, error) {
-	l := logic.NewGetDefaultAccountListLogic(ctx, s.svcCtx)
-	return l.GetDefaultAccountList(in)
-}
-
-func (s *MarketingCenterServer) GetToken(ctx context.Context, in *marketing.GetTokenReq) (*marketing.TokenInfo, error) {
-	l := logic.NewGetTokenLogic(ctx, s.svcCtx)
-	return l.GetToken(in)
-}
-
-func (s *MarketingCenterServer) SetToken(ctx context.Context, in *marketing.TokenInfo) (*marketing.BaseResp, error) {
-	l := logic.NewSetTokenLogic(ctx, s.svcCtx)
-	return l.SetToken(in)
-}
-
 func (s *MarketingCenterServer) PromotionCreate(ctx context.Context, in *marketing.PromotionCreateReq) (*marketing.BaseResp, error) {
 	l := logic.NewPromotionCreateLogic(ctx, s.svcCtx)
 	return l.PromotionCreate(in)

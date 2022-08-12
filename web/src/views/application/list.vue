@@ -3,13 +3,13 @@
     <el-col :span="24" class="search-container">
       <el-form ref="_search" :model="search" inline size="small">
         <el-form-item>
-          <el-input v-model="search.app_name" class="w200" clearable placeholder="账户名"/>
+          <el-input v-model="search.app_name" class="w150" clearable placeholder="应用名"/>
         </el-form-item>
         <el-form-item>
           <el-input v-model="search.app_id" class="w120" clearable placeholder="APP ID"/>
         </el-form-item>
         <el-form-item>
-          <el-select v-model="search.account_type" class="w130">
+          <el-select v-model="search.app_type" class="w130">
             <el-option label="全部应用类型" :value="0"/>
             <el-option v-for="(key, val) in appList.app_type" :label="key" :value="Number(val)"/>
           </el-select>
@@ -39,7 +39,7 @@
         </el-table-column>
         <el-table-column label="应用包名" prop="pkg_name" min-width="150" show-overflow-tooltip/>
         <el-table-column label="应用类型" width="130">
-          <template slot-scope="scope">{{ appList.app_type[scope.row.account_type] }}</template>
+          <template slot-scope="scope">{{ appList.app_type[scope.row.app_type] }}</template>
         </el-table-column>
         <el-table-column prop="created_at" label="添加时间" width="140" align="center">
           <template slot-scope="scope">{{scope.row.created_at|timeFormat}}</template>
@@ -70,7 +70,7 @@ import CreateApplication from './components/add-app'
 import UpdateApplication from './components/edit-app'
 
 export default {
-  // name: 'AppList',
+  name: 'AppList',
   components: {Page, CreateApplication, UpdateApplication},
   data() {
     return {

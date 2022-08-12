@@ -4,8 +4,6 @@ option go_package = "./marketing";
 
 package marketing;
 
-import "pb/account.proto";
-
 message PromotionCreateReq{
   string campaign_name = 1;
   string product_type = 2;
@@ -14,23 +12,8 @@ message PromotionCreateReq{
   string marketing_goal = 5;
 }
 
-message BaseResp {
-  int64 code = 1;
-}
+message BaseResp {}
 
 service MarketingCenter{
-  // 账户板块 RPC 服务
-  rpc AccountCreate(AccountCreateReq) returns(BaseResp);
-  rpc AccountUpdate(AccountUpdateReq) returns(BaseResp);
-  rpc GetAccountInfo(AccountInfoReq) returns(AccountInfo);
-  rpc GetAccountByClientId(GetTokenReq) returns(AccountInfo);
-  rpc AccountList(AccountListReq) returns(AccountListResp);
-  rpc AccountSearch(AccountSearchReq) returns(AccountSearchResp);
-  rpc GetAccountsByAccountIds(GetByAccountIdsReq) returns(AccountSearchResp);
-  rpc GetDefaultAccountList(DefaultListReq) returns(AccountSearchResp);
-  rpc GetToken(GetTokenReq) returns(TokenInfo);
-  rpc SetToken(TokenInfo) returns(BaseResp);
-
-
   rpc PromotionCreate(PromotionCreateReq) returns(BaseResp);
 }

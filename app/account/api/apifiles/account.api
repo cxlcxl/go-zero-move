@@ -1,0 +1,126 @@
+syntax = "v1"
+
+type (
+	BaseResp {
+		Code int64  `json:"code"`
+		Msg  string `json:"msg"`
+	}
+	AccessTokenReq {
+		AuthorizationCode string `json:"authorization_code"`
+		State             string `json:"state"`
+	}
+	RefreshTokenReq {
+		ClientId string `json:"client_id"`
+	}
+	AccessTokenResp {
+		BaseResp
+		AccessToken string `json:"access_token"`
+	}
+
+	// 账户部分
+	AccountListReq {
+		AccountId   string `form:"account_id,optional"`
+		AccountName string `form:"account_name,optional"`
+		AccountType int64  `form:"account_type,optional"`
+		State       int64  `form:"state"`
+		Page        int64  `form:"page"`
+		PageSize    int64  `form:"page_size"`
+	}
+	AccountListResp {
+		BaseResp
+		Total        int64          `json:"total"`
+		AccountTypes map[int]string `json:"account_types"`
+		State        map[int]string `json:"state"`
+		Data         []AccountInfo  `json:"data"`
+	}
+	AccountInfo {
+		Id           int64  `json:"id"`
+		ParentId     int64  `json:"parent_id"`
+		AccountName  string `json:"account_name"`
+		AccountType  int64  `json:"account_type"`
+		AdvertiserId string `json:"advertiser_id"`
+		DeveloperId  string `json:"developer_id"`
+		ClientId     string `json:"client_id"`
+		Secret       string `json:"secret"`
+		State        int64  `json:"state"`
+		IsAuth       int64  `json:"is_auth"`
+		CreatedAt    int64  `json:"created_at"`
+		UpdatedAt    int64  `json:"updated_at"`
+	}
+	AccountPost {
+		ParentId     int64  `json:"parent_id"`
+		AccountName  string `json:"account_name" validate:"required"`
+		AccountType  int64  `json:"account_type" validate:"required"`
+		AdvertiserId string `json:"advertiser_id" validate:"required"`
+		DeveloperId  string `json:"developer_id"`
+		ClientId     string `json:"client_id"`
+		Secret       string `json:"secret"`
+		State        int64  `json:"state"`
+	}
+	AccountUpdateReq {
+		Id int64 `json:"id" validate:"required"`
+		AccountPost
+	}
+	AccountInfoReq {
+		Id int64 `form:"id"`
+	}
+	AccountInfoResp {
+		BaseResp
+		Data AccountInfo `json:"data"`
+	}
+	AuthResp {
+		BaseResp
+		Data string `json:"data"`
+	}
+	AccountSearchReq {
+		AccountName string `form:"account_name"`
+	}
+	AccountSearchResp {
+		BaseResp
+		Data []AccountInfo `json:"data"`
+	}
+)
+
+@server(
+	prefix: account
+	jwt: Auth
+	middleware : AuthMiddleware,PermissionMiddleware
+)
+service account-api {
+	@doc "获取授权码"
+	@handler accessToken
+	post /token (AccessTokenReq) returns (AccessTokenResp)
+	
+	@doc "刷新授权"
+	@handler refreshToken
+	post /refresh (RefreshTokenReq) returns (BaseResp)
+	
+	// 账户部分
+	@doc "账户列表"
+	@handler accountList
+	get /list (AccountListReq) returns (AccountListResp);
+	
+	@doc "账户认证"
+	@handler accountAuth
+	get /auth (AccountInfoReq) returns (AuthResp);
+	
+	@doc "账户信息"
+	@handler accountInfo
+	get /info (AccountInfoReq) returns (AccountInfoResp);
+	
+	@doc "账户创建"
+	@handler accountCreate
+	post /create (AccountPost) returns (BaseResp);
+	
+	@doc "账户修改"
+	@handler accountUpdate
+	post /update (AccountUpdateReq) returns (BaseResp);
+	
+	@doc "账户搜索"
+	@handler accountSearch
+	get /search (AccountSearchReq) returns(AccountSearchResp)
+	
+	@doc "默认展示部分账户信息"
+	@handler accountDefaultList
+	get /default returns(AccountSearchResp)
+}

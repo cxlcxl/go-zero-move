@@ -36,7 +36,7 @@
 <script>
   import DialogPanel from '@c/DialogPanel'
   import {appUpdate, appInfo} from "@a/app"
-  import {searchAccounts, defaultAccounts} from "@a/account"
+  import {searchAccounts, defaultAccounts, accountInfo} from "@a/account"
 
   export default {
     components: {
@@ -73,27 +73,41 @@
     },
     methods: {
       initUpdate(id) {
-        this.getDefaultAccounts()
-        appInfo(id).then(res => {
-          this.visible = true
-          this.appForm = res.data
-        }).catch(() => {
-          this.$message.error("请求错误")
-        })
+        Promise.all([
+          this.getDefaultAccounts()
+        ]).then(r => {
+          appInfo(id).then(res => {
+            this.visible = true
+            this.appForm = res.data
+            if (!this.inAccounts(Number(this.appForm.account_id))) {
+              accountInfo(this.appForm.account_id).then(res => {
+                this.accounts.push({id: this.appForm.account_id, account_name: res.data.account_name})
+              }).catch(() => {
+                this.$message.error("关联账户请求错误")
+              })
+            }
+          }).catch(() => {
+            this.$message.error("请求错误")
+          })
+        }).catch(e => {})
       },
       cancel() {
         this.$refs.appForm.resetFields()
         this.visible = false
       },
       getDefaultAccounts() {
-        defaultAccounts().then(res => {
-          if (Array.isArray(res.data)) {
-            this.accounts = res.data
-          } else {
-            this.accounts = []
-          }
-        }).catch(err => {
-          this.$message.error("请求错误")
+        return new Promise((resolve, reject) => {
+          defaultAccounts().then(res => {
+            if (Array.isArray(res.data)) {
+              this.accounts = res.data
+            } else {
+              this.accounts = []
+            }
+            resolve()
+          }).catch(err => {
+            this.$message.error("请求错误")
+            reject()
+          })
         })
       },
       save() {
@@ -131,6 +145,16 @@
           this.options = [];
         }
       },
+      inAccounts(id) {
+        let has = false
+        for (let i = 0; i < this.accounts.length; i++) {
+          if (Number(this.accounts[i].id) === id) {
+            has = true
+            break
+          }
+        }
+        return has
+      }
     }
   }
 </script>
