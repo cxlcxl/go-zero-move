@@ -1,0 +1,36 @@
+syntax = "v1"
+
+type (
+	BaseResp {
+		Code int64  `json:"code"`
+		Msg  string `json:"msg"`
+	}
+	CampaignListReq {
+		CampaignId   string `json:"campaign_id"`
+		CampaignName string `json:"campaign_name"`
+	OptStatus string `json:"opt_status"`
+		Page         int64  `json:"page"`
+		PageSize     int64  `json:"page_size"`
+	}
+	CampaignListResp {
+		BaseResp
+		Total int64           `json:"total"`
+		Data  []*CampaignInfo `json:"data"`
+	}
+	CampaignInfo {
+		Id           int64  `json:"id"`
+		CampaignId   string `json:"campaign_id"`
+		CampaignName string `json:"campaign_name"`
+	}
+)
+
+@server(
+	prefix: campaign
+	jwt: Auth
+	middleware : AuthMiddleware,PermissionMiddleware
+)
+service campaign-api {
+	@doc "计划查询"
+	@handler campaignList
+	get /list (CampaignListReq) returns (CampaignListResp)
+}
