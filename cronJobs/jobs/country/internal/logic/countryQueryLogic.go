@@ -24,11 +24,17 @@ type CountryQueryLogic struct {
 	tokenChan chan *QueryParam
 	wg        sync.WaitGroup
 	stateDay  string
+	appMap    map[string]*app
 }
 
 type QueryParam struct {
 	AccountId   int64
 	AccessToken string
+}
+
+type app struct {
+	appId   string
+	appName string
 }
 
 func NewCountryQueryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CountryQueryLogic {
@@ -38,10 +44,16 @@ func NewCountryQueryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Coun
 		svcCtx:    svcCtx,
 		tokenChan: make(chan *QueryParam),
 		wg:        sync.WaitGroup{},
+		appMap:    map[string]*app{},
 	}
 }
 
 func (l *CountryQueryLogic) CountryQuery() (err error) {
+	if err = l.getApps(); err != nil {
+		fmt.Println("======> get app info error: ", err)
+		return err
+	}
+
 	go l.getTokens()
 
 	err = l.queryCountries()
@@ -62,13 +74,14 @@ func (l *CountryQueryLogic) queryCountries() error {
 func (l *CountryQueryLogic) getTokens() {
 	list, err := l.svcCtx.TokenModel.GetAccessTokenList(l.ctx)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("======> get token list error: ", err)
 		return
 	}
 	for _, tokens := range list {
 		if tokens.ExpiredAt.Before(time.Now()) {
 			at, err := refresh(l.ctx, l.svcCtx, tokens)
 			if err != nil {
+				fmt.Println("======> refresh token error: ", err)
 				continue
 			}
 			l.tokenChan <- &QueryParam{
@@ -141,15 +154,17 @@ func (l *CountryQueryLogic) query(param *QueryParam) error {
 	var page int64 = 1
 	var pageSize int64 = 500
 	hasRequestLog := false
-	statDate := time.Now().AddDate(0, 0, -2).Format("2006-01-02")
+	statDate := "2022-08-11" //time.Now().AddDate(0, 0, -2).Format("2006-01-02")
 	requestLog, err := l.svcCtx.AdsLogModel.FindLogByStatDayApiModule(l.ctx, statDate, statements.ApiModuleCountry, param.AccountId)
 	if err != nil {
 		if !errors.Is(err, model.ErrNotFound) {
+			fmt.Println("======> get request logs error: ", err)
 			return err
 		}
 	}
 	if requestLog != nil {
 		if requestLog.IsCompleted == 1 {
+			fmt.Println("======> completed <====== ", requestLog)
 			return nil
 		}
 		page = requestLog.NextRequestPage
@@ -173,6 +188,7 @@ func (l *CountryQueryLogic) query(param *QueryParam) error {
 		return err
 	}
 	if response.Code != "0" {
+		fmt.Println("======> ads api error: ", response.Code, response.Message)
 		return errors.New(response.Message)
 	}
 	var rcs = make([]*model.ReportCountries, len(response.Data.List))
@@ -181,6 +197,10 @@ func (l *CountryQueryLogic) query(param *QueryParam) error {
 		t, err = time.Parse("20060102", list.StatDatetime[:8])
 		if err != nil {
 			continue
+		}
+		appId, appName := "", ""
+		if tmpApp, ok := l.appMap[list.PackageName]; ok {
+			appId, appName = tmpApp.appId, tmpApp.appName
 		}
 		rcs[i] = &model.ReportCountries{
 			StatDate:              t,
@@ -194,8 +214,8 @@ func (l *CountryQueryLogic) query(param *QueryParam) error {
 			CreativeId:            list.CreativeId,
 			CreativeName:          strings.TrimSpace(list.CreativeName),
 			Country:               list.Country,
-			AppId:                 "",
-			AppName:               "",
+			AppId:                 appId,
+			AppName:               appName,
 			ShowCount:             list.ShowCount,
 			ClickCount:            list.ClickCount,
 			Cpc:                   utils.STF(list.Cpc),
@@ -229,10 +249,36 @@ func (l *CountryQueryLogic) query(param *QueryParam) error {
 			UpdatedAt:             time.Now(),
 		}
 	}
-	adsModel := logic.GetAdsModel(statDate, statements.ApiModuleCountry, param.AccountId, page, response.Data.PageInfo.TotalPage, pageSize, requestLog, data)
+	adsModel := logic.GetAdsModel(
+		statDate,
+		statements.ApiModuleCountry,
+		param.AccountId,
+		page,
+		response.Data.PageInfo.TotalPage,
+		response.Data.PageInfo.TotalNum,
+		pageSize,
+		requestLog,
+		data,
+	)
 	if err = l.svcCtx.ReportCountryModel.BatchInsertAndLog(l.ctx, rcs, adsModel, hasRequestLog); err != nil {
 		fmt.Println("=======> insert error: ", err)
 		return err
 	}
+	return nil
+}
+
+func (l *CountryQueryLogic) getApps() error {
+	list, err := l.svcCtx.AppModel.GetApps(l.ctx)
+	if err != nil {
+		fmt.Println("======> get token list error: ", err)
+		return err
+	}
+	for _, _app := range list {
+		l.appMap[_app.PkgName] = &app{
+			appId:   _app.AppId,
+			appName: _app.AppName,
+		}
+	}
+
 	return nil
 }

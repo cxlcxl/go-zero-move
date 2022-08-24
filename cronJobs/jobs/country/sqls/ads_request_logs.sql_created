@@ -8,6 +8,7 @@ CREATE TABLE `ads_request_logs` (
   `next_request_page` int(10) unsigned NOT NULL DEFAULT '1' COMMENT '下次请求页码',
   `is_completed` tinyint(2) unsigned NOT NULL DEFAULT '0' COMMENT '已完成本次请求',
   `total_page` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '总页数',
+  `total_num` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '总数',
   `page_size` int(10) unsigned NOT NULL DEFAULT '1000' COMMENT '页大小',
   `last_request_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '最后请求时间',
   PRIMARY KEY (`id`),

@@ -20,11 +20,10 @@ var (
 	accountsFieldNames          = builder.RawFieldNames(&Accounts{})
 	accountsRows                = strings.Join(accountsFieldNames, ",")
 	accountsRowsExpectAutoSet   = strings.Join(stringx.Remove(accountsFieldNames, "`id`", "`create_time`", "`update_time`", "`create_at`", "`update_at`"), ",")
-	accountsRowsWithPlaceHolder = strings.Join(stringx.Remove(accountsFieldNames, "`id`", "`create_time`", "`update_time`", "`created_at`", "`update_at`"), "=?,") + "=?"
+	accountsRowsWithPlaceHolder = strings.Join(stringx.Remove(accountsFieldNames, "`id`", "`create_time`", "`update_time`", "`created_at`", "`is_auth`"), "=?,") + "=?"
 
 	cacheAccountsIdPrefix           = "cache:accounts:id:"
 	cacheAccountsAdvertiserIdPrefix = "cache:accounts:advertiserId:"
-	cacheAccountsClientIdPrefix     = "cache:accounts:clientId:"
 )
 
 type (
@@ -136,7 +135,7 @@ func (m *defaultAccountsModel) Update(ctx context.Context, newData *Accounts) er
 	accountsIdKey := fmt.Sprintf("%s%v", cacheAccountsIdPrefix, data.Id)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, accountsRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.ParentId, newData.AdvertiserId, newData.DeveloperId, newData.AccountType, newData.State, newData.AccountName, newData.ClientId, newData.IsAuth, newData.Secret, newData.UpdatedAt, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.ParentId, newData.AdvertiserId, newData.DeveloperId, newData.AccountType, newData.State, newData.AccountName, newData.ClientId, newData.Secret, newData.UpdatedAt, newData.Id)
 	}, accountsAdvertiserIdKey, accountsIdKey)
 	return err
 }

@@ -3,16 +3,17 @@ package svc
 import (
 	"business/common/utils"
 	"business/cronJobs/jobs/country/config"
-	model2 "business/cronJobs/jobs/country/model"
+	"business/cronJobs/jobs/country/model"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type ServiceContext struct {
 	Config             config.Config
-	ReportCountryModel model2.ReportCountriesModel
-	AdsLogModel        model2.AdsRequestLogsModel
-	TokenModel         model2.TokensModel
-	AccountModel       model2.AccountsModel
+	ReportCountryModel model.ReportCountriesModel
+	AdsLogModel        model.AdsRequestLogsModel
+	TokenModel         model.TokensModel
+	AccountModel       model.AccountsModel
+	AppModel           model.AppsModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -20,9 +21,10 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	conn := sqlx.NewSqlConn(c.Database.Driver, dsn)
 	return &ServiceContext{
 		Config:             c,
-		ReportCountryModel: model2.NewReportCountriesModel(conn),
-		AdsLogModel:        model2.NewAdsRequestLogsModel(conn),
-		TokenModel:         model2.NewTokensModel(conn),
-		AccountModel:       model2.NewAccountsModel(conn),
+		ReportCountryModel: model.NewReportCountriesModel(conn),
+		AdsLogModel:        model.NewAdsRequestLogsModel(conn),
+		TokenModel:         model.NewTokensModel(conn),
+		AccountModel:       model.NewAccountsModel(conn),
+		AppModel:           model.NewAppsModel(conn),
 	}
 }

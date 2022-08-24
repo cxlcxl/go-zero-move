@@ -4,7 +4,8 @@ metadata:
   namespace: business
   name: ads-country
 spec:
-  schedule: "*/15 * * * *"
+  concurrencyPolicy: Forbid
+  schedule: "*/5 * * * *"
   jobTemplate:
     spec:
       completions: 1
@@ -31,7 +32,7 @@ spec:
               #    mountPath: /etc/localtime
               #  - name: mysql-master-backup
               #    mountPath: /var/db/backup
-              # command:
-              #   - "/app/country"
-              #   - "-f"
-              #   - "/etc/country.yaml"
+              command:
+                - "/app/country"
+                #- "-f"
+                #- "/etc/country.yaml"

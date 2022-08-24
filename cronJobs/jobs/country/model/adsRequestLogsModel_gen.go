@@ -46,6 +46,7 @@ type (
 		NextRequestPage    int64     `db:"next_request_page"`    // 下次请求页码
 		IsCompleted        int64     `db:"is_completed"`         // 已完成本次请求
 		TotalPage          int64     `db:"total_page"`           // 总页数
+		TotalNum           int64     `db:"total_num"`            // 总数
 		PageSize           int64     `db:"page_size"`            // 页大小
 		LastRequestTime    time.Time `db:"last_request_time"`    // 最后请求时间
 	}
@@ -93,14 +94,14 @@ func (m *defaultAdsRequestLogsModel) FindOneByStatDayApiModuleAccountId(ctx cont
 }
 
 func (m *defaultAdsRequestLogsModel) Insert(ctx context.Context, data *AdsRequestLogs) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, adsRequestLogsRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.StatDay, data.ApiModule, data.AccountId, data.RequestJsonBody, data.CurrentRequestPage, data.NextRequestPage, data.IsCompleted, data.TotalPage, data.PageSize, data.LastRequestTime)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, adsRequestLogsRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.StatDay, data.ApiModule, data.AccountId, data.RequestJsonBody, data.CurrentRequestPage, data.NextRequestPage, data.IsCompleted, data.TotalPage, data.TotalNum, data.PageSize, data.LastRequestTime)
 	return ret, err
 }
 
 func (m *defaultAdsRequestLogsModel) Update(ctx context.Context, newData *AdsRequestLogs) error {
 	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, adsRequestLogsRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, newData.StatDay, newData.ApiModule, newData.AccountId, newData.RequestJsonBody, newData.CurrentRequestPage, newData.NextRequestPage, newData.IsCompleted, newData.TotalPage, newData.PageSize, newData.LastRequestTime, newData.Id)
+	_, err := m.conn.ExecCtx(ctx, query, newData.StatDay, newData.ApiModule, newData.AccountId, newData.RequestJsonBody, newData.CurrentRequestPage, newData.NextRequestPage, newData.IsCompleted, newData.TotalPage, newData.TotalNum, newData.PageSize, newData.LastRequestTime, newData.Id)
 	return err
 }
 

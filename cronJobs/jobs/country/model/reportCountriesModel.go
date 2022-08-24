@@ -64,10 +64,10 @@ func (m *defaultReportCountriesModel) BatchInsertAndLog(ctx context.Context, dat
 		adsModel := newAdsRequestLogsModel(nil)
 		if hasLog {
 			query = fmt.Sprintf("update %s set %s where `id` = ?", adsModel.table, adsRequestLogsRowsWithPlaceHolder)
-			_, err = session.ExecCtx(ctx, query, adsLog.StatDay, adsLog.ApiModule, adsLog.AccountId, adsLog.RequestJsonBody, adsLog.CurrentRequestPage, adsLog.NextRequestPage, adsLog.IsCompleted, adsLog.TotalPage, adsLog.PageSize, adsLog.LastRequestTime, adsLog.Id)
+			_, err = session.ExecCtx(ctx, query, adsLog.StatDay, adsLog.ApiModule, adsLog.AccountId, adsLog.RequestJsonBody, adsLog.CurrentRequestPage, adsLog.NextRequestPage, adsLog.IsCompleted, adsLog.TotalPage, adsLog.TotalNum, adsLog.PageSize, adsLog.LastRequestTime, adsLog.Id)
 		} else {
-			query = fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", adsModel.table, adsRequestLogsRowsExpectAutoSet)
-			_, err = session.ExecCtx(ctx, query, adsLog.StatDay, adsLog.ApiModule, adsLog.AccountId, adsLog.RequestJsonBody, adsLog.CurrentRequestPage, adsLog.NextRequestPage, adsLog.IsCompleted, adsLog.TotalPage, adsLog.PageSize, adsLog.LastRequestTime)
+			query = fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", adsModel.table, adsRequestLogsRowsExpectAutoSet)
+			_, err = session.ExecCtx(ctx, query, adsLog.StatDay, adsLog.ApiModule, adsLog.AccountId, adsLog.RequestJsonBody, adsLog.CurrentRequestPage, adsLog.NextRequestPage, adsLog.IsCompleted, adsLog.TotalPage, adsLog.TotalNum, adsLog.PageSize, adsLog.LastRequestTime)
 		}
 		return err
 	})

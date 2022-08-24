@@ -31,7 +31,7 @@ func GetHWAdsPostResponse(url string, data, res interface{}, token string) (err 
 }
 
 // GetAdsModel 获取 ads 写入日志模型
-func GetAdsModel(statDate, apiModule string, accountId, page, totalPage, pageSize int64, adsLog *model.AdsRequestLogs, data interface{}) *model.AdsRequestLogs {
+func GetAdsModel(statDate, apiModule string, accountId, page, totalPage, totalNum, pageSize int64, adsLog *model.AdsRequestLogs, data interface{}) *model.AdsRequestLogs {
 	var isCompleted int64 = 0
 	nextPage := page
 	if totalPage <= page {
@@ -55,6 +55,7 @@ func GetAdsModel(statDate, apiModule string, accountId, page, totalPage, pageSiz
 		NextRequestPage:    nextPage,
 		IsCompleted:        isCompleted,
 		TotalPage:          totalPage,
+		TotalNum:           totalNum,
 		PageSize:           pageSize,
 		LastRequestTime:    time.Now(),
 	}
