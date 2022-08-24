@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rbac-rpc
+  name: rbac-client
   namespace: business
   labels:
-    app: rbac-rpc
+    app: rbac-client
 spec:
   replicas: 2
   revisionHistoryLimit: 5
   selector:
     matchLabels:
-      app: rbac-rpc
+      app: rbac-client
   template:
     metadata:
       labels:
-        app: rbac-rpc
+        app: rbac-client
     spec:
       serviceAccountName: find-endpoints
       containers:
-      - name: rbac-rpc
-        image: silentcxl/rbac-rpc:v1.0.0
+      - name: rbac-client
+        image: silentcxl/rbac-client:v1.0.0
         lifecycle:
           preStop:
             exec:
@@ -56,28 +56,28 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: rbac-rpc-svc
+  name: rbac-client-svc
   namespace: business
 spec:
   ports:
     - port: 28001
   selector:
-    app: rbac-rpc
+    app: rbac-client
 
 ---
 
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: rbac-rpc-hpa-c
+  name: rbac-client-hpa-c
   namespace: business
   labels:
-    app: rbac-rpc-hpa-c
+    app: rbac-client-hpa-c
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: rbac-rpc
+    name: rbac-client
   minReplicas: 2
   maxReplicas: 10
   metrics:
@@ -91,15 +91,15 @@ spec:
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: rbac-rpc-hpa-m
+  name: rbac-client-hpa-m
   namespace: business
   labels:
-    app: rbac-rpc-hpa-m
+    app: rbac-client-hpa-m
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: rbac-rpc
+    name: rbac-client
   minReplicas: 2
   maxReplicas: 10
   metrics:

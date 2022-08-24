@@ -18,6 +18,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
 		Config:       c,
 		AccountModel: model.NewAccountsModel(DBConn, c.Cache),
-		TokenModel:   model.NewTokensModel(DBConn, c.Cache),
+		TokenModel:   model.NewTokensModel(DBConn),
 	}
 }

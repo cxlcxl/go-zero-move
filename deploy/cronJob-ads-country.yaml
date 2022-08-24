@@ -1,0 +1,37 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  namespace: business
+  name: ads-country
+spec:
+  schedule: "*/15 * * * *"
+  jobTemplate:
+    spec:
+      completions: 1
+      template:
+        spec:
+          restartPolicy: Never
+          #volumes:
+          #  - name: mysql-master-script
+          #    hostPath:
+          #      path: /root/app/mysql/shell
+          #  - name: mysql-master-backup
+          #    hostPath:
+          #      path: /root/app/db/backup
+          #  - name: local-time
+          #    hostPath:
+          #      path: /etc/localtime
+          containers:
+            - name: ads-country-c
+              image: silentcxl/ads-country:v1.0.0
+              #volumeMounts:
+              #  - name: mysql-master-script
+              #    mountPath: /var/db/script
+              #  - name: local-time
+              #    mountPath: /etc/localtime
+              #  - name: mysql-master-backup
+              #    mountPath: /var/db/backup
+              # command:
+              #   - "/app/country"
+              #   - "-f"
+              #   - "/etc/country.yaml"

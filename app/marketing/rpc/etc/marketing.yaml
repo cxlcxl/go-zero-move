@@ -1,11 +1,11 @@
-Name: marketing.rpc
+Name: marketing.client
 ListenOn: 127.0.0.1:38002
 Mode: dev
 
 #Etcd:
 #  Hosts:
 #  - 127.0.0.1:2379
-#  Key: marketing.rpc
+#  Key: marketing.client
 
 Database:
   Driver: "mysql"

@@ -59,6 +59,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/default",
 					Handler: accountDefaultListHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/parents",
+					Handler: accountDefaultParentsHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),

@@ -1,0 +1,15 @@
+Database:
+  Driver: "mysql"
+  Host: "192.168.120.61"
+  Port: 3306
+  User: "root"
+  Pass: "root"
+  DbName: "business"
+  Charset: "utf8mb4"
+
+MarketingApis:
+  Refresh: "https://oauth-login.cloud.huawei.com/oauth2/v2/token"
+  Reports:
+    CampaignQuery: "https://ads-dra.cloud.huawei.com/openapi/v2/reports/campaign/query"
+    CountryQuery: "https://ads-dra.cloud.huawei.com/openapi/v2/reports/country/query"
+

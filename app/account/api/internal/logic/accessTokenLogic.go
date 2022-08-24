@@ -9,9 +9,9 @@ import (
 	"business/common/vars"
 	"context"
 	"errors"
-	"fmt"
-
 	"github.com/zeromicro/go-zero/core/logx"
+	"strconv"
+	"strings"
 )
 
 type AccessTokenLogic struct {
@@ -42,20 +42,22 @@ func (l *AccessTokenLogic) AccessToken(req *types.AccessTokenReq) (resp *types.A
 	if err = l.svcCtx.Validator.StructCtx(l.ctx, req); err != nil {
 		return nil, err
 	}
-	clientId, err := l.svcCtx.RedisCache.Get(vars.SysCachePrefix + "authorize:" + req.State)
+	authorizeValue, err := l.svcCtx.RedisCache.Get(vars.SysCachePrefix + "authorize:" + req.State)
 	if err != nil {
 		return nil, err
 	}
 	_, _ = l.svcCtx.RedisCache.Del(vars.SysCachePrefix + "authorize:" + req.State)
-	info, err := l.svcCtx.AccountRpcClient.GetAccountByClientId(l.ctx, &accountcenter.GetTokenReq{ClientId: clientId})
+	split := strings.Split(authorizeValue, "-")
+	id, err := strconv.ParseInt(split[0], 0, 64)
 	if err != nil {
-		return nil, utils.RpcError(err, "请求错误")
+		return nil, err
 	}
+
 	data := map[string]string{
 		"grant_type":    "authorization_code",
 		"code":          req.AuthorizationCode,
-		"client_id":     clientId,
-		"client_secret": info.Secret,
+		"client_id":     split[1],
+		"client_secret": split[2],
 		"redirect_uri":  l.svcCtx.Config.MarketingApis.Authorize.RedirectUri,
 	}
 	post := curl.New(l.svcCtx.Config.MarketingApis.Authorize.TokenUrl).Post().QueryData(data)
@@ -66,9 +68,9 @@ func (l *AccessTokenLogic) AccessToken(req *types.AccessTokenReq) (resp *types.A
 	if at.Error != 0 {
 		return nil, errors.New("华为接口调用失败：" + at.ErrorDescription)
 	}
-	fmt.Println(at)
+
 	_, err = l.svcCtx.AccountRpcClient.SetToken(l.ctx, &accountcenter.TokenInfo{
-		ClientId:     clientId,
+		AccountId:    id,
 		AccessToken:  at.AccessToken,
 		RefreshToken: at.RefreshToken,
 		ExpiredAt:    at.ExpiresIn,

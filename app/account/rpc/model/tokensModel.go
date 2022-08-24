@@ -1,7 +1,6 @@
 package model
 
 import (
-	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
@@ -20,8 +19,8 @@ type (
 )
 
 // NewTokensModel returns a model for the database table.
-func NewTokensModel(conn sqlx.SqlConn, c cache.CacheConf) TokensModel {
+func NewTokensModel(conn sqlx.SqlConn) TokensModel {
 	return &customTokensModel{
-		defaultTokensModel: newTokensModel(conn, c),
+		defaultTokensModel: newTokensModel(conn),
 	}
 }

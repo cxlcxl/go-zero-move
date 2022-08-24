@@ -36,6 +36,6 @@ func main() {
 
 	s.AddUnaryInterceptors(interceptors.ServerInterceptors)
 
-	fmt.Printf("Starting rpc server at %s...\n", c.ListenOn)
+	fmt.Printf("Starting client server at %s...\n", c.ListenOn)
 	s.Start()
 }

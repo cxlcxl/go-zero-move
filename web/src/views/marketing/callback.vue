@@ -6,7 +6,7 @@
 
 <script>
 
-import {getAccessToken} from "@/api/marketing"
+import {getAccessToken} from "@/api/account"
 
 export default {
   name: "Callback",

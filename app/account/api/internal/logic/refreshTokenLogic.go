@@ -7,7 +7,6 @@ import (
 	"business/common/vars"
 	"context"
 	"errors"
-	"fmt"
 
 	"business/app/account/api/internal/svc"
 	"business/app/account/api/internal/types"
@@ -30,22 +29,31 @@ func NewRefreshTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Refr
 }
 
 func (l *RefreshTokenLogic) RefreshToken(req *types.RefreshTokenReq) (resp *types.BaseResp, err error) {
-	if req.ClientId == "" {
-		return nil, errors.New("请求有误")
-	}
-	token, err := l.svcCtx.AccountRpcClient.GetToken(l.ctx, &accountcenter.GetTokenReq{ClientId: req.ClientId})
+	token, err := l.svcCtx.AccountRpcClient.GetToken(l.ctx, &accountcenter.GetTokenReq{AccountId: req.Id})
 	if err != nil {
 		return nil, utils.RpcError(err, "此 ClientId 尚未进行认证，请先认证")
 	}
-	info, err := l.svcCtx.AccountRpcClient.GetAccountByClientId(l.ctx, &accountcenter.GetTokenReq{ClientId: req.ClientId})
+	info, err := l.svcCtx.AccountRpcClient.GetAccountInfo(l.ctx, &accountcenter.AccountInfoReq{Id: req.Id})
 	if err != nil {
 		return nil, utils.RpcError(err, "")
+	}
+	clientId, secret := info.ClientId, info.Secret
+	if clientId == "" || secret == "" {
+		if info.ParentId == 0 {
+			return nil, errors.New("请先完整填写 ClientId 与 Secret")
+		} else {
+			parent, err := l.svcCtx.AccountRpcClient.GetAccountInfo(l.ctx, &accountcenter.AccountInfoReq{Id: info.ParentId})
+			if err != nil || parent.ClientId == "" || parent.Secret == "" {
+				return nil, utils.RpcError(err, "检查上级 ClientId 信息有误，请检查是否有完整填写")
+			}
+			clientId, secret = parent.ClientId, parent.Secret
+		}
 	}
 	data := map[string]string{
 		"grant_type":    "refresh_token",
 		"refresh_token": token.RefreshToken,
-		"client_id":     req.ClientId,
-		"client_secret": info.Secret,
+		"client_id":     clientId,
+		"client_secret": secret,
 	}
 	post := curl.New(l.svcCtx.Config.MarketingApis.Authorize.Refresh).Post().QueryData(data)
 	var at AT
@@ -56,9 +64,8 @@ func (l *RefreshTokenLogic) RefreshToken(req *types.RefreshTokenReq) (resp *type
 	if at.Error != 0 {
 		return nil, errors.New("华为接口调用失败：" + at.ErrorDescription)
 	}
-	fmt.Println(at)
 	_, err = l.svcCtx.AccountRpcClient.SetToken(l.ctx, &accountcenter.TokenInfo{
-		ClientId:     req.ClientId,
+		AccountId:    req.Id,
 		AccessToken:  at.AccessToken,
 		RefreshToken: at.RefreshToken,
 		ExpiredAt:    at.ExpiresIn,

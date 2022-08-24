@@ -19,8 +19,8 @@ export function responseSuccessful(response) {
 
 export function responseError(error) {
   const err = error.response;
-  if (!err || err.status === 401) {
-    //removeToken()
+  if (err.status === 401) {
+    removeToken()
     Message({
       message: "登陆信息已过期，请刷新页面重新登录",
       type: "error",

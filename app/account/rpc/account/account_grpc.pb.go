@@ -30,6 +30,7 @@ type AccountCenterClient interface {
 	AccountSearch(ctx context.Context, in *AccountSearchReq, opts ...grpc.CallOption) (*AccountSearchResp, error)
 	GetAccountsByAccountIds(ctx context.Context, in *GetByAccountIdsReq, opts ...grpc.CallOption) (*AccountSearchResp, error)
 	GetDefaultAccountList(ctx context.Context, in *DefaultListReq, opts ...grpc.CallOption) (*AccountSearchResp, error)
+	GetParentAccountList(ctx context.Context, in *ParentListReq, opts ...grpc.CallOption) (*AccountSearchResp, error)
 	GetToken(ctx context.Context, in *GetTokenReq, opts ...grpc.CallOption) (*TokenInfo, error)
 	SetToken(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*BaseResp, error)
 }
@@ -114,6 +115,15 @@ func (c *accountCenterClient) GetDefaultAccountList(ctx context.Context, in *Def
 	return out, nil
 }
 
+func (c *accountCenterClient) GetParentAccountList(ctx context.Context, in *ParentListReq, opts ...grpc.CallOption) (*AccountSearchResp, error) {
+	out := new(AccountSearchResp)
+	err := c.cc.Invoke(ctx, "/account.AccountCenter/GetParentAccountList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *accountCenterClient) GetToken(ctx context.Context, in *GetTokenReq, opts ...grpc.CallOption) (*TokenInfo, error) {
 	out := new(TokenInfo)
 	err := c.cc.Invoke(ctx, "/account.AccountCenter/GetToken", in, out, opts...)
@@ -144,6 +154,7 @@ type AccountCenterServer interface {
 	AccountSearch(context.Context, *AccountSearchReq) (*AccountSearchResp, error)
 	GetAccountsByAccountIds(context.Context, *GetByAccountIdsReq) (*AccountSearchResp, error)
 	GetDefaultAccountList(context.Context, *DefaultListReq) (*AccountSearchResp, error)
+	GetParentAccountList(context.Context, *ParentListReq) (*AccountSearchResp, error)
 	GetToken(context.Context, *GetTokenReq) (*TokenInfo, error)
 	SetToken(context.Context, *TokenInfo) (*BaseResp, error)
 	mustEmbedUnimplementedAccountCenterServer()
@@ -176,6 +187,9 @@ func (UnimplementedAccountCenterServer) GetAccountsByAccountIds(context.Context,
 }
 func (UnimplementedAccountCenterServer) GetDefaultAccountList(context.Context, *DefaultListReq) (*AccountSearchResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDefaultAccountList not implemented")
+}
+func (UnimplementedAccountCenterServer) GetParentAccountList(context.Context, *ParentListReq) (*AccountSearchResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetParentAccountList not implemented")
 }
 func (UnimplementedAccountCenterServer) GetToken(context.Context, *GetTokenReq) (*TokenInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetToken not implemented")
@@ -340,6 +354,24 @@ func _AccountCenter_GetDefaultAccountList_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AccountCenter_GetParentAccountList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ParentListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountCenterServer).GetParentAccountList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/account.AccountCenter/GetParentAccountList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountCenterServer).GetParentAccountList(ctx, req.(*ParentListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _AccountCenter_GetToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetTokenReq)
 	if err := dec(in); err != nil {
@@ -414,6 +446,10 @@ var AccountCenter_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetDefaultAccountList",
 			Handler:    _AccountCenter_GetDefaultAccountList_Handler,
+		},
+		{
+			MethodName: "GetParentAccountList",
+			Handler:    _AccountCenter_GetParentAccountList_Handler,
 		},
 		{
 			MethodName: "GetToken",

@@ -26,7 +26,7 @@ func NewSetTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SetToken
 }
 
 func (l *SetTokenLogic) SetToken(in *account.TokenInfo) (*account.BaseResp, error) {
-	token, err := l.svcCtx.TokenModel.FindOneByClientId(l.ctx, in.ClientId)
+	token, err := l.svcCtx.TokenModel.FindOneByAccountId(l.ctx, in.AccountId)
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +34,7 @@ func (l *SetTokenLogic) SetToken(in *account.TokenInfo) (*account.BaseResp, erro
 	if token != nil {
 		err = l.svcCtx.TokenModel.Update(l.ctx, &model.Tokens{
 			Id:           token.Id,
-			ClientId:     in.ClientId,
+			AccountId:    in.AccountId,
 			AccessToken:  in.AccessToken,
 			RefreshToken: in.RefreshToken,
 			ExpiredAt:    time.Unix(expire, 0),
@@ -43,7 +43,7 @@ func (l *SetTokenLogic) SetToken(in *account.TokenInfo) (*account.BaseResp, erro
 		})
 	} else {
 		_, err = l.svcCtx.TokenModel.Insert(l.ctx, &model.Tokens{
-			ClientId:     in.ClientId,
+			AccountId:    in.AccountId,
 			AccessToken:  in.AccessToken,
 			RefreshToken: in.RefreshToken,
 			ExpiredAt:    time.Unix(expire, 0),
@@ -55,6 +55,6 @@ func (l *SetTokenLogic) SetToken(in *account.TokenInfo) (*account.BaseResp, erro
 	if err != nil {
 		return nil, err
 	}
-	_ = l.svcCtx.AccountModel.SetIsAuth(l.ctx, in.ClientId)
+	_ = l.svcCtx.AccountModel.SetIsAuth(l.ctx, in.AccountId)
 	return &account.BaseResp{}, nil
 }

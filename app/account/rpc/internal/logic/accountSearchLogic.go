@@ -30,7 +30,7 @@ func (l *AccountSearchLogic) AccountSearch(in *account.AccountSearchReq) (*accou
 			Accounts: nil,
 		}, nil
 	}
-	accounts, err := l.svcCtx.AccountModel.RemoteAccounts(l.ctx, in.AccountName)
+	accounts, err := l.svcCtx.AccountModel.RemoteAccounts(l.ctx, in.AccountName, 0)
 	if err != nil {
 		return nil, err
 	}

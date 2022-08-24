@@ -1,35 +1,38 @@
 package logic
 
 import (
-	"business/app/marketing/rpc/marketingcenter"
+	"business/app/account/rpc/accountcenter"
 	"business/common/utils"
 	"business/common/vars"
 	"context"
 	"github.com/jinzhu/copier"
 
-	"business/app/marketing/api/internal/svc"
-	"business/app/marketing/api/internal/types"
+	"business/app/account/api/internal/svc"
+	"business/app/account/api/internal/types"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type AccountDefaultListLogic struct {
+type AccountDefaultParentsLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewAccountDefaultListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AccountDefaultListLogic {
-	return &AccountDefaultListLogic{
+func NewAccountDefaultParentsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AccountDefaultParentsLogic {
+	return &AccountDefaultParentsLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *AccountDefaultListLogic) AccountDefaultList() (resp *types.AccountSearchResp, err error) {
+func (l *AccountDefaultParentsLogic) AccountDefaultParents(req *types.ParentAccountReq) (resp *types.AccountSearchResp, err error) {
 	var res []types.AccountInfo
-	accounts, err := l.svcCtx.MarketingRpcClient.GetDefaultAccountList(l.ctx, &marketingcenter.DefaultListReq{})
+	accounts, err := l.svcCtx.AccountRpcClient.GetParentAccountList(l.ctx, &accountcenter.ParentListReq{
+		Id:          req.ParentId,
+		AccountName: req.AccountName,
+	})
 	if err != nil {
 		return nil, utils.RpcError(err, "未查到账户数据")
 	}

@@ -24,12 +24,12 @@ func NewGetTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetToken
 }
 
 func (l *GetTokenLogic) GetToken(in *account.GetTokenReq) (*account.TokenInfo, error) {
-	token, err := l.svcCtx.TokenModel.FindOneByClientId(l.ctx, in.ClientId)
+	token, err := l.svcCtx.TokenModel.FindOneByAccountId(l.ctx, in.AccountId)
 	if err != nil {
 		return nil, err
 	}
 	return &account.TokenInfo{
-		ClientId:     token.ClientId,
+		AccountId:    token.AccountId,
 		AccessToken:  token.AccessToken,
 		RefreshToken: token.RefreshToken,
 		ExpiredAt:    token.ExpiredAt.Unix(),

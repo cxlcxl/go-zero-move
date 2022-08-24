@@ -25,7 +25,7 @@ func NewGetDefaultAccountListLogic(ctx context.Context, svcCtx *svc.ServiceConte
 }
 
 func (l *GetDefaultAccountListLogic) GetDefaultAccountList(in *account.DefaultListReq) (*account.AccountSearchResp, error) {
-	accounts, err := l.svcCtx.AccountModel.RemoteAccounts(l.ctx, "")
+	accounts, err := l.svcCtx.AccountModel.RemoteAccounts(l.ctx, "", 0)
 	if err != nil {
 		return nil, err
 	}

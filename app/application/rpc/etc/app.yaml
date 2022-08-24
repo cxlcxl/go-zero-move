@@ -1,6 +1,5 @@
-Name: app.rpc
+Name: app.client
 ListenOn: 0.0.0.0:28003
-Mode: dev
 
 Database:
   Driver: "mysql"

@@ -24,10 +24,10 @@
       <el-form-item label="Secret" prop="secret">
         <el-input v-model="accountForm.secret" :disabled="lockSecret"/>
       </el-form-item>
-      <el-form-item prop="parent_id" label="上级服务商账户">
-        <el-select v-model="accountForm.parent_id" remote filterable placeholder="可输入名称查询" 
+      <el-form-item prop="parent_id" label="上级账户">
+        <el-select v-model="accountForm.parent_id" remote filterable placeholder="可输入名称查询"
           :remote-method="remoteMethod" :loading="remoteLoading" style="width: 100%;">
-          <el-option v-for="item in accounts" :label="item.account_name" :value="Number(item.id)" 
+          <el-option v-for="item in accounts" :label="item.account_name" :value="Number(item.id)"
             v-show="Number(item.id) !== Number(accountForm.id)"/>
         </el-select>
       </el-form-item>
@@ -37,7 +37,7 @@
 
 <script>
   import DialogPanel from '@c/DialogPanel'
-  import {accountInfo, accountUpdate, searchAccounts, defaultAccounts} from '@a/account'
+  import { accountInfo, accountUpdate, parentAccounts } from '@a/account'
 
   export default {
     components: {
@@ -76,23 +76,22 @@
     },
     methods: {
       initUpdate(id) {
-        this.getDefaultAccounts()
         accountInfo(id).then(res => {
           this.accountForm = res.data
-          this.lockSecret = this.accountForm.is_auth === 1
+          this.getDefaultAccounts(this.accountForm.parent_id)
           this.visible = true
         }).catch(() => {
           this.$message.error("用户信息请求错误")
         })
       },
-      getDefaultAccounts() {
-        defaultAccounts().then(res => {
+      getDefaultAccounts(parent_id) {
+        parentAccounts({parent_id}).then(res => {
           if (Array.isArray(res.data)) {
             this.accounts = res.data
           } else {
             this.accounts = []
           }
-          this.accounts.push({id: 0, account_name: '无上级服务商账户'})
+          this.accounts.push({id: 0, account_name: '无上级账户'})
         }).catch(err => {
           this.$message.error("账户信息请求错误")
         })
@@ -123,7 +122,7 @@
       remoteMethod(query) {
         if (query.trim() !== '') {
           this.remoteLoading = true;
-          searchAccounts(query).then(res => {
+          parentAccounts({account_name: query}).then(res => {
             this.remoteLoading = false
             if (Array.isArray(res.data)) {
               this.accounts = res.data

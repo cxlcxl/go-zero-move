@@ -15,17 +15,3 @@ CREATE TABLE `accounts`
     PRIMARY KEY (`id`),
     UNIQUE KEY `idx_advertiser_id` (`advertiser_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-create table tokens
-(
-    id            bigint(15) unsigned auto_increment not null,
-    client_id     varchar(15)                            not null default '' comment '客户端ID',
-    access_token  varchar(1000)                          not null default '',
-    refresh_token varchar(1000)                          not null default '',
-    expired_at    datetime                               not null comment 'access_token 过期时间',
-    created_at    datetime                               not null comment '添加时间',
-    updated_at    TIMESTAMP                              not null DEFAULT CURRENT_TIMESTAMP comment '最后一次修改时间',
-    token_type    varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-    primary key (id),
-    unique KEY idx_client_id (client_id) using btree
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

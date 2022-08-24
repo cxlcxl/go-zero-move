@@ -9,9 +9,6 @@ type (
 		AuthorizationCode string `json:"authorization_code"`
 		State             string `json:"state"`
 	}
-	RefreshTokenReq {
-		ClientId string `json:"client_id"`
-	}
 	AccessTokenResp {
 		BaseResp
 		AccessToken string `json:"access_token"`
@@ -64,6 +61,9 @@ type (
 	AccountInfoReq {
 		Id int64 `form:"id"`
 	}
+	RefreshTokenReq {
+		Id int64 `json:"id"`
+	}
 	AccountInfoResp {
 		BaseResp
 		Data AccountInfo `json:"data"`
@@ -78,6 +78,10 @@ type (
 	AccountSearchResp {
 		BaseResp
 		Data []AccountInfo `json:"data"`
+	}
+	ParentAccountReq {
+		ParentId    int64  `form:"parent_id,optional"`
+		AccountName string `form:"account_name,optional"`
 	}
 )
 
@@ -123,4 +127,8 @@ service account-api {
 	@doc "默认展示部分账户信息"
 	@handler accountDefaultList
 	get /default returns(AccountSearchResp)
+	
+	@doc "上下级账户"
+	@handler accountDefaultParents
+	get /parents (ParentAccountReq) returns(AccountSearchResp)
 }

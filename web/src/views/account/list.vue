@@ -53,7 +53,7 @@
           <template slot-scope="scope">
             <el-button-group class="table-operate">
               <el-button type="primary" plain @click.native.prevent="editRow(scope.row.id)">编辑</el-button>
-              <el-button type="primary" plain @click.native.prevent="doRefresh(scope.row.client_id)" v-if="scope.row.is_auth === 1">刷新</el-button>
+              <el-button type="primary" plain @click.native.prevent="doRefresh(scope.row.id)" v-if="scope.row.is_auth === 1">刷新</el-button>
               <el-button type="primary" plain @click.native.prevent="doAuth(scope.row.id)" v-else>认证</el-button>
             </el-button-group>
           </template>
@@ -141,14 +141,14 @@
       editRow(id) {
         this.$refs.accountUpdate.initUpdate(id)
       },
-      doRefresh(client_id) {
+      doRefresh(id) {
         this.$confirm('确定刷新此账户的认证信息吗?', '确认信息', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'success'
         }).then(() => {
           this.loadings.pageLoading = true
-          refreshAuth(client_id).then(res => {
+          refreshAuth(id).then(res => {
             this.loadings.pageLoading = false
             this.$message.success("刷新成功")
           }).catch(err => {

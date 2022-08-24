@@ -16,6 +16,7 @@ import (
 	"math/rand"
 	"mime/multipart"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -194,4 +195,13 @@ func WhereIn(s interface{}) (w string, args []interface{}, err error) {
 	}
 
 	return "(" + strings.Join(query, ",") + ")", args, nil
+}
+
+// STF string to float64
+func STF(d string) float64 {
+	f, err := strconv.ParseFloat(d, 64)
+	if err != nil {
+		return 0
+	}
+	return f
 }

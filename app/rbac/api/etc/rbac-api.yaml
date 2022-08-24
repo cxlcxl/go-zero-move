@@ -21,6 +21,6 @@ Auth:
   Expire: 259200 # 秒
 
 RpcConf:
-  #Target: "k8s://business/rbac-rpc-svc:28001"
+  #Target: "k8s://business/rbac-client-svc:28001"
   Endpoints:
     - "127.0.0.1:28001"

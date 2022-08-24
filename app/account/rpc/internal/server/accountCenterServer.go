@@ -62,6 +62,11 @@ func (s *AccountCenterServer) GetDefaultAccountList(ctx context.Context, in *acc
 	return l.GetDefaultAccountList(in)
 }
 
+func (s *AccountCenterServer) GetParentAccountList(ctx context.Context, in *account.ParentListReq) (*account.AccountSearchResp, error) {
+	l := logic.NewGetParentAccountListLogic(ctx, s.svcCtx)
+	return l.GetParentAccountList(in)
+}
+
 func (s *AccountCenterServer) GetToken(ctx context.Context, in *account.GetTokenReq) (*account.TokenInfo, error) {
 	l := logic.NewGetTokenLogic(ctx, s.svcCtx)
 	return l.GetToken(in)

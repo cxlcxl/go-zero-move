@@ -1,4 +1,4 @@
-Name: rbac.rpc
+Name: rbac.client
 ListenOn: 0.0.0.0:28001
 Mode: dev
 
@@ -14,7 +14,7 @@ Database:
 #Etcd:
 #  Hosts:
 #    - "192.168.120.61:23790"
-#  Key: "rbac.rpc"
+#  Key: "rbac.client"
 
 Cache:
   - Host: "192.168.120.61:6379"

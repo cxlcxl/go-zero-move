@@ -24,7 +24,7 @@ func NewGetAccountByClientIdLogic(ctx context.Context, svcCtx *svc.ServiceContex
 }
 
 func (l *GetAccountByClientIdLogic) GetAccountByClientId(in *account.GetTokenReq) (*account.AccountInfo, error) {
-	info, err := l.svcCtx.AccountModel.FindOneByClientId(l.ctx, in.ClientId)
+	info, err := l.svcCtx.AccountModel.FindOne(l.ctx, in.AccountId)
 	if err != nil {
 		return nil, err
 	}

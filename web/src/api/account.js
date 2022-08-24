@@ -40,11 +40,11 @@ export function accountAuth(account_id) {
   });
 }
 
-export function refreshAuth(client_id) {
+export function refreshAuth(id) {
   return request({
     url: "/account/refresh",
     method: "post",
-    data: { client_id },
+    data: { id },
   });
 }
 
@@ -61,4 +61,16 @@ export function defaultAccounts() {
     url: "/account/default",
     method: "get",
   });
+}
+
+export function parentAccounts(params) {
+  return request({
+    url: "/account/parents",
+    method: "get",
+    params
+  });
+}
+
+export function getAccessToken(data) {
+  return request({url: '/account/token', method: 'post', data})
 }

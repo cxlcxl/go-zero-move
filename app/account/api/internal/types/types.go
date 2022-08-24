@@ -11,10 +11,6 @@ type AccessTokenReq struct {
 	State             string `json:"state"`
 }
 
-type RefreshTokenReq struct {
-	ClientId string `json:"client_id"`
-}
-
 type AccessTokenResp struct {
 	BaseResp
 	AccessToken string `json:"access_token"`
@@ -72,6 +68,10 @@ type AccountInfoReq struct {
 	Id int64 `form:"id"`
 }
 
+type RefreshTokenReq struct {
+	Id int64 `json:"id"`
+}
+
 type AccountInfoResp struct {
 	BaseResp
 	Data AccountInfo `json:"data"`
@@ -89,4 +89,9 @@ type AccountSearchReq struct {
 type AccountSearchResp struct {
 	BaseResp
 	Data []AccountInfo `json:"data"`
+}
+
+type ParentAccountReq struct {
+	ParentId    int64  `form:"parent_id,optional"`
+	AccountName string `form:"account_name,optional"`
 }

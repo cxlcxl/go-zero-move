@@ -25,6 +25,7 @@ type (
 	DefaultListReq     = account.DefaultListReq
 	GetByAccountIdsReq = account.GetByAccountIdsReq
 	GetTokenReq        = account.GetTokenReq
+	ParentListReq      = account.ParentListReq
 	TokenInfo          = account.TokenInfo
 
 	AccountCenter interface {
@@ -36,6 +37,7 @@ type (
 		AccountSearch(ctx context.Context, in *AccountSearchReq, opts ...grpc.CallOption) (*AccountSearchResp, error)
 		GetAccountsByAccountIds(ctx context.Context, in *GetByAccountIdsReq, opts ...grpc.CallOption) (*AccountSearchResp, error)
 		GetDefaultAccountList(ctx context.Context, in *DefaultListReq, opts ...grpc.CallOption) (*AccountSearchResp, error)
+		GetParentAccountList(ctx context.Context, in *ParentListReq, opts ...grpc.CallOption) (*AccountSearchResp, error)
 		GetToken(ctx context.Context, in *GetTokenReq, opts ...grpc.CallOption) (*TokenInfo, error)
 		SetToken(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*BaseResp, error)
 	}
@@ -89,6 +91,11 @@ func (m *defaultAccountCenter) GetAccountsByAccountIds(ctx context.Context, in *
 func (m *defaultAccountCenter) GetDefaultAccountList(ctx context.Context, in *DefaultListReq, opts ...grpc.CallOption) (*AccountSearchResp, error) {
 	client := account.NewAccountCenterClient(m.cli.Conn())
 	return client.GetDefaultAccountList(ctx, in, opts...)
+}
+
+func (m *defaultAccountCenter) GetParentAccountList(ctx context.Context, in *ParentListReq, opts ...grpc.CallOption) (*AccountSearchResp, error) {
+	client := account.NewAccountCenterClient(m.cli.Conn())
+	return client.GetParentAccountList(ctx, in, opts...)
 }
 
 func (m *defaultAccountCenter) GetToken(ctx context.Context, in *GetTokenReq, opts ...grpc.CallOption) (*TokenInfo, error) {
