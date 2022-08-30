@@ -19,6 +19,7 @@ type Config struct {
 	}
 
 	MarketingRpcClient zrpc.RpcClientConf
+	AccountRpcClient   zrpc.RpcClientConf
 
 	MarketingApis struct {
 		Authorize struct {
@@ -32,6 +33,13 @@ type Config struct {
 			Query  string
 			Create string
 			Update string
+		}
+	}
+
+	Kafka struct {
+		Host   string
+		Topics struct {
+			Promotion string
 		}
 	}
 }

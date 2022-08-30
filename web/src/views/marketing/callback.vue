@@ -26,7 +26,7 @@ export default {
         return
       }
       if (!this.$route.query.authorization_code || this.$route.query.authorization_code === '') {
-        window.close()
+        //window.close()
         this.$message.error("回调请求失败，请重试")
         return
       }
@@ -34,10 +34,10 @@ export default {
         this.$message.success("回调成功，3s 后自动关闭页面，您可手动关闭")
         this.loadingMsg = "回调成功，3s 后自动关闭页面，您可手动关闭"
         setTimeout(function () {
-          window.close()
+          //window.close()
         }, 5000)
       }).catch(err => {
-        window.close()
+        //window.close()
       })
     },
   }

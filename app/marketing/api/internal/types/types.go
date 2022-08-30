@@ -7,11 +7,12 @@ type BaseResp struct {
 }
 
 type PromotionCreateReq struct {
-	CampaignName  string `json:"campaign_name" validate:"required"` // 计划名称
-	ProductType   string `json:"product_type" validate:"required"`  // 推广产品
-	DailyBudget   int64  `json:"daily_budget" validate:"numeric"`   // 日预算
-	AdvertiserId  string `json:"advertiser_id"`                     // 广告主ID
-	MarketingGoal string `json:"marketing_goal"`                    // 营销目标，默认为无目的
+	AccountId    int64  `json:"account_id"`
+	CampaignName string `json:"campaign_name" validate:"required"`               // 计划名称
+	ProductType  string `json:"product_type" validate:"required,product_type"`   // 推广产品
+	DailyBudget  int64  `json:"daily_budget" validate:"numeric"`                 // 日预算
+	CampaignType string `json:"campaign_type" validate:"required,campaign_type"` // 计划类型
+	SyncFlow     string `json:"sync_flow_resource_searchad"`                     // 同时同步投放搜索广告网络
 }
 
 type PromotionCreateInfo struct {

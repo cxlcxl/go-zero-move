@@ -3,6 +3,7 @@ package logic
 import (
 	"business/app/account/rpc/model"
 	"context"
+	"errors"
 	"time"
 
 	"business/app/account/rpc/account"
@@ -27,7 +28,7 @@ func NewSetTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SetToken
 
 func (l *SetTokenLogic) SetToken(in *account.TokenInfo) (*account.BaseResp, error) {
 	token, err := l.svcCtx.TokenModel.FindOneByAccountId(l.ctx, in.AccountId)
-	if err != nil {
+	if err != nil && !errors.Is(err, model.ErrNotFound) {
 		return nil, err
 	}
 	expire := time.Now().Unix() + in.ExpiredAt - 20

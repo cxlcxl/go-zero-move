@@ -8,10 +8,8 @@ import (
 	"business/cronJobs/jobs/country/model"
 	"business/cronJobs/statements"
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/Shopify/sarama"
 	"strings"
 	"sync"
 	"time"
@@ -156,7 +154,7 @@ func (l *CountryQueryLogic) query(param *QueryParam) error {
 	var page int64 = 1
 	var pageSize int64 = 500
 	hasRequestLog := false
-	statDate := time.Now().AddDate(0, 0, -2).Format("2006-01-02")
+	statDate := "2022-08-11" //time.Now().AddDate(0, 0, -2).Format("2006-01-02")
 	requestLog, err := l.svcCtx.AdsLogModel.FindLogByStatDayApiModule(l.ctx, statDate, statements.ApiModuleCountry, param.AccountId)
 	if err != nil {
 		if !errors.Is(err, model.ErrNotFound) {
@@ -193,21 +191,6 @@ func (l *CountryQueryLogic) query(param *QueryParam) error {
 		fmt.Println("======> ads api error: ", response.Code, response.Message)
 		return errors.New(response.Message)
 	}
-
-	kafkaMsg := make([]*sarama.ProducerMessage, 0)
-	for _, list := range response.Data.List {
-		bs, err := json.Marshal(list)
-		if err != nil {
-			continue
-		}
-		kafkaMsg = append(kafkaMsg, &sarama.ProducerMessage{
-			Topic: l.svcCtx.Config.Kafka.Topics.Country,
-			Value: sarama.ByteEncoder(bs),
-		})
-	}
-	_ = l.svcCtx.KafkaProducer.SendMessages(kafkaMsg)
-	_ = l.svcCtx.KafkaProducer.Close()
-
 	var rcs = make([]*model.ReportCountries, len(response.Data.List))
 	var t time.Time
 	for i, list := range response.Data.List {

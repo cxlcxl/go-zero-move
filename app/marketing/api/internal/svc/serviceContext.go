@@ -1,6 +1,7 @@
 package svc
 
 import (
+	"business/app/account/rpc/accountcenter"
 	"business/app/marketing/api/internal/config"
 	"business/app/marketing/api/internal/middleware"
 	"business/app/marketing/rpc/marketingcenter"
@@ -17,6 +18,7 @@ type ServiceContext struct {
 	PermissionMiddleware rest.Middleware
 	Validator            *validator.Validate
 	MarketingRpcClient   marketingcenter.MarketingCenter
+	AccountRpcClient     accountcenter.AccountCenter
 	RedisCache           *redis.Redis
 }
 
@@ -27,6 +29,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		PermissionMiddleware: middleware.NewPermissionMiddleware().Handle,
 		Validator:            validators.New(),
 		MarketingRpcClient:   marketingcenter.NewMarketingCenter(zrpc.MustNewClient(c.MarketingRpcClient)),
+		AccountRpcClient:     accountcenter.NewAccountCenter(zrpc.MustNewClient(c.AccountRpcClient)),
 		RedisCache:           redis.New(c.Redis.Host),
 	}
 }

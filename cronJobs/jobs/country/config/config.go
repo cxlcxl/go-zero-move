@@ -26,6 +26,13 @@ type Config struct {
 			CountryQuery  string `yaml:"CountryQuery"`
 		} `yaml:"Reports"`
 	} `yaml:"MarketingApis"`
+
+	Kafka struct {
+		Host   string `yaml:"Host"`
+		Topics struct {
+			Country string `yaml:"Country"`
+		} `yaml:"Topics"`
+	} `yaml:"Kafka"`
 }
 
 func Unmarshal(url string, c *Config) error {

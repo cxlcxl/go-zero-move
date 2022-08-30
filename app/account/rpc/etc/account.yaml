@@ -1,5 +1,6 @@
 Name: account.client
-ListenOn: 127.0.0.1:28002
+ListenOn: 0.0.0.0:28002
+# Mode: dev
 
 Database:
   Driver: "mysql"

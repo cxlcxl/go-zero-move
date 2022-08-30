@@ -24,7 +24,6 @@ func NewPromotionListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pro
 }
 
 func (l *PromotionListLogic) PromotionList(req *types.PromotionListReq) (resp *types.PromotionListResp, err error) {
-	// todo: add your logic here and delete this line
 
 	return
 }

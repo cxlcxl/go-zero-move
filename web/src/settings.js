@@ -1,5 +1,5 @@
 module.exports = {
-  title: "HICRM",
+  title: "HW-ADS",
 
   /**
    * @type {boolean} true | false
@@ -33,5 +33,5 @@ module.exports = {
    */
   errorLog: "production",
 
-  sysTokenKey: "mobgi_authoriation_token",
+  sysTokenKey: "ads_authoriation_token",
 };

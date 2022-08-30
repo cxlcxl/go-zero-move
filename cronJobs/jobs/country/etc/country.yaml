@@ -7,6 +7,11 @@ Database:
   DbName: "business"
   Charset: "utf8mb4"
 
+Kafka:
+  Host: "192.168.120.62:9092"
+  Topics:
+    Country: "business_ads_country"
+
 MarketingApis:
   Refresh: "https://oauth-login.cloud.huawei.com/oauth2/v2/token"
   Reports:

@@ -2,6 +2,7 @@ package curl
 
 import (
 	"encoding/json"
+	"errors"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -44,6 +45,9 @@ func (c *Curl) Request(v interface{}, headers ...HeaderHandlers) (err error) {
 	bs, err = ioutil.ReadAll(res.Body)
 	if err != nil {
 		return err
+	}
+	if res.StatusCode != 200 {
+		return errors.New(res.Status)
 	}
 	err = json.Unmarshal(bs, v)
 	if err != nil {

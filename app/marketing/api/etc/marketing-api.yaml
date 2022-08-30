@@ -1,6 +1,6 @@
 Name: marketing-api
 Host: 0.0.0.0
-Port: 18003
+Port: 18004
 
 Auth:
   AccessSecret: "ADS_BUSINESS"
@@ -8,11 +8,20 @@ Auth:
 
 MarketingRpcClient:
   Endpoints:
+    - "127.0.0.1:28004"
+
+AccountRpcClient:
+  Endpoints:
     - "127.0.0.1:28002"
 
 Redis:
   Host: "192.168.120.61:6379"
   Pass:
+
+Kafka:
+  Host: "192.168.120.62:9092"
+  Topics:
+    Promotion: "business_marketing_promotion"
 
 MarketingApis:
   Authorize:

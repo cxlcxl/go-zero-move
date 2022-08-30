@@ -6,6 +6,7 @@ Vue.use(Router)
 import Layout from '@/layout'
 import RBACRouter from './modules/rbac-manage'
 import AccountRouter from './modules/account'
+import MarketingRouter from './modules/marketing'
 
 export const constantRoutes = [
   {
@@ -67,7 +68,7 @@ export const constantRoutes = [
   },
   // http://localhost:19527/marketing/callback
   {
-    path: '/account/callback',
+    path: '/marketing/callback',
     component: () => import('@v/marketing/callback'),
     hidden: true
   }
@@ -89,6 +90,7 @@ export const constantRoutes = [
 // 权限控制为 meta 中的 auth 属性，填写规则：后端路由去掉前缀 [/api/]
 // 如果未设置 auth 属性，表示无需权限都可以访问
 export const asyncRoutes = [
+  MarketingRouter,
   AccountRouter,
   RBACRouter,
   { path: '*', redirect: '/404', hidden: true }
