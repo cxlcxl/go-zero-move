@@ -6,7 +6,7 @@ metadata:
   labels:
     app: account-rpc
 spec:
-  replicas: 3
+  replicas: 1
   revisionHistoryLimit: 5
   selector:
     matchLabels:
@@ -78,8 +78,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: account-rpc
-  minReplicas: 3
-  maxReplicas: 10
+  minReplicas: 1
+  maxReplicas: 3
   metrics:
   - type: Resource
     resource:
@@ -100,8 +100,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: account-rpc
-  minReplicas: 3
-  maxReplicas: 10
+  minReplicas: 1
+  maxReplicas: 3
   metrics:
   - type: Resource
     resource:

@@ -28,7 +28,11 @@
       <el-table v-loading="loadings.pageLoading" :data="accountList.list" highlight-current-row stripe border size="mini"
                 style="margin-top: 15px">
         <el-table-column prop="id" label="ID" width="80" align="center"/>
-        <el-table-column prop="account_name" label="账号名称" min-width="150" show-overflow-tooltip/>
+        <el-table-column label="账号名称" min-width="150" show-overflow-tooltip>
+          <template slot-scope="scope">
+            <span :class="{'text-success': scope.row.is_auth === 1}">{{ scope.row.account_name }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="账号类型" width="100" align="center" show-overflow-tooltip>
           <template slot-scope="scope">{{ account_types[scope.row.account_type] }}</template>
         </el-table-column>
@@ -40,12 +44,6 @@
           </template>
         </el-table-column>
         <el-table-column label="ClientID" prop="client_id" width="120"/>
-        <el-table-column label="认证状态" width="100" align="center">
-          <template slot-scope="scope">
-            <span v-if="scope.row.is_auth === 1" class="text-success">已认证</span>
-            <span v-else>待认证</span>
-          </template>
-        </el-table-column>
         <el-table-column prop="created_at" label="添加时间" width="140" align="center">
           <template slot-scope="scope">{{scope.row.created_at|timeFormat}}</template>
         </el-table-column>
@@ -53,8 +51,10 @@
           <template slot-scope="scope">
             <el-button-group class="table-operate">
               <el-button type="primary" plain @click.native.prevent="editRow(scope.row.id)">编辑</el-button>
-              <el-button type="primary" plain @click.native.prevent="doRefresh(scope.row.id)" v-if="scope.row.is_auth === 1">刷新</el-button>
-              <el-button type="primary" plain @click.native.prevent="doAuth(scope.row.id)" v-else>认证</el-button>
+              <template v-if="scope.row.account_type === 1">
+                <el-button type="primary" plain @click.native.prevent="doRefresh(scope.row.id)" v-if="scope.row.is_auth === 1">刷新</el-button>
+                <el-button type="primary" plain @click.native.prevent="doAuth(scope.row.id)" v-else>认证</el-button>
+              </template>
             </el-button-group>
           </template>
         </el-table-column>
@@ -77,7 +77,7 @@
   import {parseTime} from '@/utils'
 
   export default {
-    // name: 'CustomerAccountList',
+    name: 'AccountList',
     components: {
       AccountCreate,
       AccountUpdate,

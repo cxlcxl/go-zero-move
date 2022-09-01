@@ -1,39 +1,39 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rbac-client
+  name: rbac-api
   namespace: business
   labels:
-    app: rbac-client
+    app: rbac-api
 spec:
-  replicas: 2
+  replicas: 1
   revisionHistoryLimit: 5
   selector:
     matchLabels:
-      app: rbac-client
+      app: rbac-api
   template:
     metadata:
       labels:
-        app: rbac-client
+        app: rbac-api
     spec:
       serviceAccountName: find-endpoints
       containers:
-      - name: rbac-client
-        image: silentcxl/rbac-client:v1.0.0
+      - name: rbac-api
+        image: silentcxl/rbac-api:v1.0.0
         lifecycle:
           preStop:
             exec:
               command: ["sh","-c","sleep 5"]
         ports:
-        - containerPort: 28001
+        - containerPort: 18001
         readinessProbe:
           tcpSocket:
-            port: 28001
+            port: 18001
           initialDelaySeconds: 5
           periodSeconds: 10
         livenessProbe:
           tcpSocket:
-            port: 28001
+            port: 18001
           initialDelaySeconds: 15
           periodSeconds: 20
         resources:
@@ -56,30 +56,34 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: rbac-client-svc
+  name: rbac-api-svc
   namespace: business
 spec:
   ports:
-    - port: 28001
+    - nodePort: 30010
+      port: 18001
+      protocol: TCP
+      targetPort: 18001
+  type: NodePort
   selector:
-    app: rbac-client
+    app: rbac-api
 
 ---
 
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: rbac-client-hpa-c
+  name: rbac-api-hpa-c
   namespace: business
   labels:
-    app: rbac-client-hpa-c
+    app: rbac-api-hpa-c
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: rbac-client
-  minReplicas: 2
-  maxReplicas: 10
+    name: rbac-api
+  minReplicas: 1
+  maxReplicas: 3
   metrics:
   - type: Resource
     resource:
@@ -91,17 +95,17 @@ spec:
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: rbac-client-hpa-m
+  name: rbac-api-hpa-m
   namespace: business
   labels:
-    app: rbac-client-hpa-m
+    app: rbac-api-hpa-m
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: rbac-client
-  minReplicas: 2
-  maxReplicas: 10
+    name: rbac-api
+  minReplicas: 1
+  maxReplicas: 3
   metrics:
   - type: Resource
     resource:

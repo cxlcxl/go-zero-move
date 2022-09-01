@@ -2,7 +2,7 @@ package logic
 
 import (
 	"business/common/curl"
-	"business/common/utils"
+	"business/common/kfk"
 	"business/cronJobs/common"
 	"business/cronJobs/jobs/country/internal/svc"
 	"business/cronJobs/jobs/country/model"
@@ -12,7 +12,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/Shopify/sarama"
-	"strings"
+	"log"
 	"sync"
 	"time"
 
@@ -21,12 +21,13 @@ import (
 
 type CountryQueryLogic struct {
 	logx.Logger
-	ctx       context.Context
-	svcCtx    *svc.ServiceContext
-	tokenChan chan *QueryParam
-	wg        sync.WaitGroup
-	stateDay  string
-	appMap    map[string]*app
+	ctx           context.Context
+	svcCtx        *svc.ServiceContext
+	tokenChan     chan *QueryParam
+	wg            sync.WaitGroup
+	statDay       string
+	appMap        map[string]*app
+	kafkaProducer sarama.SyncProducer
 }
 
 type QueryParam struct {
@@ -52,38 +53,34 @@ func NewCountryQueryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Coun
 
 func (l *CountryQueryLogic) CountryQuery() (err error) {
 	if err = l.getApps(); err != nil {
-		fmt.Println("======> get app info error: ", err)
 		return err
 	}
-
+	// 任务时间，参数
+	l.statDay = time.Now().AddDate(0, 0, -2).Format("2006-01-02")
+	l.kafkaProducer, err = kfk.NewProducer(l.svcCtx.Config.Kafka.Host)
+	if err != nil {
+		return err
+	}
+	defer l.kafkaProducer.Close()
 	go l.getTokens()
 
-	err = l.queryCountries()
-
-	l.wg.Wait()
-	return
-}
-
-func (l *CountryQueryLogic) queryCountries() error {
 	for token := range l.tokenChan {
 		l.wg.Add(1)
-		go l.query(token)
+		go l.query(token, 1)
 	}
-
-	return nil
+	l.wg.Wait()
+	return
 }
 
 func (l *CountryQueryLogic) getTokens() {
 	list, err := l.svcCtx.TokenModel.GetAccessTokenList(l.ctx)
 	if err != nil {
-		fmt.Println("======> get token list error: ", err)
 		return
 	}
 	for _, tokens := range list {
 		if tokens.ExpiredAt.Before(time.Now()) {
 			at, err := refresh(l.ctx, l.svcCtx, tokens)
 			if err != nil {
-				fmt.Println("======> refresh token error: ", err)
 				continue
 			}
 			l.tokenChan <- &QueryParam{
@@ -150,34 +147,14 @@ func refresh(ctx context.Context, svcCtx *svc.ServiceContext, token *model.Token
 	return at.AccessToken, nil
 }
 
-func (l *CountryQueryLogic) query(param *QueryParam) error {
+func (l *CountryQueryLogic) query(param *QueryParam, page int64) (err error) {
 	defer l.wg.Done()
-
-	var page int64 = 1
-	var pageSize int64 = 500
-	hasRequestLog := false
-	statDate := time.Now().AddDate(0, 0, -2).Format("2006-01-02")
-	requestLog, err := l.svcCtx.AdsLogModel.FindLogByStatDayApiModule(l.ctx, statDate, statements.ApiModuleCountry, param.AccountId)
-	if err != nil {
-		if !errors.Is(err, model.ErrNotFound) {
-			fmt.Println("======> get request logs error: ", err)
-			return err
-		}
-	}
-	if requestLog != nil {
-		if requestLog.IsCompleted == 1 {
-			fmt.Println("======> completed <====== ", requestLog)
-			return nil
-		}
-		page = requestLog.NextRequestPage
-		hasRequestLog = true
-	}
 	data := statements.CountryRequest{
 		TimeGranularity: statements.StateTimeDaily,
-		StartDate:       statDate,
-		EndDate:         statDate,
+		StartDate:       l.statDay,
+		EndDate:         l.statDay,
 		Page:            page,
-		PageSize:        pageSize,
+		PageSize:        l.svcCtx.Config.MarketingApis.PageSize,
 		IsAbroad:        true,
 		OrderType:       statements.OrderAsc,
 		Filtering: statements.Filtering{
@@ -190,104 +167,27 @@ func (l *CountryQueryLogic) query(param *QueryParam) error {
 		return err
 	}
 	if response.Code != "0" {
-		fmt.Println("======> ads api error: ", response.Code, response.Message)
 		return errors.New(response.Message)
 	}
+	if err = setDataToKafka(l.kafkaProducer, response.Data.List, l.svcCtx.Config.Kafka.Topics.Country); err != nil {
+		log.Println("数据写入 kafka 失败：", err)
+	}
 
-	kafkaMsg := make([]*sarama.ProducerMessage, 0)
-	for _, list := range response.Data.List {
-		bs, err := json.Marshal(list)
-		if err != nil {
-			continue
+	if response.Data.PageInfo.TotalPage > 1 {
+		var i int64 = 2
+		for ; i <= response.Data.PageInfo.TotalPage; i++ {
+			if err = l.query(param, i); err != nil {
+				fmt.Println("第 ", i, " 页数据拉取出错", err)
+			}
 		}
-		kafkaMsg = append(kafkaMsg, &sarama.ProducerMessage{
-			Topic: l.svcCtx.Config.Kafka.Topics.Country,
-			Value: sarama.ByteEncoder(bs),
-		})
 	}
-	_ = l.svcCtx.KafkaProducer.SendMessages(kafkaMsg)
-	_ = l.svcCtx.KafkaProducer.Close()
 
-	var rcs = make([]*model.ReportCountries, len(response.Data.List))
-	var t time.Time
-	for i, list := range response.Data.List {
-		t, err = time.Parse("20060102", list.StatDatetime[:8])
-		if err != nil {
-			continue
-		}
-		appId, appName := "", ""
-		if tmpApp, ok := l.appMap[list.PackageName]; ok {
-			appId, appName = tmpApp.appId, tmpApp.appName
-		}
-		rcs[i] = &model.ReportCountries{
-			StatDate:              t,
-			StatHour:              list.StatDatetime[8:],
-			AdvertiserId:          list.AdvertiserId,
-			AccountId:             param.AccountId,
-			CampaignId:            list.CampaignId,
-			CampaignName:          strings.TrimSpace(list.CampaignName),
-			AdgroupId:             list.AdgroupId,
-			AdgroupName:           strings.TrimSpace(list.AdgroupName),
-			CreativeId:            list.CreativeId,
-			CreativeName:          strings.TrimSpace(list.CreativeName),
-			Country:               list.Country,
-			AppId:                 appId,
-			AppName:               appName,
-			ShowCount:             list.ShowCount,
-			ClickCount:            list.ClickCount,
-			Cpc:                   utils.STF(list.Cpc),
-			Cpm:                   utils.STF(list.Cpm),
-			Cost:                  utils.STF(list.Cost),
-			InstallCount:          list.InstallCount,
-			Cpi:                   utils.STF(list.Cpi),
-			DownloadCount:         list.DownloadCount,
-			Cpd:                   utils.STF(list.Cpd),
-			BrowseCount:           list.BrowseCount,
-			BrowseCost:            utils.STF(list.BrowseCost),
-			AppCustomCount:        list.AppCustomCount,
-			AppCustomCost:         utils.STF(list.AppCustomCost),
-			WebCustomCount:        list.WebCustomCount,
-			WebCustomCost:         utils.STF(list.WebCustomCost),
-			PlayCount:             list.PlayCount,
-			PlayOverCount:         list.PlayOverCount,
-			ThreeDayRetainCount:   list.ThreeDayRetainCount,
-			ThreeDayRetainCost:    utils.STF(list.ThreeDayRetainCost),
-			ShareCount:            list.ShareCount,
-			ShareCost:             utils.STF(list.ShareCost),
-			SevenDayRetainCount:   list.SevenDayRetainCount,
-			SevenDayRetainCost:    utils.STF(list.SevenDayRetainCost),
-			ActiveCountNormalized: list.ActiveCountNormalized,
-			Cpa:                   utils.STF(list.Cpa),
-			RetainCountNormalized: list.RetainCountNormalized,
-			RetainCostNormalized:  utils.STF(list.RetainCostNormalized),
-			PayCountNormalized:    list.PayCountNormalized,
-			PayCostNormalized:     utils.STF(list.PayCostNormalized),
-			CreatedAt:             time.Now(),
-			UpdatedAt:             time.Now(),
-		}
-	}
-	adsModel := logic.GetAdsModel(
-		statDate,
-		statements.ApiModuleCountry,
-		param.AccountId,
-		page,
-		response.Data.PageInfo.TotalPage,
-		response.Data.PageInfo.TotalNum,
-		pageSize,
-		requestLog,
-		data,
-	)
-	if err = l.svcCtx.ReportCountryModel.BatchInsertAndLog(l.ctx, rcs, adsModel, hasRequestLog); err != nil {
-		fmt.Println("=======> insert error: ", err)
-		return err
-	}
 	return nil
 }
 
 func (l *CountryQueryLogic) getApps() error {
 	list, err := l.svcCtx.AppModel.GetApps(l.ctx)
 	if err != nil {
-		fmt.Println("======> get token list error: ", err)
 		return err
 	}
 	for _, _app := range list {
@@ -298,4 +198,21 @@ func (l *CountryQueryLogic) getApps() error {
 	}
 
 	return nil
+}
+
+// 保存数据到 kafka
+func setDataToKafka(kfk sarama.SyncProducer, d []*statements.CountryList, kafkaTopic string) error {
+	kafkaMsg := make([]*sarama.ProducerMessage, 0)
+	for _, list := range d {
+		bs, err := json.Marshal(list)
+		if err != nil {
+			continue
+		}
+		kafkaMsg = append(kafkaMsg, &sarama.ProducerMessage{
+			Topic: kafkaTopic,
+			Value: sarama.ByteEncoder(bs),
+		})
+	}
+	fmt.Println("本次写入数据量：", len(kafkaMsg), "， 写入 Topic：", kafkaTopic)
+	return kfk.SendMessages(kafkaMsg)
 }

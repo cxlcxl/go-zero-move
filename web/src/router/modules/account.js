@@ -10,7 +10,7 @@ const userRouter = {
   children: [
     {
       path: "list",
-      name: "UserList",
+      name: "AccountList",
       component: () => import("@v/account/list"),
       meta: { title: "账户列表" },
     },

@@ -13,6 +13,7 @@ Kafka:
     Country: "business_ads_country"
 
 MarketingApis:
+  PageSize: 500
   Refresh: "https://oauth-login.cloud.huawei.com/oauth2/v2/token"
   Reports:
     CampaignQuery: "https://ads-dra.cloud.huawei.com/openapi/v2/reports/campaign/query"

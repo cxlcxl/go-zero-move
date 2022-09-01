@@ -6,7 +6,7 @@ const marketingRouter = {
   path: "/marketing",
   component: Layout,
   redirect: "/marketing/promotion",
-  meta: { title: "广告投放", icon: "el-icon-s-grid" },
+  meta: { title: "广告投放", icon: "el-icon-s-promotion" },
   children: [
     {
       path: "promotion",

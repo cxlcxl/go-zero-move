@@ -19,7 +19,8 @@ type Config struct {
 	} `yaml:"Database"`
 
 	MarketingApis struct {
-		Refresh string `yaml:"Refresh"`
+		PageSize int64  `yaml:"PageSize"`
+		Refresh  string `yaml:"Refresh"`
 
 		Reports struct {
 			CampaignQuery string `yaml:"CampaignQuery"`
