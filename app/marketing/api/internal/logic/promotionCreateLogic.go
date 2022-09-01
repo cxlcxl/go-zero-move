@@ -70,7 +70,7 @@ func (l *PromotionCreateLogic) PromotionCreate(req *types.PromotionCreateReq) (r
 		SyncFlow:     req.SyncFlow,
 	})
 	if err != nil {
-		return nil, err
+		return nil, utils.RpcError(err, "")
 	}
 	return &types.PromotionCreateResp{
 		Code: vars.ResponseCodeOk,

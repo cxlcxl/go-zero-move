@@ -1,25 +1,27 @@
-package main
+package country
 
 import (
-	"business/cronJobs/jobs/country/config"
-	"business/cronJobs/jobs/country/internal/handler"
-	"business/cronJobs/jobs/country/internal/svc"
-	"flag"
+	"business/cronJobs/jobs/country/logic"
+	"business/cronJobs/vars"
+	"context"
 	"fmt"
 	"log"
 )
 
-func main() {
-	flag.Parse()
+func Country() {
+	fmt.Println("country job start...")
 
-	var c config.Config
-	if err := config.Unmarshal("etc/country.yaml", &c); err != nil {
+	ctx := context.Background()
+	job, err := vars.SvcCtx.JobModel.FindOneByApiModule(ctx, "Country")
+	if err != nil {
+		log.Fatal("调度模块查询错误：", err)
+		return
+	}
+	// 获取 token 列表
+	if err = logic.NewCountryQueryLogic(ctx, vars.SvcCtx, job).CountryQuery(); err != nil {
 		log.Fatal(err)
 		return
 	}
-	svcCtx := svc.NewServiceContext(c)
 
-	fmt.Println("crontab job start...")
-	handler.StartHandlers(svcCtx)
-	fmt.Println("crontab job end...")
+	fmt.Println("country job end...")
 }

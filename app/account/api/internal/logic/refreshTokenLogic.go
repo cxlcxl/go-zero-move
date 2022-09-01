@@ -1,16 +1,14 @@
 package logic
 
 import (
+	"business/app/account/api/internal/svc"
+	"business/app/account/api/internal/types"
 	"business/app/account/rpc/accountcenter"
 	"business/common/curl"
 	"business/common/utils"
 	"business/common/vars"
 	"context"
 	"errors"
-
-	"business/app/account/api/internal/svc"
-	"business/app/account/api/internal/types"
-
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -55,10 +53,8 @@ func (l *RefreshTokenLogic) RefreshToken(req *types.RefreshTokenReq) (resp *type
 		"client_id":     clientId,
 		"client_secret": secret,
 	}
-	post := curl.New(l.svcCtx.Config.MarketingApis.Authorize.Refresh).Post().QueryData(data)
 	var at AT
-	err = post.Request(&at, curl.FormHeader())
-	if err != nil {
+	if err = curl.New(l.svcCtx.Config.MarketingApis.Authorize.Refresh).Post().QueryData(data).Request(&at, curl.FormHeader()); err != nil {
 		return nil, err
 	}
 	if at.Error != 0 {

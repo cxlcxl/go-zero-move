@@ -26,3 +26,13 @@ func (s *MarketingCenterServer) PromotionCreate(ctx context.Context, in *marketi
 	l := logic.NewPromotionCreateLogic(ctx, s.svcCtx)
 	return l.PromotionCreate(in)
 }
+
+func (s *MarketingCenterServer) PromotionList(ctx context.Context, in *marketing.PromotionListReq) (*marketing.PromotionListResp, error) {
+	l := logic.NewPromotionListLogic(ctx, s.svcCtx)
+	return l.PromotionList(in)
+}
+
+func (s *MarketingCenterServer) PromotionUpdate(ctx context.Context, in *marketing.PromotionUpdateReq) (*marketing.BaseResp, error) {
+	l := logic.NewPromotionUpdateLogic(ctx, s.svcCtx)
+	return l.PromotionUpdate(in)
+}

@@ -1,11 +1,6 @@
 Database:
   Driver: "mysql"
-  Host: "192.168.120.61"
-  Port: 3306
-  User: "root"
-  Pass: "root"
-  DbName: "business"
-  Charset: "utf8mb4"
+  Dsn: "root:root@tcp(192.168.120.61:3306)/business?charset=utf8mb4&parseTime=True&loc=Local"
 
 Kafka:
   Host: "192.168.120.62:9092"

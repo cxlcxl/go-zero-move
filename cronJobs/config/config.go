@@ -9,13 +9,8 @@ import (
 
 type Config struct {
 	Database struct {
-		Driver  string `yaml:"Driver"`
-		Host    string `yaml:"Host"`
-		Port    int64  `yaml:"Port"`
-		User    string `yaml:"User"`
-		Pass    string `yaml:"Pass"`
-		DbName  string `yaml:"DbName"`
-		Charset string `yaml:"Charset"`
+		Driver string `yaml:"Driver"`
+		Dsn    string `yaml:"Dsn"`
 	} `yaml:"Database"`
 
 	MarketingApis struct {

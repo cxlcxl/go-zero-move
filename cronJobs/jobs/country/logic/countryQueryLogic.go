@@ -3,10 +3,10 @@ package logic
 import (
 	"business/common/curl"
 	"business/common/kfk"
-	"business/cronJobs/common"
-	"business/cronJobs/jobs/country/internal/svc"
-	"business/cronJobs/jobs/country/model"
-	"business/cronJobs/statements"
+	"business/cronJobs/jobs/commonLogic"
+	"business/cronJobs/model"
+	"business/cronJobs/svc"
+	"business/cronJobs/vars/statements"
 	"context"
 	"encoding/json"
 	"errors"
@@ -28,6 +28,7 @@ type CountryQueryLogic struct {
 	statDay       string
 	appMap        map[string]*app
 	kafkaProducer sarama.SyncProducer
+	countryModel  *model.Jobs
 }
 
 type QueryParam struct {
@@ -40,14 +41,15 @@ type app struct {
 	appName string
 }
 
-func NewCountryQueryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CountryQueryLogic {
+func NewCountryQueryLogic(ctx context.Context, svcCtx *svc.ServiceContext, job *model.Jobs) *CountryQueryLogic {
 	return &CountryQueryLogic{
-		Logger:    logx.WithContext(ctx),
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		tokenChan: make(chan *QueryParam),
-		wg:        sync.WaitGroup{},
-		appMap:    map[string]*app{},
+		Logger:       logx.WithContext(ctx),
+		ctx:          ctx,
+		svcCtx:       svcCtx,
+		tokenChan:    make(chan *QueryParam),
+		wg:           sync.WaitGroup{},
+		appMap:       map[string]*app{},
+		countryModel: job,
 	}
 }
 
@@ -81,6 +83,7 @@ func (l *CountryQueryLogic) getTokens() {
 		if tokens.ExpiredAt.Before(time.Now()) {
 			at, err := refresh(l.ctx, l.svcCtx, tokens)
 			if err != nil {
+				log.Println("Token 刷新失败，账户 ID：", tokens.AccountId, err)
 				continue
 			}
 			l.tokenChan <- &QueryParam{
@@ -171,6 +174,14 @@ func (l *CountryQueryLogic) query(param *QueryParam, page int64) (err error) {
 	}
 	if err = setDataToKafka(l.kafkaProducer, response.Data.List, l.svcCtx.Config.Kafka.Topics.Country); err != nil {
 		log.Println("数据写入 kafka 失败：", err)
+	} else {
+		logMsg := fmt.Sprintf("写入 Topic: %s, 数量: %d 条, 页码: %d, 所属账户: %d",
+			l.svcCtx.Config.Kafka.Topics.Country,
+			len(response.Data.List),
+			page,
+			param.AccountId,
+		)
+		log.Println(logMsg)
 	}
 
 	if response.Data.PageInfo.TotalPage > 1 {
@@ -179,6 +190,8 @@ func (l *CountryQueryLogic) query(param *QueryParam, page int64) (err error) {
 			if err = l.query(param, i); err != nil {
 				fmt.Println("第 ", i, " 页数据拉取出错", err)
 			}
+
+			time.Sleep(time.Millisecond * 500)
 		}
 	}
 
@@ -213,6 +226,5 @@ func setDataToKafka(kfk sarama.SyncProducer, d []*statements.CountryList, kafkaT
 			Value: sarama.ByteEncoder(bs),
 		})
 	}
-	fmt.Println("本次写入数据量：", len(kafkaMsg), "， 写入 Topic：", kafkaTopic)
 	return kfk.SendMessages(kafkaMsg)
 }

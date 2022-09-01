@@ -31,7 +31,7 @@ func (l *PromotionCreateLogic) PromotionCreate(in *marketing.PromotionCreateReq)
 		CampaignId:       in.CampaignId,
 		CampaignName:     in.CampaignName,
 		AccountId:        in.AccountId,
-		AdvertiserId:     "",
+		AdvertiserId:     in.AdvertiserId,
 		ProductType:      in.ProductType,
 		SyncFlowResource: in.SyncFlow,
 		CampaignType:     in.CampaignType,

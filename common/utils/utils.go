@@ -126,7 +126,7 @@ func HttpRequest(host, data, method string, headers map[string]string) ([]byte, 
 
 // RpcError 拆出 RPC 返回的错误
 func RpcError(err error, emptyErrMsg string) error {
-	if IsErrNotFound(err) {
+	if err == nil || IsErrNotFound(err) {
 		return errors.New(emptyErrMsg)
 	} else {
 		errs := strings.Split(err.Error(), "=")

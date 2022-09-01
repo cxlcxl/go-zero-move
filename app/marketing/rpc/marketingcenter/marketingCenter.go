@@ -15,9 +15,15 @@ import (
 type (
 	BaseResp           = marketing.BaseResp
 	PromotionCreateReq = marketing.PromotionCreateReq
+	PromotionInfo      = marketing.PromotionInfo
+	PromotionListReq   = marketing.PromotionListReq
+	PromotionListResp  = marketing.PromotionListResp
+	PromotionUpdateReq = marketing.PromotionUpdateReq
 
 	MarketingCenter interface {
 		PromotionCreate(ctx context.Context, in *PromotionCreateReq, opts ...grpc.CallOption) (*BaseResp, error)
+		PromotionList(ctx context.Context, in *PromotionListReq, opts ...grpc.CallOption) (*PromotionListResp, error)
+		PromotionUpdate(ctx context.Context, in *PromotionUpdateReq, opts ...grpc.CallOption) (*BaseResp, error)
 	}
 
 	defaultMarketingCenter struct {
@@ -34,4 +40,14 @@ func NewMarketingCenter(cli zrpc.Client) MarketingCenter {
 func (m *defaultMarketingCenter) PromotionCreate(ctx context.Context, in *PromotionCreateReq, opts ...grpc.CallOption) (*BaseResp, error) {
 	client := marketing.NewMarketingCenterClient(m.cli.Conn())
 	return client.PromotionCreate(ctx, in, opts...)
+}
+
+func (m *defaultMarketingCenter) PromotionList(ctx context.Context, in *PromotionListReq, opts ...grpc.CallOption) (*PromotionListResp, error) {
+	client := marketing.NewMarketingCenterClient(m.cli.Conn())
+	return client.PromotionList(ctx, in, opts...)
+}
+
+func (m *defaultMarketingCenter) PromotionUpdate(ctx context.Context, in *PromotionUpdateReq, opts ...grpc.CallOption) (*BaseResp, error) {
+	client := marketing.NewMarketingCenterClient(m.cli.Conn())
+	return client.PromotionUpdate(ctx, in, opts...)
 }

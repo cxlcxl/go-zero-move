@@ -14,9 +14,49 @@ message PromotionCreateReq{
   string sync_flow = 7;
   string advertiser_id = 8;
 }
+message PromotionUpdateReq{
+  string campaign_id = 1;
+  string campaign_name = 2;
+  string product_type = 3;
+  int64 daily_budget = 4;
+}
+message PromotionListReq{
+  string campaign_id = 1;
+  string campaign_name = 2;
+  string campaign_type = 3;
+  int64 page = 4;
+  int64 page_size = 5;
+}
+message  PromotionListResp{
+  repeated PromotionInfo promotions = 1;
+  int64 total = 2;
+}
+message PromotionInfo{
+  int64 id = 1;
+  string campaign_id = 2;
+  string campaign_name = 3;
+  int64 account_id = 4;
+  string advertiser_id = 5;
+  string opt_status = 6;
+  string campaign_daily_budget_status = 7;
+  string product_type = 8;
+  string show_status = 9;
+  string user_balance_status = 10;
+  string flow_resource = 11;
+  string sync_flow_resource = 12;
+  string campaign_type = 13;
+  int64 today_daily_budget = 14;
+  int64 tomorrow_daily_budget = 15;
+  string marketing_goal = 16;
+  int64 is_callback = 17;
+  int64 created_at = 18;
+  int64 updated_at = 19;
+}
 
 message BaseResp {}
 
 service MarketingCenter{
   rpc PromotionCreate(PromotionCreateReq) returns(BaseResp);
+  rpc PromotionList(PromotionListReq) returns(PromotionListResp);
+  rpc PromotionUpdate(PromotionUpdateReq) returns(BaseResp);
 }

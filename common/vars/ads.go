@@ -13,6 +13,10 @@ const (
 
 	SyncFlowYes = "YES"
 	SyncFlowNo  = "NO"
+
+	DailyBudgetUpdateToday    = "UPDATE_TODAY_DAILY_BUDGET"
+	DailyBudgetUpdateTomorrow = "UPDATE_TOMORROW_DAILY_BUDGET"
+	DailyBudgetDeleteTomorrow = "DELETE_TOMORROW_DAILY_BUDGET"
 )
 
 var (
@@ -36,5 +40,11 @@ var (
 	SyncFlow = map[string]string{
 		SyncFlowYes: "展示广告网络同时投放到搜索广告网络",
 		SyncFlowNo:  "只投放展示广告网络",
+	}
+	// DailyBudgetOpts 计划日限额操作类型
+	DailyBudgetOpts = map[string]string{
+		DailyBudgetUpdateToday:    "修改当日限额",
+		DailyBudgetUpdateTomorrow: "修改计划限额，次日生效",
+		DailyBudgetDeleteTomorrow: "删除计划次日日限额",
 	}
 )

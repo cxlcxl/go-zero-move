@@ -23,11 +23,7 @@ type Config struct {
 
 	MarketingApis struct {
 		Authorize struct {
-			Refresh     string
-			CodeUrl     string
-			TokenUrl    string
-			RedirectUri string
-			Scope       string
+			Refresh string
 		}
 		Promotion struct {
 			Query  string

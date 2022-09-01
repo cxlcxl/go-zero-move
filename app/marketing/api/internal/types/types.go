@@ -30,7 +30,7 @@ type PromotionListReq struct {
 	PageSize     int64  `form:"page_size"`
 	CampaignName string `form:"campaign_name,optional"`
 	CampaignId   string `form:"campaign_id,optional"`
-	ShowStatus   string `form:"show_status,optional"`
+	CampaignType string `form:"show_status,optional"`
 }
 
 type Promotion struct {
@@ -43,16 +43,27 @@ type Promotion struct {
 	CampaignStatus            string `json:"campaign_status"`              // 操作状态
 	CampaignDailyBudgetStatus string `json:"campaign_daily_budget_status"` // 计划日预算状态
 	ShowStatus                string `json:"show_status"`                  // 计划状态
-	CreatedAt                 int64  `json:"created_at"`                   // 计划创建的时间
 	MarketingGoal             string `json:"marketing_goal"`               //
 	CampaignId                string `json:"campaign_id"`                  // 计划ID
 	TodayDailyBudget          int64  `json:"today_daily_budget"`           // 当日计划日限额
 	TomorrowDailyBudget       int64  `json:"tomorrow_daily_budget"`        // 次日计划日限额，不返回表示与当日计划日限额相同
 	SyncFlowResourceSearchad  string `json:"sync_flow_resource_searchad"`  // 同时同步投放搜索广告网络 YES|NO
+	IsCallback                int64  `json:"is_callback"`
+	CreatedAt                 int64  `json:"created_at"` // 计划创建的时间
+	UpdatedAt                 int64  `json:"updated_at"`
 }
 
 type PromotionListResp struct {
 	BaseResp
-	Total int64        `json:"total"`
-	Data  []*Promotion `json:"data"`
+	Total     int64          `json:"total"`
+	Resources *ListResources `json:"resources"`
+	Data      []*Promotion   `json:"data"`
+}
+
+type ListResources struct {
+	OptStatus       map[string]string `json:"opt_status"`
+	ProductType     map[string]string `json:"product_type"`
+	CampaignType    map[string]string `json:"campaign_type"`
+	SyncFlow        map[string]string `json:"sycn_flow"`
+	DailyBudgetOpts map[string]string `json:"daily_budget_opts"`
 }

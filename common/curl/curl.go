@@ -46,11 +46,11 @@ func (c *Curl) Request(v interface{}, headers ...HeaderHandlers) (err error) {
 	if err != nil {
 		return err
 	}
-	if res.StatusCode != 200 {
-		return errors.New(res.Status)
-	}
 	err = json.Unmarshal(bs, v)
 	if err != nil {
+		if res.StatusCode != 200 {
+			return errors.New(res.Status)
+		}
 		return err
 	}
 	return nil
