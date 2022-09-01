@@ -28,7 +28,6 @@ type CountryQueryLogic struct {
 	statDay       string
 	appMap        map[string]*app
 	kafkaProducer sarama.SyncProducer
-	countryModel  *model.Jobs
 }
 
 type QueryParam struct {
@@ -41,15 +40,15 @@ type app struct {
 	appName string
 }
 
-func NewCountryQueryLogic(ctx context.Context, svcCtx *svc.ServiceContext, job *model.Jobs) *CountryQueryLogic {
+func NewCountryQueryLogic(ctx context.Context, svcCtx *svc.ServiceContext, day string) *CountryQueryLogic {
 	return &CountryQueryLogic{
-		Logger:       logx.WithContext(ctx),
-		ctx:          ctx,
-		svcCtx:       svcCtx,
-		tokenChan:    make(chan *QueryParam),
-		wg:           sync.WaitGroup{},
-		appMap:       map[string]*app{},
-		countryModel: job,
+		Logger:    logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		tokenChan: make(chan *QueryParam),
+		wg:        sync.WaitGroup{},
+		appMap:    map[string]*app{},
+		statDay:   day,
 	}
 }
 
@@ -57,8 +56,6 @@ func (l *CountryQueryLogic) CountryQuery() (err error) {
 	if err = l.getApps(); err != nil {
 		return err
 	}
-	// 任务时间，参数
-	l.statDay = time.Now().AddDate(0, 0, -2).Format("2006-01-02")
 	l.kafkaProducer, err = kfk.NewProducer(l.svcCtx.Config.Kafka.Host)
 	if err != nil {
 		return err

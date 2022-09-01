@@ -2,6 +2,7 @@ package main
 
 import (
 	"business/cronJobs/config"
+	"business/cronJobs/jobs"
 	"business/cronJobs/svc"
 	"business/cronJobs/vars"
 	"context"
@@ -30,13 +31,13 @@ func (s Schedule) TaskScheduling() {
 	c := cron.New()
 	// cron 表达式与 linux 的 crontab 一致：*  *  *  *  *
 	//                           分别对应：分 时 日 月 周
-	jobs, err := vars.SvcCtx.JobModel.GetJobs(context.Background())
+	_jobs, err := vars.SvcCtx.JobModel.GetJobs(context.Background())
 	if err != nil {
 		log.Fatal("调度启动失败", err)
 		return
 	}
 	now := time.Now()
-	for _, job := range jobs {
+	for _, job := range _jobs {
 		if job.PauseRule == -1 {
 			continue
 		}
@@ -44,7 +45,7 @@ func (s Schedule) TaskScheduling() {
 		if job.StatDay.After(pauseDay) {
 			continue
 		}
-		if fn, ok := vars.ScheduleJobs[job.ApiModule]; ok {
+		if fn, ok := jobs.ScheduleJobs[job.ApiModule]; ok {
 			_, err = c.AddFunc(job.JobSchedule, fn)
 		}
 	}

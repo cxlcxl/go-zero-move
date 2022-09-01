@@ -1,16 +1,13 @@
 package vars
 
 import (
-	"business/cronJobs/jobs/country"
 	"business/cronJobs/svc"
 )
 
-type Job func()
+const (
+	DateFormat = "2006-01-02"
+)
 
 var (
 	SvcCtx *svc.ServiceContext
-
-	ScheduleJobs = map[string]Job{
-		"Country": country.Country,
-	}
 )

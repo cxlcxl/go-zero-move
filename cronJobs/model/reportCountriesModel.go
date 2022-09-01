@@ -14,7 +14,7 @@ type (
 	// and implement the added methods in customReportCountriesModel.
 	ReportCountriesModel interface {
 		reportCountriesModel
-		BatchInsertAndLog(ctx context.Context, data []*ReportCountries, adsLog *AdsRequestLogs, hasLog bool) error
+		BatchInsertAndLog(ctx context.Context, data []*ReportCountries) error
 	}
 
 	customReportCountriesModel struct {
@@ -29,7 +29,7 @@ func NewReportCountriesModel(conn sqlx.SqlConn) ReportCountriesModel {
 	}
 }
 
-func (m *defaultReportCountriesModel) BatchInsertAndLog(ctx context.Context, data []*ReportCountries, adsLog *AdsRequestLogs, hasLog bool) (err error) {
+func (m *defaultReportCountriesModel) BatchInsertAndLog(ctx context.Context, data []*ReportCountries) (err error) {
 	query := fmt.Sprintf("insert into %s (%s) values ", m.table, reportCountriesRowsExpectAutoSet)
 	values, valueStatement := make([]interface{}, 0), make([]string, 0)
 	chunk := 1
@@ -61,14 +61,6 @@ func (m *defaultReportCountriesModel) BatchInsertAndLog(ctx context.Context, dat
 			chunk++
 		}
 
-		adsModel := newAdsRequestLogsModel(nil)
-		if hasLog {
-			query = fmt.Sprintf("update %s set %s where `id` = ?", adsModel.table, adsRequestLogsRowsWithPlaceHolder)
-			_, err = session.ExecCtx(ctx, query, adsLog.StatDay, adsLog.ApiModule, adsLog.AccountId, adsLog.RequestJsonBody, adsLog.CurrentRequestPage, adsLog.NextRequestPage, adsLog.IsCompleted, adsLog.TotalPage, adsLog.TotalNum, adsLog.PageSize, adsLog.LastRequestTime, adsLog.Id)
-		} else {
-			query = fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", adsModel.table, adsRequestLogsRowsExpectAutoSet)
-			_, err = session.ExecCtx(ctx, query, adsLog.StatDay, adsLog.ApiModule, adsLog.AccountId, adsLog.RequestJsonBody, adsLog.CurrentRequestPage, adsLog.NextRequestPage, adsLog.IsCompleted, adsLog.TotalPage, adsLog.TotalNum, adsLog.PageSize, adsLog.LastRequestTime)
-		}
 		return err
 	})
 
