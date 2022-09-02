@@ -15,14 +15,19 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AuthMiddleware, serverCtx.PermissionMiddleware},
 			[]rest.Route{
 				{
+					Method:  http.MethodGet,
+					Path:    "/campaign/resources",
+					Handler: campaignResourcesHandler(serverCtx),
+				},
+				{
 					Method:  http.MethodPost,
-					Path:    "/promotion/create",
-					Handler: promotionCreateHandler(serverCtx),
+					Path:    "/campaign/create",
+					Handler: campaignCreateHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodGet,
-					Path:    "/promotion/list",
-					Handler: promotionListHandler(serverCtx),
+					Path:    "/campaign/list",
+					Handler: campaignListHandler(serverCtx),
 				},
 			}...,
 		),

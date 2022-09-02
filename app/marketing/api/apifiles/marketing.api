@@ -1,14 +1,7 @@
 syntax = "v1"
 
 import (
-	"promotion.api"
-)
-
-type (
-	BaseResp {
-		Code int64  `json:"code"`
-		Msg  string `json:"msg"`
-	}
+	"campaign.api"
 )
 
 @server(
@@ -17,11 +10,15 @@ type (
 	middleware : AuthMiddleware,PermissionMiddleware
 )
 service marketing-api {
+	@doc "计划所需资源"
+	@handler campaignResources
+	get /campaign/resources returns(CampaignResources)
+	
 	@doc "创建计划"
-	@handler promotionCreate
-	post /promotion/create (PromotionCreateReq) returns (PromotionCreateResp)
+	@handler campaignCreate
+	post /campaign/create (CampaignCreateReq) returns (CampaignCreateResp)
 	
 	@doc "计划列表"
-	@handler promotionList
-	get /promotion/list (PromotionListReq) returns (PromotionListResp)
+	@handler campaignList
+	get /campaign/list (CampaignListReq) returns (CampaignListResp)
 }

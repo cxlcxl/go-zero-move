@@ -5,13 +5,13 @@ import Layout from "@/layout";
 const marketingRouter = {
   path: "/marketing",
   component: Layout,
-  redirect: "/marketing/promotion",
+  redirect: "/marketing/campaign",
   meta: { title: "广告投放", icon: "el-icon-s-promotion" },
   children: [
     {
-      path: "promotion",
-      name: "PromotionList",
-      component: () => import("@v/marketing/promotion"),
+      path: "campaign",
+      name: "CampaignList",
+      component: () => import("@v/marketing/campaign"),
       meta: { title: "计划列表" },
     },
     {

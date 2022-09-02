@@ -3,33 +3,35 @@ package logic
 import (
 	"business/app/account/rpc/accountcenter"
 	"business/app/marketing/api/internal/statements"
-	"business/app/marketing/api/internal/svc"
-	"business/app/marketing/api/internal/types"
 	"business/app/marketing/rpc/marketingcenter"
 	"business/common/curl"
 	"business/common/utils"
 	"business/common/vars"
 	"context"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
 	"time"
+
+	"business/app/marketing/api/internal/svc"
+	"business/app/marketing/api/internal/types"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type PromotionCreateLogic struct {
+type CampaignCreateLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewPromotionCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PromotionCreateLogic {
-	return &PromotionCreateLogic{
+func NewCampaignCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CampaignCreateLogic {
+	return &CampaignCreateLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *PromotionCreateLogic) PromotionCreate(req *types.PromotionCreateReq) (resp *types.PromotionCreateResp, err error) {
+func (l *CampaignCreateLogic) CampaignCreate(req *types.CampaignCreateReq) (resp *types.CampaignCreateResp, err error) {
 	if err = l.svcCtx.Validator.StructCtx(l.ctx, req); err != nil {
 		return nil, err
 	}
@@ -44,7 +46,7 @@ func (l *PromotionCreateLogic) PromotionCreate(req *types.PromotionCreateReq) (r
 	if token.ExpiredAt <= time.Now().Unix() {
 		return nil, errors.New(vars.ResponseMsg[vars.ResponseCodeTokenExpire])
 	}
-	c, err := curl.New(l.svcCtx.Config.MarketingApis.Promotion.Create).Post().JsonData(statements.PromotionCreate{
+	c, err := curl.New(l.svcCtx.Config.MarketingApis.Promotion.Create).Post().JsonData(statements.CampaignCreate{
 		AdvertiserId: info.AdvertiserId,
 		CampaignName: req.CampaignName,
 		ProductType:  req.ProductType,
@@ -55,7 +57,7 @@ func (l *PromotionCreateLogic) PromotionCreate(req *types.PromotionCreateReq) (r
 	if err != nil {
 		return nil, err
 	}
-	var rs statements.PromotionCreateResp
+	var rs statements.CampaignCreateResp
 	if err = c.Request(&rs, curl.Authorization(token.TokenType+" "+token.AccessToken), curl.JsonHeader()); err != nil {
 		return nil, errors.New("华为 ADS 接口调用失败：" + err.Error())
 	}
@@ -72,7 +74,7 @@ func (l *PromotionCreateLogic) PromotionCreate(req *types.PromotionCreateReq) (r
 	if err != nil {
 		return nil, utils.RpcError(err, "")
 	}
-	return &types.PromotionCreateResp{
+	return &types.CampaignCreateResp{
 		Code: vars.ResponseCodeOk,
 		Msg:  vars.ResponseMsg[vars.ResponseCodeOk],
 		Data: nil,

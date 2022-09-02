@@ -5,7 +5,7 @@ type BaseAdsResp struct {
 	Message string `json:"message"`
 }
 
-type PromotionCreate struct {
+type CampaignCreate struct {
 	AdvertiserId string `json:"advertiser_id"`
 	CampaignName string `json:"campaign_name"`
 	ProductType  string `json:"product_type"`
@@ -14,7 +14,7 @@ type PromotionCreate struct {
 	SyncFlow     string `json:"sync_flow_resource_searchad"`
 }
 
-type PromotionCreateResp struct {
+type CampaignCreateResp struct {
 	*BaseAdsResp
 	Data struct {
 		CampaignId string `json:"campaign_id"`

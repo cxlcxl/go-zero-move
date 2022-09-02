@@ -1,7 +1,9 @@
 syntax = "v1"
 
+import "base.api"
+
 type (
-    PromotionCreateReq {
+    CampaignCreateReq {
         AccountId int64 `json:"account_id"`
         CampaignName string `json:"campaign_name" validate:"required"`                        // 计划名称
         ProductType string `json:"product_type" validate:"required,product_type"`             // 推广产品
@@ -9,30 +11,30 @@ type (
         CampaignType string `json:"campaign_type" validate:"required,campaign_type"`          // 计划类型
         SyncFlow string `json:"sync_flow_resource_searchad"`                                  // 同时同步投放搜索广告网络
     }
-    PromotionCreateInfo {
+    CampaignCreateInfo {
         CampaignId string `json:"campaign_id"`
     }
-    PromotionCreateResp {
+    CampaignCreateResp {
         Code int64 `json:"code"`
         Msg string `json:"msg"`
-        Data *PromotionCreateInfo `json:"data"`
+        Data *CampaignCreateInfo `json:"data"`
     }
 
-    PromotionListReq {
+    CampaignListReq {
         Page int64 `form:"page"`
         PageSize int64 `form:"page_size"`
         CampaignName string `form:"campaign_name,optional"`
         CampaignId string `form:"campaign_id,optional"`
         CampaignType string `form:"show_status,optional"`
     }
-    Promotion {
+    Campaign {
         Id int64 `json:"id"`
         CampaignName string `json:"campaign_name"`                             // 计划名称
         CampaignType string `json:"campaign_type"`                             // 计划类型
         FlowResource string `json:"flow_resource"`                             // 投放网络
         ProductType string `json:"product_type"`                               // 推广产品
         UserBalanceStatus string `json:"user_balance_status"`                  // 账户余额状态
-        CampaignStatus string `json:"campaign_status"`                         // 操作状态
+        OptStatus string `json:"opt_status"`                         // 操作状态
         CampaignDailyBudgetStatus string `json:"campaign_daily_budget_status"` // 计划日预算状态
         ShowStatus string `json:"show_status"`                                 // 计划状态
         MarketingGoal string `json:"marketing_goal"`                           //
@@ -44,17 +46,27 @@ type (
         CreatedAt int64 `json:"created_at"`                                    // 计划创建的时间
         UpdatedAt int64 `json:"updated_at"`
     }
-    PromotionListResp {
+    CampaignListResp {
         BaseResp
-        Total int64 `json:"total"`
-        Resources *ListResources `json:"resources"`
-        Data []*Promotion `json:"data"`
+        Data CampaignListData `json:"data"`
     }
-    ListResources {
+    CampaignListData {
+        Campaigns []*Campaign `json:"campaigns"`
+        Total int64 `json:"total"`
+    }
+    Resources {
         OptStatus map[string]string `json:"opt_status"`
         ProductType map[string]string `json:"product_type"`
         CampaignType map[string]string `json:"campaign_type"`
-        SyncFlow map[string]string `json:"sycn_flow"`
+        SyncFlow map[string]string `json:"sync_flow"`
         DailyBudgetOpts map[string]string `json:"daily_budget_opts"`
+        ShowStatus map[string]string `json:"show_status"`
+        CampaignDaily map[string]string `json:"campaign_daily"`
+        BalanceStatus map[string]string `json:"balance_status"`
+        FlowResource map[string]string `json:"flow_resource"`
+    }
+    CampaignResources {
+        BaseResp
+        Data *Resources `json:"data"`
     }
 )

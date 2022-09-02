@@ -13,21 +13,21 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type PromotionListLogic struct {
+type CampaignListLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewPromotionListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PromotionListLogic {
-	return &PromotionListLogic{
+func NewCampaignListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CampaignListLogic {
+	return &CampaignListLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *PromotionListLogic) PromotionList(req *types.PromotionListReq) (resp *types.PromotionListResp, err error) {
+func (l *CampaignListLogic) CampaignList(req *types.CampaignListReq) (resp *types.CampaignListResp, err error) {
 	list, err := l.svcCtx.MarketingRpcClient.PromotionList(l.ctx, &marketingcenter.PromotionListReq{
 		CampaignId:   req.CampaignId,
 		CampaignName: req.CampaignName,
@@ -38,23 +38,18 @@ func (l *PromotionListLogic) PromotionList(req *types.PromotionListReq) (resp *t
 	if err != nil {
 		return nil, utils.RpcError(err, "")
 	}
-	var promotions []*types.Promotion
-	if err = copier.Copy(&promotions, list.Promotions); err != nil {
+	var campaigns []*types.Campaign
+	if err = copier.Copy(&campaigns, list.Promotions); err != nil {
 		return nil, err
 	}
-	return &types.PromotionListResp{
+	return &types.CampaignListResp{
 		BaseResp: types.BaseResp{
 			Code: vars.ResponseCodeOk,
 			Msg:  vars.ResponseMsg[vars.ResponseCodeOk],
 		},
-		Total: list.Total,
-		Data:  promotions,
-		Resources: &types.ListResources{
-			OptStatus:       vars.OptStatus,
-			ProductType:     vars.ProductType,
-			CampaignType:    vars.CampaignType,
-			SyncFlow:        vars.SyncFlow,
-			DailyBudgetOpts: vars.DailyBudgetOpts,
+		Data: types.CampaignListData{
+			Campaigns: campaigns,
+			Total:     list.Total,
 		},
 	}, nil
 }
