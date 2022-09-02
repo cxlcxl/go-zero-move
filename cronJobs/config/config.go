@@ -21,12 +21,17 @@ type Config struct {
 			CampaignQuery string `yaml:"CampaignQuery"`
 			CountryQuery  string `yaml:"CountryQuery"`
 		} `yaml:"Reports"`
+
+		Promotion struct {
+			Campaign string `yaml:"Campaign"`
+		} `yaml:"Promotion"`
 	} `yaml:"MarketingApis"`
 
 	Kafka struct {
 		Host   string `yaml:"Host"`
 		Topics struct {
-			Country string `yaml:"Country"`
+			Country  string `yaml:"Country"`
+			Campaign string `yaml:"Campaign"`
 		} `yaml:"Topics"`
 	} `yaml:"Kafka"`
 }

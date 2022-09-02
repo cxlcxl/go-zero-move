@@ -39,6 +39,7 @@ type (
 		GetDefaultAccountList(ctx context.Context, in *DefaultListReq, opts ...grpc.CallOption) (*AccountSearchResp, error)
 		GetParentAccountList(ctx context.Context, in *ParentListReq, opts ...grpc.CallOption) (*AccountSearchResp, error)
 		GetToken(ctx context.Context, in *GetTokenReq, opts ...grpc.CallOption) (*TokenInfo, error)
+		RefreshToken(ctx context.Context, in *GetTokenReq, opts ...grpc.CallOption) (*TokenInfo, error)
 		SetToken(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*BaseResp, error)
 	}
 
@@ -101,6 +102,11 @@ func (m *defaultAccountCenter) GetParentAccountList(ctx context.Context, in *Par
 func (m *defaultAccountCenter) GetToken(ctx context.Context, in *GetTokenReq, opts ...grpc.CallOption) (*TokenInfo, error) {
 	client := account.NewAccountCenterClient(m.cli.Conn())
 	return client.GetToken(ctx, in, opts...)
+}
+
+func (m *defaultAccountCenter) RefreshToken(ctx context.Context, in *GetTokenReq, opts ...grpc.CallOption) (*TokenInfo, error) {
+	client := account.NewAccountCenterClient(m.cli.Conn())
+	return client.RefreshToken(ctx, in, opts...)
 }
 
 func (m *defaultAccountCenter) SetToken(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*BaseResp, error) {

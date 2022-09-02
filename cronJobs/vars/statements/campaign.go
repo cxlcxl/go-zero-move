@@ -189,18 +189,44 @@ type CampaignList struct {
 }
 
 type CampaignRequest struct {
-	TimeGranularity string `json:"time_granularity"`
-	StartDate       string `json:"start_date"`
-	EndDate         string `json:"end_date"`
-	IsAbroad        bool   `json:"is_abroad"`
-	Page            int64  `json:"page"`
-	PageSize        int64  `json:"page_size"`
+	Page      int64             `json:"page"`
+	PageSize  int64             `json:"page_size"`
+	Filtering CampaignFiltering `json:"filtering"`
+}
+
+type CampaignFiltering struct {
+	CampaignIds      []string `json:"campaign_ids,optional,omitempty"`
+	UpdatedBeginTime string   `json:"updated_begin_time,optional,omitempty"`
+	UpdatedEndTime   string   `json:"updated_end_time,optional,omitempty"`
 }
 
 type CampaignResponse struct {
 	BaseResponse
 	Data struct {
-		List     []*CampaignList `json:"list"`
-		PageInfo Pages           `json:"page_info"`
+		Data  CampaignQueue `json:"data"`
+		Total int64         `json:"total"`
 	} `json:"data"`
+}
+
+type CampaignQueue []*CampaignInfo
+
+func (q CampaignQueue) GenerateMsg(fn func(interface{})) {
+	for _, campaignData := range q {
+		fn(campaignData)
+	}
+}
+
+type CampaignInfo struct {
+	CampaignName              string `json:"campaign_name"`
+	CreatedTime               string `json:"created_time"`
+	ProductType               string `json:"product_type"`
+	UserBalanceStatus         string `json:"user_balance_status"`
+	CampaignStatus            string `json:"campaign_status"`
+	SyncFlowResourceSearchAd  string `json:"sync_flow_resource_searchad"`
+	CampaignType              string `json:"campaign_type"`
+	FlowResource              string `json:"flow_resource"`
+	CampaignDailyBudgetStatus string `json:"campaign_daily_budget_status"`
+	ShowStatus                string `json:"show_status"`
+	CampaignId                string `json:"campaign_id"`
+	TodayDailyBudget          int    `json:"today_daily_budget"`
 }

@@ -18,15 +18,15 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type CountryQueryLogic struct {
+type CampaignQueryLogic struct {
 	logx.Logger
 	ctx           context.Context
 	svcCtx        *svc.ServiceContext
 	tokenChan     chan *QueryParam
 	wg            sync.WaitGroup
 	statDay       string
-	appMap        map[string]*app
 	kafkaProducer sarama.SyncProducer
+	pageSize      int64
 }
 
 type QueryParam struct {
@@ -34,27 +34,19 @@ type QueryParam struct {
 	AccessToken string
 }
 
-type app struct {
-	appId   string
-	appName string
-}
-
-func NewCountryQueryLogic(ctx context.Context, svcCtx *svc.ServiceContext, day string) *CountryQueryLogic {
-	return &CountryQueryLogic{
+func NewCampaignQueryLogic(ctx context.Context, svcCtx *svc.ServiceContext, day string) *CampaignQueryLogic {
+	return &CampaignQueryLogic{
 		Logger:    logx.WithContext(ctx),
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		tokenChan: make(chan *QueryParam),
 		wg:        sync.WaitGroup{},
-		appMap:    map[string]*app{},
 		statDay:   day,
+		pageSize:  50,
 	}
 }
 
-func (l *CountryQueryLogic) CountryQuery() (err error) {
-	if err = l.getApps(); err != nil {
-		return err
-	}
+func (l *CampaignQueryLogic) CampaignQuery() (err error) {
 	l.kafkaProducer, err = kfk.NewProducer(l.svcCtx.Config.Kafka.Host)
 	if err != nil {
 		return err
@@ -70,7 +62,7 @@ func (l *CountryQueryLogic) CountryQuery() (err error) {
 	return
 }
 
-func (l *CountryQueryLogic) getTokens() {
+func (l *CampaignQueryLogic) getTokens() {
 	list, err := l.svcCtx.TokenModel.GetAccessTokenList(l.ctx)
 	if err != nil {
 		return
@@ -146,38 +138,34 @@ func refresh(ctx context.Context, svcCtx *svc.ServiceContext, token *model.Token
 	return at.AccessToken, nil
 }
 
-func (l *CountryQueryLogic) query(param *QueryParam, page int64) (err error) {
+func (l *CampaignQueryLogic) query(param *QueryParam, page int64) (err error) {
 	defer l.wg.Done()
-	data := statements.CountryRequest{
-		TimeGranularity: statements.StateTimeDaily,
-		StartDate:       l.statDay,
-		EndDate:         l.statDay,
-		Page:            page,
-		PageSize:        l.svcCtx.Config.MarketingApis.PageSize,
-		IsAbroad:        true,
-		OrderType:       statements.OrderAsc,
-		Filtering: statements.Filtering{
-			OtherFilterType: statements.FilterTypeCreative,
+	data := statements.CampaignRequest{
+		Page:     page,
+		PageSize: l.pageSize,
+		Filtering: statements.CampaignFiltering{
+			UpdatedBeginTime: l.statDay + " 00:00:00",
+			UpdatedEndTime:   l.statDay + " 23:59:59",
 		},
 	}
-	var response statements.CountryResponse
-	url := l.svcCtx.Config.MarketingApis.Reports.CountryQuery
-	c, err := curl.New(url).Post().JsonData(data)
+	var response statements.CampaignResponse
+	c, err := curl.New(l.svcCtx.Config.MarketingApis.Promotion.Campaign).Get().JsonData(data)
 	if err != nil {
 		return err
 	}
-	if err = c.Request(&response); err != nil {
+	if err = c.Request(&response, curl.Authorization(param.AccessToken)); err != nil {
 		return err
 	}
-	if response.Code != "0" {
+	if response.Code != "200" {
 		return errors.New(response.Message)
 	}
-	if err = jobs.SetDataToKafka(l.kafkaProducer, response.Data.List, l.svcCtx.Config.Kafka.Topics.Country); err != nil {
+
+	if err = jobs.SetDataToKafka(l.kafkaProducer, response.Data.Data, l.svcCtx.Config.Kafka.Topics.Campaign); err != nil {
 		log.Println("数据写入 kafka 失败：", err)
 	} else {
 		logMsg := fmt.Sprintf("写入 Topic: %s, 数量: %d 条, 页码: %d, 所属账户: %d",
-			l.svcCtx.Config.Kafka.Topics.Country,
-			len(response.Data.List),
+			l.svcCtx.Config.Kafka.Topics.Campaign,
+			response.Data.Total,
 			page,
 			param.AccountId,
 		)
@@ -187,9 +175,11 @@ func (l *CountryQueryLogic) query(param *QueryParam, page int64) (err error) {
 	if page > 1 {
 		return
 	}
-	if response.Data.PageInfo.TotalPage > 1 {
+
+	sumPages := ceil(response.Data.Total, l.pageSize)
+	if sumPages > 1 {
 		var i int64 = 2
-		for ; i <= response.Data.PageInfo.TotalPage; i++ {
+		for ; i <= sumPages; i++ {
 			if err = l.query(param, i); err != nil {
 				fmt.Println("第 ", i, " 页数据拉取出错", err)
 			}
@@ -201,17 +191,13 @@ func (l *CountryQueryLogic) query(param *QueryParam, page int64) (err error) {
 	return nil
 }
 
-func (l *CountryQueryLogic) getApps() error {
-	list, err := l.svcCtx.AppModel.GetApps(l.ctx)
-	if err != nil {
-		return err
+func ceil(num, pageSize int64) int64 {
+	if num < pageSize {
+		return 0
 	}
-	for _, _app := range list {
-		l.appMap[_app.PkgName] = &app{
-			appId:   _app.AppId,
-			appName: _app.AppName,
-		}
+	var d int64 = 0
+	if num%pageSize > 0 {
+		d = 1
 	}
-
-	return nil
+	return num/pageSize + d
 }

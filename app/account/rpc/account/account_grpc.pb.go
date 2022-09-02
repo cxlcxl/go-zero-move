@@ -32,6 +32,7 @@ type AccountCenterClient interface {
 	GetDefaultAccountList(ctx context.Context, in *DefaultListReq, opts ...grpc.CallOption) (*AccountSearchResp, error)
 	GetParentAccountList(ctx context.Context, in *ParentListReq, opts ...grpc.CallOption) (*AccountSearchResp, error)
 	GetToken(ctx context.Context, in *GetTokenReq, opts ...grpc.CallOption) (*TokenInfo, error)
+	RefreshToken(ctx context.Context, in *GetTokenReq, opts ...grpc.CallOption) (*TokenInfo, error)
 	SetToken(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*BaseResp, error)
 }
 
@@ -133,6 +134,15 @@ func (c *accountCenterClient) GetToken(ctx context.Context, in *GetTokenReq, opt
 	return out, nil
 }
 
+func (c *accountCenterClient) RefreshToken(ctx context.Context, in *GetTokenReq, opts ...grpc.CallOption) (*TokenInfo, error) {
+	out := new(TokenInfo)
+	err := c.cc.Invoke(ctx, "/account.AccountCenter/RefreshToken", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *accountCenterClient) SetToken(ctx context.Context, in *TokenInfo, opts ...grpc.CallOption) (*BaseResp, error) {
 	out := new(BaseResp)
 	err := c.cc.Invoke(ctx, "/account.AccountCenter/SetToken", in, out, opts...)
@@ -156,6 +166,7 @@ type AccountCenterServer interface {
 	GetDefaultAccountList(context.Context, *DefaultListReq) (*AccountSearchResp, error)
 	GetParentAccountList(context.Context, *ParentListReq) (*AccountSearchResp, error)
 	GetToken(context.Context, *GetTokenReq) (*TokenInfo, error)
+	RefreshToken(context.Context, *GetTokenReq) (*TokenInfo, error)
 	SetToken(context.Context, *TokenInfo) (*BaseResp, error)
 	mustEmbedUnimplementedAccountCenterServer()
 }
@@ -193,6 +204,9 @@ func (UnimplementedAccountCenterServer) GetParentAccountList(context.Context, *P
 }
 func (UnimplementedAccountCenterServer) GetToken(context.Context, *GetTokenReq) (*TokenInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetToken not implemented")
+}
+func (UnimplementedAccountCenterServer) RefreshToken(context.Context, *GetTokenReq) (*TokenInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RefreshToken not implemented")
 }
 func (UnimplementedAccountCenterServer) SetToken(context.Context, *TokenInfo) (*BaseResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetToken not implemented")
@@ -390,6 +404,24 @@ func _AccountCenter_GetToken_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AccountCenter_RefreshToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTokenReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountCenterServer).RefreshToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/account.AccountCenter/RefreshToken",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountCenterServer).RefreshToken(ctx, req.(*GetTokenReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _AccountCenter_SetToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TokenInfo)
 	if err := dec(in); err != nil {
@@ -454,6 +486,10 @@ var AccountCenter_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetToken",
 			Handler:    _AccountCenter_GetToken_Handler,
+		},
+		{
+			MethodName: "RefreshToken",
+			Handler:    _AccountCenter_RefreshToken_Handler,
 		},
 		{
 			MethodName: "SetToken",

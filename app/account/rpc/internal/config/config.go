@@ -19,4 +19,8 @@ type Config struct {
 	}
 
 	Cache cache.CacheConf
+
+	MarketingApis struct {
+		Refresh string
+	}
 }

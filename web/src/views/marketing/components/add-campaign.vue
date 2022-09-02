@@ -5,9 +5,9 @@
         <el-input v-model="campaignForm.campaign_name" placeholder="不能使用“^”,“|”，换行符；最大长度不得超过100；计划名称不得重复"/>
       </el-form-item>
       <el-form-item label="选择账户" prop="account_id">
-        <el-select v-model="campaignForm.account_id" remote filterable placeholder="可输入名称查询" @change="handleChangeAccount"
+        <el-select v-model="campaignForm.account_id" remote filterable placeholder="可输入名称查询"
                    :remote-method="remoteMethod" :loading="remoteLoading" style="width: 100%;">
-          <el-option v-for="item in accounts" :label="item.account_name" :value="Number(item.id)"/>
+          <el-option v-for="item in accounts" :label="item.account_name" :value="Number(item.id)" v-if="Number(item.is_auth) === 1"/>
         </el-select>
       </el-form-item>
       <el-form-item label="推广产品" prop="product_type">
@@ -131,9 +131,6 @@
         } else {
           this.options = [];
         }
-      },
-      handleChangeAccount(id) {
-        console.log(id)
       }
     }
   }

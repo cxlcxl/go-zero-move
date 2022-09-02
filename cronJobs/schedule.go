@@ -19,7 +19,7 @@ func main() {
 	flag.Parse()
 
 	var c config.Config
-	if err := config.Unmarshal("etc/country.yaml", &c); err != nil {
+	if err := config.Unmarshal("etc/jobs.yaml", &c); err != nil {
 		log.Fatal(err)
 		return
 	}

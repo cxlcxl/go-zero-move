@@ -44,7 +44,10 @@ func (l *CampaignCreateLogic) CampaignCreate(req *types.CampaignCreateReq) (resp
 		return nil, utils.RpcError(err, "账户信息请求错误")
 	}
 	if token.ExpiredAt <= time.Now().Unix() {
-		return nil, errors.New(vars.ResponseMsg[vars.ResponseCodeTokenExpire])
+		token, err = l.svcCtx.AccountRpcClient.RefreshToken(l.ctx, &accountcenter.GetTokenReq{AccountId: req.AccountId})
+		if err != nil {
+			return nil, utils.RpcError(err, "数据异常")
+		}
 	}
 	c, err := curl.New(l.svcCtx.Config.MarketingApis.Promotion.Create).Post().JsonData(statements.CampaignCreate{
 		AdvertiserId: info.AdvertiserId,

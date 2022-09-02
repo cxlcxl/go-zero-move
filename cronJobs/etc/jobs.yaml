@@ -6,6 +6,7 @@ Kafka:
   Host: "192.168.120.62:9092"
   Topics:
     Country: "business_ads_country"
+    Campaign: "business_ads_campaign"
 
 MarketingApis:
   PageSize: 500
@@ -13,4 +14,5 @@ MarketingApis:
   Reports:
     CampaignQuery: "https://ads-dra.cloud.huawei.com/openapi/v2/reports/campaign/query"
     CountryQuery: "https://ads-dra.cloud.huawei.com/openapi/v2/reports/country/query"
-
+  Promotion:
+    Campaign: "https://ads-dra.cloud.huawei.com/ads/v1/promotion/campaign/query"

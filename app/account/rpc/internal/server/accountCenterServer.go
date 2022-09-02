@@ -72,6 +72,11 @@ func (s *AccountCenterServer) GetToken(ctx context.Context, in *account.GetToken
 	return l.GetToken(in)
 }
 
+func (s *AccountCenterServer) RefreshToken(ctx context.Context, in *account.GetTokenReq) (*account.TokenInfo, error) {
+	l := logic.NewRefreshTokenLogic(ctx, s.svcCtx)
+	return l.RefreshToken(in)
+}
+
 func (s *AccountCenterServer) SetToken(ctx context.Context, in *account.TokenInfo) (*account.BaseResp, error) {
 	l := logic.NewSetTokenLogic(ctx, s.svcCtx)
 	return l.SetToken(in)

@@ -27,6 +27,18 @@ func NewRefreshTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Refr
 }
 
 func (l *RefreshTokenLogic) RefreshToken(req *types.RefreshTokenReq) (resp *types.BaseResp, err error) {
+	_, err = l.svcCtx.AccountRpcClient.RefreshToken(l.ctx, &accountcenter.GetTokenReq{AccountId: req.Id})
+	if err != nil {
+		return nil, utils.RpcError(err, "请检查用户是否填写完整 ClientId 信息")
+	}
+
+	return &types.BaseResp{
+		Code: vars.ResponseCodeOk,
+		Msg:  vars.ResponseMsg[vars.ResponseCodeOk],
+	}, nil
+}
+
+func (l *RefreshTokenLogic) refreshBak(req *types.RefreshTokenReq) (resp *types.BaseResp, err error) {
 	token, err := l.svcCtx.AccountRpcClient.GetToken(l.ctx, &accountcenter.GetTokenReq{AccountId: req.Id})
 	if err != nil {
 		return nil, utils.RpcError(err, "此 ClientId 尚未进行认证，请先认证")

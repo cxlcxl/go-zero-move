@@ -30,8 +30,8 @@ type Filtering struct {
 type CountryResponse struct {
 	BaseResponse
 	Data struct {
-		List     []*CountryList `json:"list"`
-		PageInfo Pages          `json:"page_info"`
+		List     CountryQueue `json:"list"`
+		PageInfo Pages        `json:"page_info"`
 	} `json:"data"`
 }
 
@@ -79,4 +79,12 @@ type CountryList struct {
 	ThirtyRoi             string `json:"ad_income_thirty_day_roi"`
 	FifteenRoi            string `json:"ad_income_fifteen_day_roi"`
 	LtvHms                string `json:"ad_income_seven_day_ltv_hms"`
+}
+
+type CountryQueue []*CountryList
+
+func (q CountryQueue) GenerateMsg(fn func(interface{})) {
+	for _, countryData := range q {
+		fn(countryData)
+	}
 }

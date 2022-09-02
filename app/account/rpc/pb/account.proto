@@ -93,5 +93,6 @@ service AccountCenter {
   rpc GetDefaultAccountList(DefaultListReq) returns(AccountSearchResp);
   rpc GetParentAccountList(ParentListReq) returns(AccountSearchResp);
   rpc GetToken(GetTokenReq) returns(TokenInfo);
+  rpc RefreshToken(GetTokenReq) returns(TokenInfo);
   rpc SetToken(TokenInfo) returns(BaseResp);
 }

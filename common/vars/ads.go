@@ -1,5 +1,15 @@
 package vars
 
+type AdsAccessTokenResponse struct {
+	Error            int64  `json:"error"`
+	ErrorDescription string `json:"error_description"`
+	AccessToken      string `json:"access_token"`
+	ExpiresIn        int64  `json:"expires_in"`
+	RefreshToken     string `json:"refresh_token"`
+	Scope            string `json:"scope"`
+	TokenType        string `json:"token_type"`
+}
+
 const (
 	OptStatusEnable  = "OPERATION_STATUS_ENABLE"
 	OptStatusDisable = "OPERATION_STATUS_DISABLE"
