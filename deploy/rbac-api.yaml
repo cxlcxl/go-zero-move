@@ -1,39 +1,39 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: account-rpc
+  name: rbac-api
   namespace: business
   labels:
-    app: account-rpc
+    app: rbac-api
 spec:
   replicas: 1
   revisionHistoryLimit: 5
   selector:
     matchLabels:
-      app: account-rpc
+      app: rbac-api
   template:
     metadata:
       labels:
-        app: account-rpc
+        app: rbac-api
     spec:
-      serviceAccountName: find-endpoints
+      serviceAccountName: business
       containers:
-      - name: account-rpc
-        image: silentcxl/account-rpc:v1.0.0
+      - name: rbac-api
+        image: silentcxl/rbac-api:v1.0.1
         lifecycle:
           preStop:
             exec:
               command: ["sh","-c","sleep 5"]
         ports:
-        - containerPort: 28002
+        - containerPort: 18001
         readinessProbe:
           tcpSocket:
-            port: 28002
+            port: 18001
           initialDelaySeconds: 5
           periodSeconds: 10
         livenessProbe:
           tcpSocket:
-            port: 28002
+            port: 18001
           initialDelaySeconds: 15
           periodSeconds: 20
         resources:
@@ -56,28 +56,32 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: account-rpc-svc
+  name: rbac-api-svc
   namespace: business
 spec:
   ports:
-    - port: 28002
+    - nodePort: 30010
+      port: 18001
+      protocol: TCP
+      targetPort: 18001
+  type: NodePort
   selector:
-    app: account-rpc
+    app: rbac-api
 
 ---
 
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: account-rpc-hpa-c
+  name: rbac-api-hpa-c
   namespace: business
   labels:
-    app: account-rpc-hpa-c
+    app: rbac-api-hpa-c
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: account-rpc
+    name: rbac-api
   minReplicas: 1
   maxReplicas: 3
   metrics:
@@ -91,15 +95,15 @@ spec:
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: account-rpc-hpa-m
+  name: rbac-api-hpa-m
   namespace: business
   labels:
-    app: account-rpc-hpa-m
+    app: rbac-api-hpa-m
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: account-rpc
+    name: rbac-api
   minReplicas: 1
   maxReplicas: 3
   metrics:

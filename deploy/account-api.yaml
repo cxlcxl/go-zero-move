@@ -1,39 +1,39 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: app-rpc
+  name: account-api
   namespace: business
   labels:
-    app: app-rpc
+    app: account-api
 spec:
   replicas: 1
   revisionHistoryLimit: 5
   selector:
     matchLabels:
-      app: app-rpc
+      app: account-api
   template:
     metadata:
       labels:
-        app: app-rpc
+        app: account-api
     spec:
-      serviceAccountName: find-endpoints
+      serviceAccountName: business
       containers:
-      - name: app-rpc
-        image: silentcxl/app-rpc:v1.0.0
+      - name: account-api
+        image: silentcxl/account-api:v1.0.0
         lifecycle:
           preStop:
             exec:
               command: ["sh","-c","sleep 5"]
         ports:
-        - containerPort: 28003
+        - containerPort: 18002
         readinessProbe:
           tcpSocket:
-            port: 28003
+            port: 18002
           initialDelaySeconds: 5
           periodSeconds: 10
         livenessProbe:
           tcpSocket:
-            port: 28003
+            port: 18002
           initialDelaySeconds: 15
           periodSeconds: 20
         resources:
@@ -56,28 +56,32 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: app-rpc-svc
+  name: account-api-svc
   namespace: business
 spec:
   ports:
-    - port: 28003
+    - nodePort: 30020
+      port: 18002
+      protocol: TCP
+      targetPort: 18002
+  type: NodePort
   selector:
-    app: app-rpc
+    app: account-api
 
 ---
 
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: app-rpc-hpa-c
+  name: account-api-hpa-c
   namespace: business
   labels:
-    app: app-rpc-hpa-c
+    app: account-api-hpa-c
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: app-rpc
+    name: account-api
   minReplicas: 1
   maxReplicas: 3
   metrics:
@@ -91,15 +95,15 @@ spec:
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: app-rpc-hpa-m
+  name: account-api-hpa-m
   namespace: business
   labels:
-    app: app-rpc-hpa-m
+    app: account-api-hpa-m
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: app-rpc
+    name: account-api
   minReplicas: 1
   maxReplicas: 3
   metrics:

@@ -64,6 +64,9 @@ func (l *CampaignCreateLogic) CampaignCreate(req *types.CampaignCreateReq) (resp
 	if err = c.Request(&rs, curl.Authorization(token.TokenType+" "+token.AccessToken), curl.JsonHeader()); err != nil {
 		return nil, errors.New("华为 ADS 接口调用失败：" + err.Error())
 	}
+	if rs.Code != "200" {
+		return nil, errors.New("华为 ADS 接口调用失败：" + rs.Message)
+	}
 	_, err = l.svcCtx.MarketingRpcClient.PromotionCreate(l.ctx, &marketingcenter.PromotionCreateReq{
 		CampaignId:   rs.Data.CampaignId,
 		CampaignName: req.CampaignName,

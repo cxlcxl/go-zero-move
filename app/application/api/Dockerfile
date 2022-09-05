@@ -14,8 +14,8 @@ ADD go.mod .
 ADD go.sum .
 RUN go mod download
 COPY . .
-COPY app/rbac/rpc/etc /app/etc
-RUN go build -ldflags="-s -w" -o /app/rbac app/rbac/rpc/rbac.go
+COPY app/application/api/etc /app/etc
+RUN go build -ldflags="-s -w" -o /app/app app/application/api/app.go
 
 
 FROM scratch
@@ -25,7 +25,7 @@ COPY --from=builder /usr/share/zoneinfo/Asia/Shanghai /usr/share/zoneinfo/Asia/S
 ENV TZ Asia/Shanghai
 
 WORKDIR /app
-COPY --from=builder /app/rbac /app/rbac
+COPY --from=builder /app/app /app/app
 COPY --from=builder /app/etc /app/etc
 
-CMD ["./rbac", "-f", "etc/rbac.dev.yaml"]
+CMD ["./app", "-f", "etc/app-api.test.yaml"]

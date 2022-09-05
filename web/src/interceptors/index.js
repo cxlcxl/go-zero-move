@@ -19,7 +19,7 @@ export function responseSuccessful(response) {
 
 export function responseError(error) {
   const err = error.response;
-  if (err.status === 401) {
+  if (err.hasOwnProperty(status) && err.status === 401) {
     removeToken()
     Message({
       message: "登陆信息已过期，请刷新页面重新登录",
@@ -41,7 +41,7 @@ export function responseError(error) {
 
 export function requestConfigs(config) {
   if (store.getters.token) {
-    config.headers["Authorization"] = "Bearer " + getToken();
+    config.headers["Authorization"] = 'Bearer ' + getToken();
   }
   return config;
 }

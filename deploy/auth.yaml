@@ -13,7 +13,7 @@ metadata:
   name: discov-business
 rules:
 - apiGroups: [""]
-  resources: [""] # endpoints
+  resources: ["endpoints"] # endpoints
   verbs: ["get","list","watch"]
 
 ---

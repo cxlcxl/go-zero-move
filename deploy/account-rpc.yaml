@@ -1,39 +1,39 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rbac-rpc
+  name: account-rpc
   namespace: business
   labels:
-    app: rbac-rpc
+    app: account-rpc
 spec:
   replicas: 1
   revisionHistoryLimit: 5
   selector:
     matchLabels:
-      app: rbac-rpc
+      app: account-rpc
   template:
     metadata:
       labels:
-        app: rbac-rpc
+        app: account-rpc
     spec:
-      serviceAccountName: find-endpoints
+      serviceAccountName: business
       containers:
-      - name: rbac-rpc
-        image: silentcxl/rbac-rpc:v1.0.0
+      - name: account-rpc
+        image: silentcxl/account-rpc:v1.0.0
         lifecycle:
           preStop:
             exec:
               command: ["sh","-c","sleep 5"]
         ports:
-        - containerPort: 28001
+        - containerPort: 28002
         readinessProbe:
           tcpSocket:
-            port: 28001
+            port: 28002
           initialDelaySeconds: 5
           periodSeconds: 10
         livenessProbe:
           tcpSocket:
-            port: 28001
+            port: 28002
           initialDelaySeconds: 15
           periodSeconds: 20
         resources:
@@ -56,28 +56,28 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: rbac-rpc-svc
+  name: account-rpc-svc
   namespace: business
 spec:
   ports:
-    - port: 28001
+    - port: 28002
   selector:
-    app: rbac-rpc
+    app: account-rpc
 
 ---
 
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: rbac-rpc-hpa-c
+  name: account-rpc-hpa-c
   namespace: business
   labels:
-    app: rbac-rpc-hpa-c
+    app: account-rpc-hpa-c
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: rbac-rpc
+    name: account-rpc
   minReplicas: 1
   maxReplicas: 3
   metrics:
@@ -91,15 +91,15 @@ spec:
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: rbac-rpc-hpa-m
+  name: account-rpc-hpa-m
   namespace: business
   labels:
-    app: rbac-rpc-hpa-m
+    app: account-rpc-hpa-m
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: rbac-rpc
+    name: account-rpc
   minReplicas: 1
   maxReplicas: 3
   metrics:

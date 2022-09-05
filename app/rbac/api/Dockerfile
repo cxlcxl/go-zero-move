@@ -15,7 +15,7 @@ ADD go.sum .
 RUN go mod download
 COPY . .
 COPY app/rbac/api/etc /app/etc
-RUN go build -ldflags="-s -w" -o /app/rbac app/rbac/api/.\rbac.go
+RUN go build -ldflags="-s -w" -o /app/rbac app/rbac/api/rbac.go
 
 FROM scratch
 

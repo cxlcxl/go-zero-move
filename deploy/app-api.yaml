@@ -1,39 +1,39 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: account-api
+  name: app-api
   namespace: business
   labels:
-    app: account-api
+    app: app-api
 spec:
   replicas: 1
   revisionHistoryLimit: 5
   selector:
     matchLabels:
-      app: account-api
+      app: app-api
   template:
     metadata:
       labels:
-        app: account-api
+        app: app-api
     spec:
-      serviceAccountName: find-endpoints
+      serviceAccountName: business
       containers:
-      - name: account-api
-        image: silentcxl/account-api:v1.0.0
+      - name: app-api
+        image: silentcxl/app-api:v1.0.0
         lifecycle:
           preStop:
             exec:
               command: ["sh","-c","sleep 5"]
         ports:
-        - containerPort: 18002
+        - containerPort: 18003
         readinessProbe:
           tcpSocket:
-            port: 18002
+            port: 18003
           initialDelaySeconds: 5
           periodSeconds: 10
         livenessProbe:
           tcpSocket:
-            port: 18002
+            port: 18003
           initialDelaySeconds: 15
           periodSeconds: 20
         resources:
@@ -56,32 +56,32 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: account-api-svc
+  name: app-api-svc
   namespace: business
 spec:
   ports:
-    - nodePort: 30020
-      port: 18002
+    - nodePort: 30030
+      port: 18003
       protocol: TCP
-      targetPort: 18002
+      targetPort: 18003
   type: NodePort
   selector:
-    app: account-api
+    app: app-api
 
 ---
 
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: account-api-hpa-c
+  name: app-api-hpa-c
   namespace: business
   labels:
-    app: account-api-hpa-c
+    app: app-api-hpa-c
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: account-api
+    name: app-api
   minReplicas: 1
   maxReplicas: 3
   metrics:
@@ -95,15 +95,15 @@ spec:
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: account-api-hpa-m
+  name: app-api-hpa-m
   namespace: business
   labels:
-    app: account-api-hpa-m
+    app: app-api-hpa-m
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: account-api
+    name: app-api
   minReplicas: 1
   maxReplicas: 3
   metrics:

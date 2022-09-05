@@ -1,7 +1,7 @@
 package statements
 
 type BaseAdsResp struct {
-	Code    int64  `json:"code"`
+	Code    string `json:"code"`
 	Message string `json:"message"`
 }
 
@@ -15,7 +15,7 @@ type CampaignCreate struct {
 }
 
 type CampaignCreateResp struct {
-	*BaseAdsResp
+	BaseAdsResp
 	Data struct {
 		CampaignId string `json:"campaign_id"`
 	} `json:"data"`
