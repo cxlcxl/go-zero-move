@@ -3,17 +3,17 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   namespace: business
-  name: find-endpoints
+  name: business
 
 ---
 #创建角色对应操作
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: discov-endpoints
+  name: discov-business
 rules:
 - apiGroups: [""]
-  resources: ["endpoints"]
+  resources: [""] # endpoints
   verbs: ["get","list","watch"]
 
 ---
@@ -21,12 +21,12 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: find-endpoints-discov-endpoints
+  name: find-business-discov-business
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: discov-endpoints
+  name: discov-business
 subjects:
 - kind: ServiceAccount
-  name: find-endpoints
+  name: business
   namespace: business

@@ -3,6 +3,7 @@ package jobs
 import (
 	"business/cronJobs/jobs/campaign"
 	"business/cronJobs/jobs/country"
+	"business/cronJobs/vars/statements"
 	"encoding/json"
 	"github.com/Shopify/sarama"
 )
@@ -21,8 +22,8 @@ type Job func()
 
 var (
 	ScheduleJobs = map[string]Job{
-		"Country":  country.Country,
-		"Campaign": campaign.Campaign,
+		statements.ApiModuleCountry:  country.Country,
+		statements.ApiModuleCampaign: campaign.Campaign,
 	}
 )
 

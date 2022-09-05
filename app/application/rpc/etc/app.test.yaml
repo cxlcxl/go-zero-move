@@ -1,0 +1,16 @@
+Name: app.client
+ListenOn: 0.0.0.0:28003
+
+Database:
+  Driver: "mysql"
+  Host: "192.168.120.61"
+  Port: 3306
+  User: "root"
+  Pass: "root"
+  DbName: "business"
+  Charset: "utf8mb4"
+
+Cache:
+  - Host: "192.168.120.61:6379"
+    Type: "node"
+    Pass: ""

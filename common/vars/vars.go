@@ -3,6 +3,7 @@ package vars
 const (
 	MaxPageSize    uint64 = 100
 	SysCachePrefix string = "business:cache:"
+	Env            string = "dev"
 )
 
 const (

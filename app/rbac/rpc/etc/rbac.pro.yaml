@@ -1,4 +1,4 @@
-Name: rbac.client
+Name: rbac.rpc
 ListenOn: 0.0.0.0:28001
 Mode: dev
 

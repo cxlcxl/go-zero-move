@@ -8,3 +8,4 @@ web/node_modules/
 web/node_modules/*
 web/node_modules
 *.dev.yaml
+*.pro.yaml

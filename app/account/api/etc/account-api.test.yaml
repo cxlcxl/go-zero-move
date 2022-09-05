@@ -1,0 +1,24 @@
+Name: account-api
+Host: 0.0.0.0
+Port: 18002
+
+Auth:
+  AccessSecret: "ADS_BUSINESS"
+  Expire: 259200 # 秒
+
+AccountRpcClient:
+  #Target: "k8s://business/account-rpc-svc:28002"
+  Endpoints:
+    - "127.0.0.1:28002"
+
+Redis:
+  Host: "192.168.0.101:6379"
+  Pass:
+
+MarketingApis:
+  Authorize:
+    CodeUrl: "https://login.cloud.huawei.com/oauth2/v2/authorize"
+    TokenUrl: "https://login.cloud.huawei.com/oauth2/v2/token"
+    RedirectUri: "http://localhost:19527/#/marketing/callback"
+    Refresh: "https://oauth-login.cloud.huawei.com/oauth2/v2/token"
+    Scope: "https://ads.cloud.huawei.com/promotion https://ads.cloud.huawei.com/report"

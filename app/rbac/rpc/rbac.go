@@ -6,6 +6,7 @@ import (
 	"business/app/rbac/rpc/internal/server"
 	"business/app/rbac/rpc/internal/svc"
 	"business/app/rbac/rpc/rbac"
+	"business/common/vars"
 	"flag"
 	"fmt"
 	"github.com/zeromicro/go-zero/core/conf"
@@ -15,7 +16,7 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-var configFile = flag.String("f", "etc/rbac.yaml", "the config file")
+var configFile = flag.String("f", "etc/rbac."+vars.Env+".yaml", "the config file")
 
 func main() {
 	flag.Parse()

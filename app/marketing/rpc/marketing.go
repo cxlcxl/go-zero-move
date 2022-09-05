@@ -1,6 +1,7 @@
 package main
 
 import (
+	"business/common/vars"
 	"flag"
 	"fmt"
 
@@ -16,7 +17,7 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-var configFile = flag.String("f", "etc/marketing.yaml", "the config file")
+var configFile = flag.String("f", "etc/marketing."+vars.Env+".yaml", "the config file")
 
 func main() {
 	flag.Parse()

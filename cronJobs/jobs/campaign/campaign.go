@@ -3,6 +3,7 @@ package campaign
 import (
 	"business/cronJobs/jobs/campaign/logic"
 	"business/cronJobs/vars"
+	"business/cronJobs/vars/statements"
 	"context"
 	"fmt"
 	"log"
@@ -13,7 +14,7 @@ func Campaign() {
 	fmt.Println("================= campaign job start ==================")
 
 	ctx := context.Background()
-	job, err := vars.SvcCtx.JobModel.FindOneByApiModule(ctx, "Campaign")
+	job, err := vars.SvcCtx.JobModel.FindOneByApiModule(ctx, statements.ApiModuleCampaign)
 	if err != nil {
 		log.Fatal("调度模块查询错误：", err)
 		return
