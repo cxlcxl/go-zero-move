@@ -4,6 +4,9 @@ const (
 	MaxPageSize    uint64 = 100
 	SysCachePrefix string = "business:cache:"
 	Env            string = "dev"
+
+	ApiModuleCountry  = "Country"
+	ApiModuleCampaign = "Campaign"
 )
 
 const (
@@ -76,5 +79,10 @@ var (
 	AppType = map[int]string{
 		AppAppTypeA: "A",
 		AppAppTypeB: "B",
+	}
+	// CronModules 调度模块 - 与 cronJobs 模块保持一致
+	CronModules = map[string]string{
+		ApiModuleCountry:  "国家/地区数据",
+		ApiModuleCampaign: "计划数据",
 	}
 )

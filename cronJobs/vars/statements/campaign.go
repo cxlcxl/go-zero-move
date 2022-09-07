@@ -1,9 +1,5 @@
 package statements
 
-const (
-	ApiModuleCampaign = "Campaign"
-)
-
 type CampaignList struct {
 	CommentCount                      int     `json:"comment_count"`
 	AchievementUnlockedCost           string  `json:"achievement_unlocked_cost"`

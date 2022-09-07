@@ -2,11 +2,12 @@ package main
 
 import (
 	"business/cronJobs/config"
-	"business/cronJobs/jobs"
 	"business/cronJobs/svc"
 	"business/cronJobs/vars"
+	"business/cronJobs/vars/scripts"
 	"context"
 	"flag"
+	"fmt"
 	"github.com/robfig/cron/v3"
 	"log"
 	"time"
@@ -19,7 +20,7 @@ func main() {
 	flag.Parse()
 
 	var c config.Config
-	if err := config.Unmarshal("etc/jobs.yaml", &c); err != nil {
+	if err := config.Unmarshal("etc/jobs."+vars.Env+".yaml", &c); err != nil {
 		log.Fatal(err)
 		return
 	}
@@ -45,8 +46,10 @@ func (s Schedule) TaskScheduling() {
 		if job.StatDay.After(pauseDay) {
 			continue
 		}
-		if fn, ok := jobs.ScheduleJobs[job.ApiModule]; ok {
-			_, err = c.AddFunc(job.JobSchedule, fn)
+		if fn, ok := scripts.ScheduleJobs[job.ApiModule]; ok {
+			if _, err = c.AddFunc(job.JobSchedule, fn); err != nil {
+				fmt.Println(job.JobSchedule, " 添加调度失败：", err)
+			}
 		}
 	}
 

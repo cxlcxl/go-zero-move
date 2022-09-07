@@ -1,9 +1,6 @@
 package jobs
 
 import (
-	"business/cronJobs/jobs/campaign"
-	"business/cronJobs/jobs/country"
-	"business/cronJobs/vars/statements"
 	"encoding/json"
 	"github.com/Shopify/sarama"
 )
@@ -17,15 +14,6 @@ type AccessToken struct {
 	Scope            string `json:"scope"`
 	TokenType        string `json:"token_type"`
 }
-
-type Job func()
-
-var (
-	ScheduleJobs = map[string]Job{
-		statements.ApiModuleCountry:  country.Country,
-		statements.ApiModuleCampaign: campaign.Campaign,
-	}
-)
 
 type QueueData interface {
 	GenerateMsg(fn func(interface{}))

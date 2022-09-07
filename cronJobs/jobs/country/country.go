@@ -3,7 +3,6 @@ package country
 import (
 	"business/cronJobs/jobs/country/logic"
 	"business/cronJobs/vars"
-	"business/cronJobs/vars/statements"
 	"context"
 	"fmt"
 	"log"
@@ -14,7 +13,7 @@ func Country() {
 	fmt.Println("================= country job start ==================")
 
 	ctx := context.Background()
-	job, err := vars.SvcCtx.JobModel.FindOneByApiModule(ctx, statements.ApiModuleCountry)
+	job, err := vars.SvcCtx.JobModel.FindOneByApiModule(ctx, vars.ApiModuleCountry)
 	if err != nil {
 		log.Fatal("调度模块查询错误：", err)
 		return

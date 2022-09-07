@@ -159,7 +159,10 @@ func (l *CampaignQueryLogic) query(param *QueryParam, page int64) (err error) {
 	if response.Code != "200" {
 		return errors.New(response.Message)
 	}
-
+	if len(response.Data.Data) == 0 {
+		log.Println("查无数据")
+		return
+	}
 	if err = jobs.SetDataToKafka(l.kafkaProducer, response.Data.Data, l.svcCtx.Config.Kafka.Topics.Campaign); err != nil {
 		log.Println("数据写入 kafka 失败：", err)
 	} else {

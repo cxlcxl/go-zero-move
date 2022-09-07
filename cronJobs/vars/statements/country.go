@@ -1,7 +1,6 @@
 package statements
 
 const (
-	ApiModuleCountry   = "Country"
 	FilterTypeCreative = "CREATIVE"
 
 	StateTimeHour    = "STAT_TIME_GRANULARITY_HOURLY"
