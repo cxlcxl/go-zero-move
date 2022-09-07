@@ -34,7 +34,9 @@ func Campaign() {
 			return
 		}
 		jobDay = jobDay.AddDate(0, 0, 1)
-
+		if err = vars.SvcCtx.JobModel.UpdateJobDayByModule(ctx, vars.ApiModuleCampaign, jobDay.Format(vars.DateFormat)); err != nil {
+			fmt.Println("数据库调度时间修改失败: ", err)
+		}
 		time.Sleep(time.Millisecond * 500)
 	}
 

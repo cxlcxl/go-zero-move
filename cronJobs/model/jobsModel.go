@@ -2,6 +2,7 @@ package model
 
 import (
 	"context"
+	"fmt"
 	"github.com/Masterminds/squirrel"
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
@@ -15,6 +16,7 @@ type (
 	JobsModel interface {
 		jobsModel
 		GetJobs(ctx context.Context) (jobs []*Jobs, err error)
+		UpdateJobDayByModule(ctx context.Context, module, day string) error
 	}
 
 	customJobsModel struct {
@@ -43,4 +45,10 @@ func (m *defaultJobsModel) GetJobs(ctx context.Context) (jobs []*Jobs, err error
 	default:
 		return nil, err
 	}
+}
+
+func (m *defaultJobsModel) UpdateJobDayByModule(ctx context.Context, module, day string) error {
+	query := fmt.Sprintf("update %s set stat_day = ? where `api_module` = ?", m.table)
+	_, err := m.conn.ExecCtx(ctx, query, day, module)
+	return err
 }
