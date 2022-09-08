@@ -11,35 +11,28 @@ type AdsAccessTokenResponse struct {
 }
 
 const (
-	OptStatusEnable  = "OPERATION_STATUS_ENABLE"
-	OptStatusDisable = "OPERATION_STATUS_DISABLE"
-	OptStatusDelete  = "OPERATION_STATUS_DELETE"
-
-	ProductTypeWEB        = "WEB"
-	ProductTypeAndroidApp = "ANDROID_APP"
-
-	CampaignTypeDisplay  = "CAMPAIGN_TYPE_DISPLAY"
-	CampaignTypeShopping = "CAMPAIGN_TYPE_SHOPPING"
-
-	SyncFlowYes = "YES"
-	SyncFlowNo  = "NO"
-
-	DailyBudgetUpdateToday    = "UPDATE_TODAY_DAILY_BUDGET"
-	DailyBudgetUpdateTomorrow = "UPDATE_TOMORROW_DAILY_BUDGET"
-	DailyBudgetDeleteTomorrow = "DELETE_TOMORROW_DAILY_BUDGET"
-
-	CampaignStatusDelete      = "CAMPAIGN_STATUS_DELETE"
-	CampaignStatusDisable     = "CAMPAIGN_STATUS_DISABLE"
-	CampaignStatusFrozen      = "CAMPAIGN_STATUS_ADVERTISER_FROZEN"
-	CampaignStatusBalance     = "CAMPAIGN_STATUS_ADVERTISER_BALANCE_EXCEED"
-	CampaignStatusDailyBudget = "CAMPAIGN_STATUS_ADVERTISER_DAILY_BUDGET_EXCEED"
-	CampaignStatusDaily       = "CAMPAIGN_STATUS_CAMPAIGN_DAILY_BUDGET_EXCEED"
-	CampaignStatusOk          = "CAMPAIGN_STATUS_DELIVERY_OK"
-	CampaignStatusEnable      = "CAMPAIGN_STATUS_ENABLE"
-
-	CampaignDailyNotExceed = "CAMPAIGN_DAILY_BUDGET_NOT_EXCEED"
-	CampaignDailyExceed    = "CAMPAIGN_DAILY_BUDGET_EXCEED"
-
+	OptStatusEnable              = "OPERATION_STATUS_ENABLE"
+	OptStatusDisable             = "OPERATION_STATUS_DISABLE"
+	OptStatusDelete              = "OPERATION_STATUS_DELETE"
+	ProductTypeWEB               = "WEB"
+	ProductTypeAndroidApp        = "ANDROID_APP"
+	CampaignTypeDisplay          = "CAMPAIGN_TYPE_DISPLAY"
+	CampaignTypeShopping         = "CAMPAIGN_TYPE_SHOPPING"
+	SyncFlowYes                  = "YES"
+	SyncFlowNo                   = "NO"
+	DailyBudgetUpdateToday       = "UPDATE_TODAY_DAILY_BUDGET"
+	DailyBudgetUpdateTomorrow    = "UPDATE_TOMORROW_DAILY_BUDGET"
+	DailyBudgetDeleteTomorrow    = "DELETE_TOMORROW_DAILY_BUDGET"
+	CampaignStatusDelete         = "CAMPAIGN_STATUS_DELETE"
+	CampaignStatusDisable        = "CAMPAIGN_STATUS_DISABLE"
+	CampaignStatusFrozen         = "CAMPAIGN_STATUS_ADVERTISER_FROZEN"
+	CampaignStatusBalance        = "CAMPAIGN_STATUS_ADVERTISER_BALANCE_EXCEED"
+	CampaignStatusDailyBudget    = "CAMPAIGN_STATUS_ADVERTISER_DAILY_BUDGET_EXCEED"
+	CampaignStatusDaily          = "CAMPAIGN_STATUS_CAMPAIGN_DAILY_BUDGET_EXCEED"
+	CampaignStatusOk             = "CAMPAIGN_STATUS_DELIVERY_OK"
+	CampaignStatusEnable         = "CAMPAIGN_STATUS_ENABLE"
+	CampaignDailyNotExceed       = "CAMPAIGN_DAILY_BUDGET_NOT_EXCEED"
+	CampaignDailyExceed          = "CAMPAIGN_DAILY_BUDGET_EXCEED"
 	AdGroupStatusDelete          = "ADGROUP_STATUS_DELETE"
 	AdGroupStatusDisable         = "ADGROUP_STATUS_DISABLE"
 	AdGroupStatusCampaignDisable = "ADGROUP_STATUS_CAMPAIGN_DISABLE"
@@ -54,11 +47,12 @@ const (
 	AdGroupStatusCampaignBudget  = "ADGROUP_STATUS_CAMPAIGN_BUDGET_EXCEED"
 	AdGroupStatusOk              = "ADGROUP_STATUS_DELIVERY_OK"
 	AdGroupStatusEnable          = "ADGROUP_STATUS_ENABLE"
-
-	BalanceNotExceed = "ADVERTISER_BALANCE_NOT_EXCEED"
-	BalanceExceed    = "ADVERTISER_BALANCE_EXCEED"
-
-	FlowResourceShowAd = "FLOW_RESOURCE_SHOWAD"
+	BalanceNotExceed             = "ADVERTISER_BALANCE_NOT_EXCEED"
+	BalanceExceed                = "ADVERTISER_BALANCE_EXCEED"
+	FlowResourceShowAd           = "FLOW_RESOURCE_SHOWAD"
+	CreativeCategoryThirdParty   = "CREATIVE_SIZE_CATEGORY_THIRD_PARTY"
+	CreativeCategorySelf         = "CREATIVE_SIZE_CATEGORY_SELF_OWNED"
+	CreativeCategoryOther        = "CREATIVE_SIZE_CATEGORY_OTHER"
 )
 
 var (
@@ -130,5 +124,11 @@ var (
 	// FlowResource 投放网络
 	FlowResource = map[string]string{
 		FlowResourceShowAd: "展示广告网络",
+	}
+	// CreativeCategory 任务版位分类
+	CreativeCategory = map[string]string{
+		CreativeCategoryThirdParty: "三方媒体资源",
+		CreativeCategorySelf:       "自有媒体资源",
+		CreativeCategoryOther:      "其他首选资",
 	}
 )

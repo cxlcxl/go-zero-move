@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	consumer, err := sarama.NewConsumer([]string{"192.168.0.101:9092"}, nil)
+	consumer, err := sarama.NewConsumer([]string{"192.168.120.62:9092"}, nil)
 	if err != nil {
 		fmt.Printf("fail to start consumer, err:%v\n", err)
 		return
@@ -21,7 +21,7 @@ func main() {
 	fmt.Println(partitionList)
 	for partition := range partitionList { // 遍历所有的分区
 		// 针对每个分区创建一个对应的分区消费者
-		pc, err := consumer.ConsumePartition("web_log", int32(partition), sarama.OffsetNewest)
+		pc, err := consumer.ConsumePartition("business_ads_campaign", int32(partition), sarama.OffsetNewest)
 		if err != nil {
 			fmt.Printf("failed to start consumer for partition %d,err:%v\n", partition, err)
 			return

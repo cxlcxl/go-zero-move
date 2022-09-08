@@ -26,6 +26,13 @@ const marketingRouter = {
       component: () => import("@v/marketing/creative"),
       meta: { title: "创意列表" },
     },
+    {
+      hidden: true,
+      path: "adgroup-create",
+      name: "AdgroupCreate",
+      component: () => import("@v/marketing/components/adgroup-create"),
+      meta: { title: "任务创建" },
+    },
   ],
 };
 

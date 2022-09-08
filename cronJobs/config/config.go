@@ -25,6 +25,10 @@ type Config struct {
 		Promotion struct {
 			Campaign string `yaml:"Campaign"`
 		} `yaml:"Promotion"`
+
+		Tools struct {
+			Dictionary string `yaml:"Dictionary"`
+		} `yaml:"Tools"`
 	} `yaml:"MarketingApis"`
 
 	Kafka struct {

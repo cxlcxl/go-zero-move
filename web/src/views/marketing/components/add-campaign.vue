@@ -129,7 +129,7 @@
             this.remoteLoading = false
           })
         } else {
-          this.options = [];
+          this.accounts = [];
         }
       }
     }

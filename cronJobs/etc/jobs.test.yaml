@@ -16,3 +16,5 @@ MarketingApis:
     CountryQuery: "https://ads-dra.cloud.huawei.com/openapi/v2/reports/country/query"
   Promotion:
     Campaign: "https://ads-dra.cloud.huawei.com/ads/v1/promotion/campaign/query"
+  Tools:
+    Dictionary: "https://ads-dra.cloud.huawei.com/ads/v1/tools/dictionary/query"
