@@ -13,17 +13,21 @@ import (
 )
 
 type (
-	BaseResp           = marketing.BaseResp
-	PromotionCreateReq = marketing.PromotionCreateReq
-	PromotionInfo      = marketing.PromotionInfo
-	PromotionListReq   = marketing.PromotionListReq
-	PromotionListResp  = marketing.PromotionListResp
-	PromotionUpdateReq = marketing.PromotionUpdateReq
+	BaseResp                  = marketing.BaseResp
+	DictionaryReq             = marketing.DictionaryReq
+	DictionaryResp            = marketing.DictionaryResp
+	DictionaryResp_Dictionary = marketing.DictionaryResp_Dictionary
+	PromotionCreateReq        = marketing.PromotionCreateReq
+	PromotionInfo             = marketing.PromotionInfo
+	PromotionListReq          = marketing.PromotionListReq
+	PromotionListResp         = marketing.PromotionListResp
+	PromotionUpdateReq        = marketing.PromotionUpdateReq
 
 	MarketingCenter interface {
 		PromotionCreate(ctx context.Context, in *PromotionCreateReq, opts ...grpc.CallOption) (*BaseResp, error)
 		PromotionList(ctx context.Context, in *PromotionListReq, opts ...grpc.CallOption) (*PromotionListResp, error)
 		PromotionUpdate(ctx context.Context, in *PromotionUpdateReq, opts ...grpc.CallOption) (*BaseResp, error)
+		DictQuery(ctx context.Context, in *DictionaryReq, opts ...grpc.CallOption) (*DictionaryResp, error)
 	}
 
 	defaultMarketingCenter struct {
@@ -50,4 +54,9 @@ func (m *defaultMarketingCenter) PromotionList(ctx context.Context, in *Promotio
 func (m *defaultMarketingCenter) PromotionUpdate(ctx context.Context, in *PromotionUpdateReq, opts ...grpc.CallOption) (*BaseResp, error) {
 	client := marketing.NewMarketingCenterClient(m.cli.Conn())
 	return client.PromotionUpdate(ctx, in, opts...)
+}
+
+func (m *defaultMarketingCenter) DictQuery(ctx context.Context, in *DictionaryReq, opts ...grpc.CallOption) (*DictionaryResp, error) {
+	client := marketing.NewMarketingCenterClient(m.cli.Conn())
+	return client.DictQuery(ctx, in, opts...)
 }

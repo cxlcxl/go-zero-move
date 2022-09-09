@@ -1,7 +1,27 @@
 syntax = "v1"
 
 import (
+	"base.api"
 	"campaign.api"
+)
+
+type (
+	Dictionary {
+		DictKey string `json:"dict_key"`
+		Id      string `json:"id"`
+		Pid     string `json:"pid"`
+		Label   string `json:"label"`
+		Value   string `json:"value"`
+		Code    string `json:"code"`
+		Seq     string `json:"seq"`
+	}
+	DictReq {
+		DictKey string `form:"dict_key"`
+	}
+	DictResp {
+		BaseResp
+		Data map[string][]*Dictionary `json:"data"`
+	}
 )
 
 @server(
@@ -21,4 +41,8 @@ service marketing-api {
 	@doc "计划列表"
 	@handler campaignList
 	get /campaign/list (CampaignListReq) returns (CampaignListResp)
+	
+	@doc "字典查询"
+	@handler dictionaryQuery
+	get /dictionary/query (DictReq) returns (DictResp)
 }

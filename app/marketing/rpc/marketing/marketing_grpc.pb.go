@@ -25,6 +25,7 @@ type MarketingCenterClient interface {
 	PromotionCreate(ctx context.Context, in *PromotionCreateReq, opts ...grpc.CallOption) (*BaseResp, error)
 	PromotionList(ctx context.Context, in *PromotionListReq, opts ...grpc.CallOption) (*PromotionListResp, error)
 	PromotionUpdate(ctx context.Context, in *PromotionUpdateReq, opts ...grpc.CallOption) (*BaseResp, error)
+	DictQuery(ctx context.Context, in *DictionaryReq, opts ...grpc.CallOption) (*DictionaryResp, error)
 }
 
 type marketingCenterClient struct {
@@ -62,6 +63,15 @@ func (c *marketingCenterClient) PromotionUpdate(ctx context.Context, in *Promoti
 	return out, nil
 }
 
+func (c *marketingCenterClient) DictQuery(ctx context.Context, in *DictionaryReq, opts ...grpc.CallOption) (*DictionaryResp, error) {
+	out := new(DictionaryResp)
+	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/DictQuery", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MarketingCenterServer is the server API for MarketingCenter service.
 // All implementations must embed UnimplementedMarketingCenterServer
 // for forward compatibility
@@ -69,6 +79,7 @@ type MarketingCenterServer interface {
 	PromotionCreate(context.Context, *PromotionCreateReq) (*BaseResp, error)
 	PromotionList(context.Context, *PromotionListReq) (*PromotionListResp, error)
 	PromotionUpdate(context.Context, *PromotionUpdateReq) (*BaseResp, error)
+	DictQuery(context.Context, *DictionaryReq) (*DictionaryResp, error)
 	mustEmbedUnimplementedMarketingCenterServer()
 }
 
@@ -84,6 +95,9 @@ func (UnimplementedMarketingCenterServer) PromotionList(context.Context, *Promot
 }
 func (UnimplementedMarketingCenterServer) PromotionUpdate(context.Context, *PromotionUpdateReq) (*BaseResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PromotionUpdate not implemented")
+}
+func (UnimplementedMarketingCenterServer) DictQuery(context.Context, *DictionaryReq) (*DictionaryResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DictQuery not implemented")
 }
 func (UnimplementedMarketingCenterServer) mustEmbedUnimplementedMarketingCenterServer() {}
 
@@ -152,6 +166,24 @@ func _MarketingCenter_PromotionUpdate_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MarketingCenter_DictQuery_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DictionaryReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketingCenterServer).DictQuery(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/marketing.MarketingCenter/DictQuery",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketingCenterServer).DictQuery(ctx, req.(*DictionaryReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MarketingCenter_ServiceDesc is the grpc.ServiceDesc for MarketingCenter service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -170,6 +202,10 @@ var MarketingCenter_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "PromotionUpdate",
 			Handler:    _MarketingCenter_PromotionUpdate_Handler,
+		},
+		{
+			MethodName: "DictQuery",
+			Handler:    _MarketingCenter_DictQuery_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

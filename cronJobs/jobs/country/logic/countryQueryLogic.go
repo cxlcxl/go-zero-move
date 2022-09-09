@@ -4,7 +4,6 @@ import (
 	"business/common/curl"
 	"business/common/kfk"
 	"business/cronJobs/jobs"
-	"business/cronJobs/model"
 	"business/cronJobs/svc"
 	"business/cronJobs/vars/statements"
 	"context"
@@ -22,16 +21,11 @@ type CountryQueryLogic struct {
 	logx.Logger
 	ctx           context.Context
 	svcCtx        *svc.ServiceContext
-	tokenChan     chan *QueryParam
+	tokenChan     chan *jobs.QueryParam
 	wg            sync.WaitGroup
 	statDay       string
 	appMap        map[string]*app
 	kafkaProducer sarama.SyncProducer
-}
-
-type QueryParam struct {
-	AccountId   int64
-	AccessToken string
 }
 
 type app struct {
@@ -44,7 +38,7 @@ func NewCountryQueryLogic(ctx context.Context, svcCtx *svc.ServiceContext, day s
 		Logger:    logx.WithContext(ctx),
 		ctx:       ctx,
 		svcCtx:    svcCtx,
-		tokenChan: make(chan *QueryParam),
+		tokenChan: make(chan *jobs.QueryParam),
 		wg:        sync.WaitGroup{},
 		appMap:    map[string]*app{},
 		statDay:   day,
@@ -60,7 +54,7 @@ func (l *CountryQueryLogic) CountryQuery() (err error) {
 		return err
 	}
 	defer l.kafkaProducer.Close()
-	go l.getTokens()
+	go jobs.GetTokens(l.ctx, l.svcCtx, l.tokenChan)
 
 	for token := range l.tokenChan {
 		l.wg.Add(1)
@@ -70,83 +64,7 @@ func (l *CountryQueryLogic) CountryQuery() (err error) {
 	return
 }
 
-func (l *CountryQueryLogic) getTokens() {
-	list, err := l.svcCtx.TokenModel.GetAccessTokenList(l.ctx)
-	if err != nil {
-		return
-	}
-	for _, tokens := range list {
-		if tokens.ExpiredAt.Before(time.Now()) {
-			at, err := refresh(l.ctx, l.svcCtx, tokens)
-			if err != nil {
-				log.Println("Token 刷新失败，账户 ID：", tokens.AccountId, err)
-				continue
-			}
-			l.tokenChan <- &QueryParam{
-				AccountId:   tokens.AccountId,
-				AccessToken: fmt.Sprintf("%s %s", tokens.TokenType, at),
-			}
-		} else {
-			l.tokenChan <- &QueryParam{
-				AccountId:   tokens.AccountId,
-				AccessToken: fmt.Sprintf("%s %s", tokens.TokenType, tokens.AccessToken),
-			}
-		}
-	}
-
-	close(l.tokenChan)
-}
-
-// token 过期时刷新
-func refresh(ctx context.Context, svcCtx *svc.ServiceContext, token *model.Tokens) (string, error) {
-	info, err := svcCtx.AccountModel.FindOne(ctx, token.AccountId)
-	if err != nil {
-		return "", err
-	}
-	clientId, secret := info.ClientId, info.Secret
-	if clientId == "" || secret == "" {
-		if info.ParentId == 0 {
-			return "", errors.New("未完整填写 ClientId 与 Secret")
-		} else {
-			parent, err := svcCtx.AccountModel.FindOne(ctx, info.ParentId)
-			if err != nil {
-				return "", errors.New("上级信息查询错误")
-			}
-			if parent.ClientId == "" || parent.Secret == "" {
-				return "", errors.New("上级 ClientId 与 Secret 信息未填写")
-			}
-			clientId, secret = parent.ClientId, parent.Secret
-		}
-	}
-	data := map[string]string{
-		"grant_type":    "refresh_token",
-		"refresh_token": token.RefreshToken,
-		"client_id":     clientId,
-		"client_secret": secret,
-	}
-	post := curl.New(svcCtx.Config.MarketingApis.Refresh).Post().QueryData(data)
-	var at jobs.AccessToken
-	err = post.Request(&at, curl.FormHeader())
-	if err != nil {
-		return "", err
-	}
-	if at.Error != 0 {
-		return "", errors.New("华为接口调用失败：" + at.ErrorDescription)
-	}
-	_ = svcCtx.TokenModel.Update(ctx, &model.Tokens{
-		Id:           token.Id,
-		AccountId:    token.AccountId,
-		AccessToken:  at.AccessToken,
-		RefreshToken: token.RefreshToken,
-		ExpiredAt:    time.Now().Add(time.Duration(at.ExpiresIn) - 20),
-		UpdatedAt:    time.Now(),
-		TokenType:    at.TokenType,
-	})
-
-	return at.AccessToken, nil
-}
-
-func (l *CountryQueryLogic) query(param *QueryParam, page int64) (err error) {
+func (l *CountryQueryLogic) query(param *jobs.QueryParam, page int64) (err error) {
 	defer l.wg.Done()
 	data := statements.CountryRequest{
 		TimeGranularity: statements.StateTimeDaily,

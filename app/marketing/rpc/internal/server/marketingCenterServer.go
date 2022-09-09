@@ -36,3 +36,8 @@ func (s *MarketingCenterServer) PromotionUpdate(ctx context.Context, in *marketi
 	l := logic.NewPromotionUpdateLogic(ctx, s.svcCtx)
 	return l.PromotionUpdate(in)
 }
+
+func (s *MarketingCenterServer) DictQuery(ctx context.Context, in *marketing.DictionaryReq) (*marketing.DictionaryResp, error) {
+	l := logic.NewDictQueryLogic(ctx, s.svcCtx)
+	return l.DictQuery(in)
+}

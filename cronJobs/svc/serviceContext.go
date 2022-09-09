@@ -13,12 +13,14 @@ type ServiceContext struct {
 	TokenModel         model.TokensModel
 	AccountModel       model.AccountsModel
 	AppModel           model.AppsModel
+	DictModel          model.TargetingDictionariesModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	conn := sqlx.NewSqlConn(c.Database.Driver, c.Database.Dsn)
 	return &ServiceContext{
 		Config:             c,
+		DictModel:          model.NewTargetingDictionariesModel(conn),
 		ReportCountryModel: model.NewReportCountriesModel(conn),
 		JobModel:           model.NewJobsModel(conn),
 		TokenModel:         model.NewTokensModel(conn),

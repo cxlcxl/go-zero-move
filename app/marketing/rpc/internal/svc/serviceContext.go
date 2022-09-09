@@ -9,6 +9,7 @@ import (
 type ServiceContext struct {
 	Config        config.Config
 	CampaignModel model.CampaignsModel
+	DictModel     model.TargetingDictionariesModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -16,5 +17,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
 		Config:        c,
 		CampaignModel: model.NewCampaignsModel(DBConn),
+		DictModel:     model.NewTargetingDictionariesModel(DBConn),
 	}
 }

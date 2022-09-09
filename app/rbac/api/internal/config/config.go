@@ -9,16 +9,6 @@ import (
 type Config struct {
 	rest.RestConf
 
-	Database struct {
-		Driver  string
-		User    string
-		Pass    string
-		Host    string
-		Port    int64
-		DbName  string
-		Charset string
-	}
-
 	Cache cache.CacheConf
 
 	Auth struct {

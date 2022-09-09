@@ -2,17 +2,13 @@ package logic
 
 import (
 	"business/common/curl"
+	"business/common/vars"
 	"business/cronJobs/jobs"
 	"business/cronJobs/model"
 	"business/cronJobs/svc"
 	"business/cronJobs/vars/statements"
 	"context"
 	"errors"
-	"fmt"
-	"log"
-	"sync"
-	"time"
-
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -20,126 +16,36 @@ type DictionaryQueryLogic struct {
 	logx.Logger
 	ctx       context.Context
 	svcCtx    *svc.ServiceContext
-	tokenChan chan *QueryParam
-	wg        sync.WaitGroup
+	tokenChan chan *jobs.QueryParam
 	statDay   string
 	pageSize  int64
 }
 
-type QueryParam struct {
-	AccountId   int64
-	AccessToken string
-}
-
-func NewDictionaryQueryLogic(ctx context.Context, svcCtx *svc.ServiceContext, day string) *DictionaryQueryLogic {
+func NewDictionaryQueryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DictionaryQueryLogic {
 	return &DictionaryQueryLogic{
 		Logger:    logx.WithContext(ctx),
 		ctx:       ctx,
 		svcCtx:    svcCtx,
-		tokenChan: make(chan *QueryParam),
-		wg:        sync.WaitGroup{},
-		statDay:   day,
-		pageSize:  50,
+		tokenChan: make(chan *jobs.QueryParam),
 	}
 }
 
 func (l *DictionaryQueryLogic) DictionaryQuery() (err error) {
-	go l.getTokens()
+	go jobs.GetTokens(l.ctx, l.svcCtx, l.tokenChan)
 
 	for token := range l.tokenChan {
-		l.wg.Add(1)
-		go l.query(token, 1)
+		// 字典数据同步一次成功即可
+		if err = l.query(token); err == nil {
+			break
+		} else {
+			continue
+		}
 	}
-	l.wg.Wait()
 	return
 }
 
-func (l *DictionaryQueryLogic) getTokens() {
-	list, err := l.svcCtx.TokenModel.GetAccessTokenList(l.ctx)
-	if err != nil {
-		return
-	}
-	for _, tokens := range list {
-		if tokens.ExpiredAt.Before(time.Now()) {
-			at, err := refresh(l.ctx, l.svcCtx, tokens)
-			if err != nil {
-				log.Println("Token 刷新失败，账户 ID：", tokens.AccountId, err)
-				continue
-			}
-			l.tokenChan <- &QueryParam{
-				AccountId:   tokens.AccountId,
-				AccessToken: fmt.Sprintf("%s %s", tokens.TokenType, at),
-			}
-		} else {
-			l.tokenChan <- &QueryParam{
-				AccountId:   tokens.AccountId,
-				AccessToken: fmt.Sprintf("%s %s", tokens.TokenType, tokens.AccessToken),
-			}
-		}
-	}
-
-	close(l.tokenChan)
-}
-
-// token 过期时刷新
-func refresh(ctx context.Context, svcCtx *svc.ServiceContext, token *model.Tokens) (string, error) {
-	info, err := svcCtx.AccountModel.FindOne(ctx, token.AccountId)
-	if err != nil {
-		return "", err
-	}
-	clientId, secret := info.ClientId, info.Secret
-	if clientId == "" || secret == "" {
-		if info.ParentId == 0 {
-			return "", errors.New("未完整填写 ClientId 与 Secret")
-		} else {
-			parent, err := svcCtx.AccountModel.FindOne(ctx, info.ParentId)
-			if err != nil {
-				return "", errors.New("上级信息查询错误")
-			}
-			if parent.ClientId == "" || parent.Secret == "" {
-				return "", errors.New("上级 ClientId 与 Secret 信息未填写")
-			}
-			clientId, secret = parent.ClientId, parent.Secret
-		}
-	}
-	data := map[string]string{
-		"grant_type":    "refresh_token",
-		"refresh_token": token.RefreshToken,
-		"client_id":     clientId,
-		"client_secret": secret,
-	}
-	post := curl.New(svcCtx.Config.MarketingApis.Refresh).Post().QueryData(data)
-	var at jobs.AccessToken
-	err = post.Request(&at, curl.FormHeader())
-	if err != nil {
-		return "", err
-	}
-	if at.Error != 0 {
-		return "", errors.New("华为接口调用失败：" + at.ErrorDescription)
-	}
-	_ = svcCtx.TokenModel.Update(ctx, &model.Tokens{
-		Id:           token.Id,
-		AccountId:    token.AccountId,
-		AccessToken:  at.AccessToken,
-		RefreshToken: token.RefreshToken,
-		ExpiredAt:    time.Now().Add(time.Duration(at.ExpiresIn) - 20),
-		UpdatedAt:    time.Now(),
-		TokenType:    at.TokenType,
-	})
-
-	return at.AccessToken, nil
-}
-
-func (l *DictionaryQueryLogic) query(param *QueryParam, page int64) (err error) {
-	defer l.wg.Done()
-	data := statements.DictionaryRequest{
-		Language: "zh_CN",
-		TargetingList: []string{
-			"pre_define_audience", "not_pre_define_audience", "gender", "age", "series_type", "device_price", "app_category",
-			"network_type", "pre_define_audience", "not_pre_define_audience", "media_app_category", "carrier",
-			"language", "app_interest", "location_category",
-		},
-	}
+func (l *DictionaryQueryLogic) query(param *jobs.QueryParam) (err error) {
+	data := statements.DictionaryRequest{Language: "zh_CN", TargetingList: vars.TargetingDictionaryKeys}
 	var response statements.DictionaryResponse
 	c, err := curl.New(l.svcCtx.Config.MarketingApis.Tools.Dictionary).Get().JsonData(data)
 	if err != nil {
@@ -149,19 +55,36 @@ func (l *DictionaryQueryLogic) query(param *QueryParam, page int64) (err error) 
 		return err
 	}
 	if response.Code != "200" {
-		return errors.New(response.Message)
+		return errors.New("接口返回错误：" + response.Message)
 	}
+	var dict []*model.TargetingDictionaries
+	dict = append(dict, dataCopy("age", response.Data.LinearTargetingMap.Age)...)
+	dict = append(dict, dataCopy("device_price", response.Data.LinearTargetingMap.DevicePrice)...)
+	dict = append(dict, dataCopy("not_pre_define_audience", response.Data.LinearTargetingMap.NotPreDefineAudience)...)
+	dict = append(dict, dataCopy("gender", response.Data.LinearTargetingMap.Gender)...)
+	dict = append(dict, dataCopy("pre_define_audience", response.Data.LinearTargetingMap.PreDefineAudience)...)
+	dict = append(dict, dataCopy("media_app_category", response.Data.LinearTargetingMap.MediaAppCategory)...)
+	dict = append(dict, dataCopy("network_type", response.Data.LinearTargetingMap.NetworkType)...)
+	dict = append(dict, dataCopy("app_interest", response.Data.LinearTargetingMap.AppInterest)...)
+	dict = append(dict, dataCopy("language", response.Data.LinearTargetingMap.Language)...)
+	dict = append(dict, dataCopy("carrier", response.Data.TreeTargetingMap.Carrier)...)
+	dict = append(dict, dataCopy("app_category", response.Data.TreeTargetingMap.AppCategory)...)
+	dict = append(dict, dataCopy("series_type", response.Data.TreeTargetingMap.SeriesType)...)
 
-	return nil
+	return l.svcCtx.DictModel.BatchInsert(l.ctx, dict)
 }
 
-func ceil(num, pageSize int64) int64 {
-	if num < pageSize {
-		return 0
+func dataCopy(key string, items []*statements.DictionaryItem) (dict []*model.TargetingDictionaries) {
+	for _, item := range items {
+		dict = append(dict, &model.TargetingDictionaries{
+			DictKey: key,
+			Id:      item.Id,
+			Pid:     item.Pid,
+			Label:   item.Label,
+			Value:   item.Value,
+			Code:    item.Code,
+			Seq:     item.Seq,
+		})
 	}
-	var d int64 = 0
-	if num%pageSize > 0 {
-		d = 1
-	}
-	return num/pageSize + d
+	return
 }

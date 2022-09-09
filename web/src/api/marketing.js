@@ -22,3 +22,11 @@ export function campaignResources() {
     method: "get",
   });
 }
+
+export function dictionaryQuery(params) {
+  return request({
+    url: "/marketing/dictionary/query",
+    method: "get",
+    params
+  });
+}

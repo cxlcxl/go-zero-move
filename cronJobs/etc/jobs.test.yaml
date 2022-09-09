@@ -1,6 +1,6 @@
 Database:
   Driver: "mysql"
-  Dsn: "root:root@tcp(192.168.120.61:3306)/business?charset=utf8mb4&parseTime=True&loc=Local"
+  Dsn: "root:XqfX29pXso@tcp(111.230.169.231:21077)/hiads?charset=utf8mb4&parseTime=True&loc=Local"
 
 Kafka:
   Host: "192.168.120.62:9092"

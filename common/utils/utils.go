@@ -9,7 +9,6 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"errors"
-	"fmt"
 	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"io/ioutil"
@@ -167,13 +166,6 @@ func ArrayUnique(arr []int64) []int64 {
 		}
 	}
 	return result
-}
-
-// GetDsn mysql dsn 连接
-func GetDsn(user, pass, host, name, charset string, port int64) string {
-	return fmt.Sprintf(
-		"%s:%s@tcp(%s:%d)/%s?charset=%s&parseTime=True&loc=Local", user, pass, host, port, name, charset,
-	)
 }
 
 // WhereIn where in 条件组合

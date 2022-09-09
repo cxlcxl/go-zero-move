@@ -29,6 +29,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/campaign/list",
 					Handler: campaignListHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/dictionary/query",
+					Handler: dictionaryQueryHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),

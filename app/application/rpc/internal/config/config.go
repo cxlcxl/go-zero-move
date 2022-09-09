@@ -9,13 +9,8 @@ type Config struct {
 	zrpc.RpcServerConf
 
 	Database struct {
-		Driver  string
-		Host    string
-		Port    int64
-		User    string
-		Pass    string
-		DbName  string
-		Charset string
+		Driver string
+		Dsn    string
 	}
 
 	Cache cache.CacheConf

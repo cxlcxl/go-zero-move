@@ -2,15 +2,6 @@ Name: rbac-api
 Host: 0.0.0.0
 Port: 18001
 
-Database:
-  Driver: "mysql"
-  User: "root"
-  Pass: "root"
-  Host: "192.168.120.61"
-  Port: 3306
-  DbName: "business"
-  Charset: "utf8mb4"
-
 Cache:
   - Host: "192.168.120.61:6379"
     Type: "node"

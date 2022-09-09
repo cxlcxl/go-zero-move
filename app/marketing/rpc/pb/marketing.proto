@@ -52,6 +52,21 @@ message PromotionInfo{
   int64 created_at = 18;
   int64 updated_at = 19;
 }
+message DictionaryReq {
+  repeated string dict_key = 1;
+}
+message DictionaryResp {
+  message Dictionary {
+    string dict_key = 1;
+    string id = 2;
+    string pid = 3;
+    string label = 4;
+    string value = 5;
+    string code = 6;
+    string seq = 7;
+  }
+  repeated Dictionary Dictionaries = 1;
+}
 
 message BaseResp {}
 
@@ -59,4 +74,5 @@ service MarketingCenter{
   rpc PromotionCreate(PromotionCreateReq) returns(BaseResp);
   rpc PromotionList(PromotionListReq) returns(PromotionListResp);
   rpc PromotionUpdate(PromotionUpdateReq) returns(BaseResp);
+  rpc DictQuery(DictionaryReq) returns(DictionaryResp);
 }

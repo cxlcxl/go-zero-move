@@ -131,4 +131,22 @@ var (
 		CreativeCategorySelf:       "自有媒体资源",
 		CreativeCategoryOther:      "其他首选资",
 	}
+	// TargetingDictionaryKeys 字典 key 列表
+	TargetingDictionaryKeys = []string{
+		"pre_define_audience",
+		"not_pre_define_audience",
+		"gender",
+		"age",
+		"series_type",
+		"device_price",
+		"app_category",
+		"network_type",
+		"pre_define_audience",
+		"not_pre_define_audience",
+		"media_app_category",
+		"carrier",
+		"language",
+		"app_interest",
+		"location_category",
+	}
 )
