@@ -21,13 +21,14 @@ type (
 	}
 
 	TargetingDictionaries struct {
-		DictKey string `db:"dict_key"` // 属于什么字典
-		Id      string `db:"id"`       // 字典的元素 ID
-		Pid     string `db:"pid"`      // 父节点元素ID
-		Label   string `db:"label"`    // 显示的内容
-		Value   string `db:"value"`    // 元素的值
-		Code    string `db:"code"`
-		Seq     string `db:"seq"`
+		DictKey    string `db:"dict_key"` // 属于什么字典
+		Id         string `db:"id"`       // 字典的元素 ID
+		Pid        string `db:"pid"`      // 父节点元素ID
+		Label      string `db:"label"`    // 显示的内容
+		Value      string `db:"value"`    // 元素的值
+		Code       string `db:"code"`
+		Seq        string `db:"seq"`
+		DataStruct int64  `db:"data_struct"`
 	}
 )
 

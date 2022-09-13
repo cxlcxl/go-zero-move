@@ -3,17 +3,19 @@ syntax = "v1"
 import (
 	"base.api"
 	"campaign.api"
+	"targeting.api"
 )
 
 type (
 	Dictionary {
-		DictKey string `json:"dict_key"`
-		Id      string `json:"id"`
-		Pid     string `json:"pid"`
-		Label   string `json:"label"`
-		Value   string `json:"value"`
-		Code    string `json:"code"`
-		Seq     string `json:"seq"`
+		DictKey  string        `json:"dict_key"`
+		Id       string        `json:"id"`
+		Pid      string        `json:"pid"`
+		Label    string        `json:"label"`
+		Value    string        `json:"value"`
+		Code     string        `json:"code"`
+		Seq      string        `json:"seq"`
+		Children []*Dictionary `json:"children"`
 	}
 	DictReq {
 		DictKey string `form:"dict_key"`
@@ -45,4 +47,9 @@ service marketing-api {
 	@doc "字典查询"
 	@handler dictionaryQuery
 	get /dictionary/query (DictReq) returns (DictResp)
+	
+	@doc "创建定向包"
+	@handler targetingCreate
+	get /targeting/create (TargetingCreateReq) returns (TargetingCreateResp)
+	
 }

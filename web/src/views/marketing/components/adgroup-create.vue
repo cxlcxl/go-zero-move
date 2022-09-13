@@ -28,6 +28,7 @@
                 <el-option v-for="targeting in targetingList" :label="targeting.targeting_name" :value="targeting.targeting_id"/>
               </el-select>
               <el-button icon="el-icon-plus" type="primary" style="margin-left: 10px;" @click="createTargeting(__adgroup.tab_name)">新建定向</el-button>
+              <el-button icon="el-icon-refresh" style="margin-left: 10px;" @click="pullTargeting">同步定向数据</el-button>
               <el-button icon="el-icon-document-copy" type="primary"
                          @click="copyTab(__adgroup.tab_name, idx)" style="margin-left: 10px; float: right;">拷贝此任务</el-button>
             </el-form-item>
@@ -73,8 +74,8 @@
         </el-tabs>
 
         <el-form-item>
-          <el-button type="primary" icon="el-icon-check">提交</el-button>
-          <el-button icon="el-icon-close">取消</el-button>
+          <el-button type="primary" icon="el-icon-check" @click="confirmAdgroup">提交</el-button>
+          <el-button icon="el-icon-close">取消创建</el-button>
         </el-form-item>
       </el-col>
     </el-form>
@@ -149,6 +150,9 @@ export default {
     },
     createTargeting(tab) {
       this.$refs.targeting_create.initCreate(tab)
+    },
+    pullTargeting() {
+      this.$message.info("定向数据拉取中，请稍后...")
     },
     targetingCallback(tab) {
       console.log(tab)
@@ -236,6 +240,15 @@ export default {
         this.editableTabsValue = activeName;
         this.adgroupForm.adgroups = tabs.filter(tab => tab.tab_name !== targetName);
       }).catch(() => {})
+    },
+    confirmAdgroup() {
+      this.$refs.adgroupForm.validate(v => {
+        if (v) {
+
+        } else {
+          return false
+        }
+      })
     }
   }
 }

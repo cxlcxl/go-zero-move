@@ -34,6 +34,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/dictionary/query",
 					Handler: dictionaryQueryHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/targeting/create",
+					Handler: targetingCreateHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),

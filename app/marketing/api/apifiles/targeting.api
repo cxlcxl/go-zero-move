@@ -1,0 +1,34 @@
+syntax = "v1"
+
+type (
+    TargetingCreateReq {
+        AccountId int64 `json:"account_id"`
+        TargetingType string `json:"targeting_type"`
+        TargetingName string `json:"targeting_name"`
+        GenderStruct string `json:"gender_struct"`
+        AgeStruct []string `json:"age_struct"`
+        NetworkTypeStruct []string `json:"network_type_struct"`
+        AppBehavior string `json:"app_behavior"`
+        AppBehaviors []string `json:"app_behaviors"`
+        AppInterest string `json:"app_interest"`
+        AppInterests []string `json:"app_interests"`
+        Audience string `json:"audience"`
+        AudienceStruct []string `json:"audience_struct"`
+        NotAudienceStruct []string `json:"not_audience_struct"`
+        SeriesType string `json:"series_type"`
+        Series []string `json:"series"`
+        MediaAppCategory string `json:"media_app_category"`
+        AppCategoryOfMediaStruct []string `json:"app_category_of_media_struct"`
+        LanguageCheck string `json:"language_check"`
+        Language []string `json:"language"`
+        InstalledApps string `json:"installed_apps"`
+    }
+
+    TargetingCreateRsInfo {
+        TargetingId string `json:"targeting_id"`
+    }
+    TargetingCreateResp {
+        BaseResp
+        Data TargetingCreateRsInfo `json:"data"`
+    }
+)

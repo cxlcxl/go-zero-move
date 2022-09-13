@@ -401,3 +401,21 @@ export function formatMoney(number, decimals = 2, thousandsSep = ',') {
   }
   return s.join('.')
 }
+
+/**
+ * 数组转树结构
+ * @param origin array
+ * @param pid number
+ * @param parentIdKey string
+ * @param subKey string
+ */
+export function arrayToTree(origin, pid, parentIdKey, subKey) {
+  let d = []
+  origin.forEach((v, k) => {
+    if (Number(v[parentIdKey]) === pid) {
+      v[subKey] = arrayToTree(origin, Number(v.id), parentIdKey, subKey)
+      d.push(v)
+    }
+  })
+  return d
+}

@@ -64,6 +64,7 @@ message DictionaryResp {
     string value = 5;
     string code = 6;
     string seq = 7;
+    int64 data_struct = 8;
   }
   repeated Dictionary Dictionaries = 1;
 }

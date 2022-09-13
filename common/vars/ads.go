@@ -53,6 +53,9 @@ const (
 	CreativeCategoryThirdParty   = "CREATIVE_SIZE_CATEGORY_THIRD_PARTY"
 	CreativeCategorySelf         = "CREATIVE_SIZE_CATEGORY_SELF_OWNED"
 	CreativeCategoryOther        = "CREATIVE_SIZE_CATEGORY_OTHER"
+
+	TargetingDictionaryStructLine = 1
+	TargetingDictionaryStructTree = 2
 )
 
 var (
@@ -133,20 +136,37 @@ var (
 	}
 	// TargetingDictionaryKeys 字典 key 列表
 	TargetingDictionaryKeys = []string{
+		"app_category",
+		"series_type",
+		"carrier",
+		"location_category",
 		"pre_define_audience",
 		"not_pre_define_audience",
 		"gender",
 		"age",
-		"series_type",
 		"device_price",
-		"app_category",
 		"network_type",
 		"pre_define_audience",
 		"not_pre_define_audience",
 		"media_app_category",
-		"carrier",
 		"language",
 		"app_interest",
-		"location_category",
+	}
+	TargetingDictionaryStruct = map[int64][]string{
+		TargetingDictionaryStructLine: {
+			"pre_define_audience",
+			"not_pre_define_audience",
+			"gender",
+			"age",
+			"device_price",
+			"network_type",
+			"pre_define_audience",
+			"not_pre_define_audience",
+			"media_app_category",
+			"language",
+			"app_interest",
+			"location_category",
+		},
+		TargetingDictionaryStructTree: {"carrier", "app_category", "series_type"},
 	}
 )

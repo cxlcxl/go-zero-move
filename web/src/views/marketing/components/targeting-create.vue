@@ -1,5 +1,5 @@
 <template>
-  <dialog-panel title="创建定向" confirm-text="创建" :visible="visible" @cancel="cancel" @confirm="add" :confirm-loading="loading" width="1000px">
+  <drawer-panel title="创建定向" confirm-text="创建" :visible="visible" @cancel="cancel" @confirm="add" :confirm-loading="loading" width="800px" direction="ltr">
     <el-form :model="targetingForm" ref="targetingForm" label-width="120px" size="mini" :rules="targetingRules">
       <el-form-item label="定向包名称" prop="targeting_name">
         <el-input v-model="targetingForm.targeting_name" placeholder="限 100 字内的中英文、数字以及破折号 [ - ]"/>
@@ -7,9 +7,9 @@
       <el-form-item label="语言" prop="language">
         <el-radio-group v-model="targetingForm.language_check" @change="handleChangeDiy($event, 'language')">
           <el-radio-button label="">不限</el-radio-button>
-          <el-radio-button :label="1">自定义</el-radio-button>
+          <el-radio-button label="1">自定义</el-radio-button>
         </el-radio-group>
-        <el-transfer v-model="targetingForm.language" class="dictionary-transfer" v-show="targetingForm.language_check === 1"
+        <el-transfer v-model="targetingForm.language" class="dictionary-transfer" v-show="targetingForm.language_check === '1'"
                      :props="{key: 'value',label: 'label' }" :data="dictionaries.language" filterable
                      :titles="['待选列表', '已选列表']"/>
       </el-form-item>
@@ -31,11 +31,35 @@
           <el-radio-button label="0">未安装</el-radio-button>
         </el-radio-group>
       </el-form-item>
+      <el-form-item label="APP 行为" prop="app_behavior">
+        <el-radio-group v-model="targetingForm.app_behavior" @change="handleChangeDiy($event, 'app_behaviors')">
+          <el-radio-button label="">不限</el-radio-button>
+          <el-radio-button label="app_category_active_struct">一个月内活跃</el-radio-button>
+          <el-radio-button label="app_category_installed_struct">已安装</el-radio-button>
+          <el-radio-button label="not_app_category_install_struct">未安装</el-radio-button>
+        </el-radio-group>
+        <el-transfer v-model="targetingForm.app_behaviors" class="dictionary-transfer" v-show="targetingForm.app_behavior !== ''"
+                     :props="{key: 'value',label: 'label' }" :data="dictionaries.app_category" filterable
+                     :titles="['待选列表', '已选列表']"/>
+      </el-form-item>
+      <el-form-item label="APP 兴趣" prop="app_interest">
+        <el-radio-group v-model="targetingForm.app_interest" @change="handleChangeDiy($event, 'app_interests')">
+          <el-radio-button label="">不限</el-radio-button>
+          <el-radio-button label="unlimit_app_interest_struct">兴趣不限</el-radio-button>
+          <el-radio-button label="normal_app_interest_struct">中等兴趣</el-radio-button>
+          <el-radio-button label="high_app_interest_struct">高兴趣</el-radio-button>
+        </el-radio-group>
+        <el-cascader-panel v-model="targetingForm.app_interests" class="dictionary-transfer" :options="dictionaries.app_interest|dataToTree"
+                           v-show="targetingForm.app_interest !== ''" :props="{ multiple: true }"/>
+      </el-form-item>
       <el-form-item label="设备" prop="series_type">
-        <el-radio-group v-model="targetingForm.series_type">
+        <el-radio-group v-model="targetingForm.series_type" @change="handleChangeDiy($event, 'series')">
           <el-radio-button label="">不限</el-radio-button>
           <el-radio-button label="1">按品牌划分</el-radio-button>
         </el-radio-group>
+        <el-transfer v-model="targetingForm.series" class="dictionary-transfer" v-show="targetingForm.series_type === '1'"
+                     :props="{key: 'value',label: 'label' }" :data="dictionaries.series_type" filterable
+                     :titles="['待选列表', '已选列表']"/>
       </el-form-item>
       <el-form-item label="联网方式" prop="network_type_struct">
         <el-checkbox-group v-model="targetingForm.network_type_struct" @change="handleChange($event, 'network_type_struct')">
@@ -43,18 +67,34 @@
           <el-checkbox-button v-for="item in dictionaries.network_type" :label="item.value">{{ item.label }}</el-checkbox-button>
         </el-checkbox-group>
       </el-form-item>
+      <el-form-item label="自定义人群" prop="audience">
+        <el-radio-group v-model="targetingForm.audience">
+          <el-radio-button label="">不限</el-radio-button>
+          <el-radio-button label="1">自定义</el-radio-button>
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item label="媒体类型" prop="media_app_category">
+        <el-radio-group v-model="targetingForm.media_app_category">
+          <el-radio-button label="">不限</el-radio-button>
+          <el-radio-button label="1">包含</el-radio-button>
+        </el-radio-group>
+        <el-cascader-panel v-model="targetingForm.app_category_of_media_struct" class="dictionary-transfer"
+                           :options="dictionaries.media_app_category|dataToTree"
+                           v-show="targetingForm.media_app_category === '1'" :props="{ multiple: true }"/>
+      </el-form-item>
     </el-form>
-  </dialog-panel>
+  </drawer-panel>
 </template>
 
 <script>
-import DialogPanel from '@c/DialogPanel'
+import DrawerPanel from '@c/Drawer'
 import {dictionaryQuery} from '@a/marketing'
+import {arrayToTree} from '@/utils'
 
 export default {
   name: 'TargetingCreate',
   components: {
-    DialogPanel
+    DrawerPanel
   },
   props: {
     AccountId: {
@@ -74,7 +114,17 @@ export default {
         gender_struct: '',
         age_struct: [''],
         network_type_struct: [''],
+        app_behavior: '',
+        app_behaviors: [],
+        app_interest: '',
+        app_interests: [],
+        audience: '',
+        audience_struct: [],
+        not_audience_struct: [],
         series_type: '',
+        series: [],
+        media_app_category: '',
+        app_category_of_media_struct: [],
         language_check: '',
         language: [],
         installed_apps: '1',
@@ -89,12 +139,25 @@ export default {
         network_type: [],
         gender: [],
         language: [],
+        app_category: [],
+        app_interest: [],
+        media_app_category: [],
       }
+    }
+  },
+  filters: {
+    dataToTree(origin) {
+      let d = []
+      if (Array.isArray(origin)) {
+        d = arrayToTree(origin, 0, 'pid', 'children')
+      }
+      return d
     }
   },
   methods: {
     initCreate(tab) {
-      dictionaryQuery({dict_key: "age,series_type,network_type,gender,language"}).then(res => {
+      let dict_key = "age,series_type,network_type,gender,language,app_category,app_interest,media_app_category"
+      dictionaryQuery({dict_key}).then(res => {
         this.dictionaries = res.data
         this.creativeTab = tab
         this.visible = true
@@ -134,7 +197,7 @@ export default {
       }
     },
     handleChangeDiy(v, attr) {
-      if (Number(v) === 1) {
+      if (Number(v) === 0) {
 
       }
     }

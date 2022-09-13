@@ -2,6 +2,7 @@ package logic
 
 import (
 	"business/common/curl"
+	"business/common/utils"
 	"business/common/vars"
 	"business/cronJobs/jobs"
 	"business/cronJobs/model"
@@ -10,6 +11,7 @@ import (
 	"context"
 	"errors"
 	"github.com/zeromicro/go-zero/core/logx"
+	"log"
 )
 
 type DictionaryQueryLogic struct {
@@ -70,20 +72,34 @@ func (l *DictionaryQueryLogic) query(param *jobs.QueryParam) (err error) {
 	dict = append(dict, dataCopy("carrier", response.Data.TreeTargetingMap.Carrier)...)
 	dict = append(dict, dataCopy("app_category", response.Data.TreeTargetingMap.AppCategory)...)
 	dict = append(dict, dataCopy("series_type", response.Data.TreeTargetingMap.SeriesType)...)
+	dict = append(dict, dataCopy("location_category", response.Data.TreeTargetingMap.LocationCategory)...)
 
 	return l.svcCtx.DictModel.BatchInsert(l.ctx, dict)
 }
 
 func dataCopy(key string, items []*statements.DictionaryItem) (dict []*model.TargetingDictionaries) {
+	dict = make([]*model.TargetingDictionaries, 0)
+	var dataStruct int64 = 0
+	for ds, keys := range vars.TargetingDictionaryStruct {
+		if utils.StringInArray(keys, key) {
+			dataStruct = ds
+			break
+		}
+	}
+	if dataStruct == 0 {
+		log.Println("调度异常，字典 Key 未设置：", key)
+		return
+	}
 	for _, item := range items {
 		dict = append(dict, &model.TargetingDictionaries{
-			DictKey: key,
-			Id:      item.Id,
-			Pid:     item.Pid,
-			Label:   item.Label,
-			Value:   item.Value,
-			Code:    item.Code,
-			Seq:     item.Seq,
+			DictKey:    key,
+			Id:         item.Id,
+			Pid:        item.Pid,
+			Label:      item.Label,
+			Value:      item.Value,
+			Code:       item.Code,
+			Seq:        item.Seq,
+			DataStruct: dataStruct,
 		})
 	}
 	return

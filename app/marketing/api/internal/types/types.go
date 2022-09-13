@@ -2,13 +2,14 @@
 package types
 
 type Dictionary struct {
-	DictKey string `json:"dict_key"`
-	Id      string `json:"id"`
-	Pid     string `json:"pid"`
-	Label   string `json:"label"`
-	Value   string `json:"value"`
-	Code    string `json:"code"`
-	Seq     string `json:"seq"`
+	DictKey  string        `json:"dict_key"`
+	Id       string        `json:"id"`
+	Pid      string        `json:"pid"`
+	Label    string        `json:"label"`
+	Value    string        `json:"value"`
+	Code     string        `json:"code"`
+	Seq      string        `json:"seq"`
+	Children []*Dictionary `json:"children"`
 }
 
 type DictReq struct {
@@ -97,4 +98,36 @@ type Resources struct {
 type CampaignResources struct {
 	BaseResp
 	Data *Resources `json:"data"`
+}
+
+type TargetingCreateReq struct {
+	AccountId                int64    `json:"account_id"`
+	TargetingType            string   `json:"targeting_type"`
+	TargetingName            string   `json:"targeting_name"`
+	GenderStruct             string   `json:"gender_struct"`
+	AgeStruct                []string `json:"age_struct"`
+	NetworkTypeStruct        []string `json:"network_type_struct"`
+	AppBehavior              string   `json:"app_behavior"`
+	AppBehaviors             []string `json:"app_behaviors"`
+	AppInterest              string   `json:"app_interest"`
+	AppInterests             []string `json:"app_interests"`
+	Audience                 string   `json:"audience"`
+	AudienceStruct           []string `json:"audience_struct"`
+	NotAudienceStruct        []string `json:"not_audience_struct"`
+	SeriesType               string   `json:"series_type"`
+	Series                   []string `json:"series"`
+	MediaAppCategory         string   `json:"media_app_category"`
+	AppCategoryOfMediaStruct []string `json:"app_category_of_media_struct"`
+	LanguageCheck            string   `json:"language_check"`
+	Language                 []string `json:"language"`
+	InstalledApps            string   `json:"installed_apps"`
+}
+
+type TargetingCreateRsInfo struct {
+	TargetingId string `json:"targeting_id"`
+}
+
+type TargetingCreateResp struct {
+	BaseResp
+	Data TargetingCreateRsInfo `json:"data"`
 }

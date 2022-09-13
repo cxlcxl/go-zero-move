@@ -38,7 +38,7 @@ func (m *defaultTargetingDictionariesModel) BatchInsert(ctx context.Context, dic
 			return err
 		}
 		for i := 0; i < len(dictionaries); i++ {
-			valueStatement = append(valueStatement, "(?, ?, ?, ?, ?, ?, ?)")
+			valueStatement = append(valueStatement, "(?, ?, ?, ?, ?, ?, ?, ?)")
 			values = append(values,
 				dictionaries[i].DictKey,
 				dictionaries[i].Id,
@@ -47,6 +47,7 @@ func (m *defaultTargetingDictionariesModel) BatchInsert(ctx context.Context, dic
 				dictionaries[i].Value,
 				dictionaries[i].Code,
 				dictionaries[i].Seq,
+				dictionaries[i].DataStruct,
 			)
 			// 达到了 500 条数据，或最后一条了
 			if chunk == 500 || i == len(dictionaries)-1 {

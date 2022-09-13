@@ -18,20 +18,21 @@ type DictionaryResponse struct {
 	BaseResponse
 	Data struct {
 		TreeTargetingMap struct {
-			Carrier     []*DictionaryItem `json:"carrier"`
-			AppCategory []*DictionaryItem `json:"app_category"`
-			SeriesType  []*DictionaryItem `json:"series_type"`
+			Carrier          []*DictionaryItem `json:"carrier"`
+			AppCategory      []*DictionaryItem `json:"app_category"`
+			SeriesType       []*DictionaryItem `json:"series_type"`
+			LocationCategory []*DictionaryItem `json:"location_category"`
 		} `json:"tree_targeting_map"`
 		LinearTargetingMap struct {
-			DevicePrice          []*DictionaryItem `json:"device_price"`
-			NotPreDefineAudience []*DictionaryItem `json:"not_pre_define_audience"`
 			Gender               []*DictionaryItem `json:"gender"`
+			Age                  []*DictionaryItem `json:"age"`
+			DevicePrice          []*DictionaryItem `json:"device_price"`
+			NetworkType          []*DictionaryItem `json:"network_type"`
 			PreDefineAudience    []*DictionaryItem `json:"pre_define_audience"`
-			Language             []*DictionaryItem `json:"language"`
+			NotPreDefineAudience []*DictionaryItem `json:"not_pre_define_audience"`
 			MediaAppCategory     []*DictionaryItem `json:"media_app_category"`
 			AppInterest          []*DictionaryItem `json:"app_interest"`
-			NetworkType          []*DictionaryItem `json:"network_type"`
-			Age                  []*DictionaryItem `json:"age"`
+			Language             []*DictionaryItem `json:"language"`
 		} `json:"linear_targeting_map"`
 	} `json:"data"`
 }
