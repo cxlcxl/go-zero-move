@@ -14,8 +14,8 @@ ADD go.mod .
 ADD go.sum .
 RUN go mod download
 COPY . .
-COPY app/application/api/etc /app/etc
-RUN go build -ldflags="-s -w" -o /app/app app/application/api/app.go
+COPY app/account/api/etc /app/etc
+RUN go build -ldflags="-s -w" -o /app/account app/account/api/account.go
 
 
 FROM scratch
@@ -25,7 +25,7 @@ COPY --from=builder /usr/share/zoneinfo/Asia/Shanghai /usr/share/zoneinfo/Asia/S
 ENV TZ Asia/Shanghai
 
 WORKDIR /app
-COPY --from=builder /app/app /app/app
+COPY --from=builder /app/account /app/account
 COPY --from=builder /app/etc /app/etc
 
-CMD ["./app", "-f", "etc/app-api.dev.yaml"]
+CMD ["./account", "-f", "etc/account-api.dev.yaml"]

@@ -55,7 +55,7 @@ spec:
         - name: configfiles
           nfs:
             server: 192.168.120.61
-            path: /business/app-rbac-rpc
+            path: /usr/local/nfs/business/app-rbac-rpc
             readOnly: true
 
 ---

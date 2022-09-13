@@ -19,7 +19,7 @@ spec:
       serviceAccountName: business
       containers:
       - name: app-api
-        image: silentcxl/app-api:v1.0.0
+        image: silentcxl/app-api:v1.0.1
         lifecycle:
           preStop:
             exec:
@@ -46,10 +46,17 @@ spec:
         volumeMounts:
         - name: timezone
           mountPath: /etc/localtime
+        - name: configfiles
+          mountPath: /app/etc
       volumes:
         - name: timezone
           hostPath:
             path: /usr/share/zoneinfo/Asia/Shanghai
+        - name: configfiles
+          nfs:
+            path: /usr/local/nfs/business/app-app-api
+            server: 192.168.120.61
+            readOnly: true
 
 ---
 
