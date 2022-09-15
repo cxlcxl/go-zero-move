@@ -25,7 +25,10 @@ type MarketingCenterClient interface {
 	PromotionCreate(ctx context.Context, in *PromotionCreateReq, opts ...grpc.CallOption) (*BaseResp, error)
 	PromotionList(ctx context.Context, in *PromotionListReq, opts ...grpc.CallOption) (*PromotionListResp, error)
 	PromotionUpdate(ctx context.Context, in *PromotionUpdateReq, opts ...grpc.CallOption) (*BaseResp, error)
+	CampaignInfo(ctx context.Context, in *CampaignInfoReq, opts ...grpc.CallOption) (*PromotionInfo, error)
 	DictQuery(ctx context.Context, in *DictionaryReq, opts ...grpc.CallOption) (*DictionaryResp, error)
+	Continents(ctx context.Context, in *EmptyParamsReq, opts ...grpc.CallOption) (*ContinentResp, error)
+	GetCountries(ctx context.Context, in *EmptyParamsReq, opts ...grpc.CallOption) (*CountriesResp, error)
 }
 
 type marketingCenterClient struct {
@@ -63,9 +66,36 @@ func (c *marketingCenterClient) PromotionUpdate(ctx context.Context, in *Promoti
 	return out, nil
 }
 
+func (c *marketingCenterClient) CampaignInfo(ctx context.Context, in *CampaignInfoReq, opts ...grpc.CallOption) (*PromotionInfo, error) {
+	out := new(PromotionInfo)
+	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/CampaignInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *marketingCenterClient) DictQuery(ctx context.Context, in *DictionaryReq, opts ...grpc.CallOption) (*DictionaryResp, error) {
 	out := new(DictionaryResp)
 	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/DictQuery", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketingCenterClient) Continents(ctx context.Context, in *EmptyParamsReq, opts ...grpc.CallOption) (*ContinentResp, error) {
+	out := new(ContinentResp)
+	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/Continents", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketingCenterClient) GetCountries(ctx context.Context, in *EmptyParamsReq, opts ...grpc.CallOption) (*CountriesResp, error) {
+	out := new(CountriesResp)
+	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/GetCountries", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -79,7 +109,10 @@ type MarketingCenterServer interface {
 	PromotionCreate(context.Context, *PromotionCreateReq) (*BaseResp, error)
 	PromotionList(context.Context, *PromotionListReq) (*PromotionListResp, error)
 	PromotionUpdate(context.Context, *PromotionUpdateReq) (*BaseResp, error)
+	CampaignInfo(context.Context, *CampaignInfoReq) (*PromotionInfo, error)
 	DictQuery(context.Context, *DictionaryReq) (*DictionaryResp, error)
+	Continents(context.Context, *EmptyParamsReq) (*ContinentResp, error)
+	GetCountries(context.Context, *EmptyParamsReq) (*CountriesResp, error)
 	mustEmbedUnimplementedMarketingCenterServer()
 }
 
@@ -96,8 +129,17 @@ func (UnimplementedMarketingCenterServer) PromotionList(context.Context, *Promot
 func (UnimplementedMarketingCenterServer) PromotionUpdate(context.Context, *PromotionUpdateReq) (*BaseResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PromotionUpdate not implemented")
 }
+func (UnimplementedMarketingCenterServer) CampaignInfo(context.Context, *CampaignInfoReq) (*PromotionInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CampaignInfo not implemented")
+}
 func (UnimplementedMarketingCenterServer) DictQuery(context.Context, *DictionaryReq) (*DictionaryResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DictQuery not implemented")
+}
+func (UnimplementedMarketingCenterServer) Continents(context.Context, *EmptyParamsReq) (*ContinentResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Continents not implemented")
+}
+func (UnimplementedMarketingCenterServer) GetCountries(context.Context, *EmptyParamsReq) (*CountriesResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCountries not implemented")
 }
 func (UnimplementedMarketingCenterServer) mustEmbedUnimplementedMarketingCenterServer() {}
 
@@ -166,6 +208,24 @@ func _MarketingCenter_PromotionUpdate_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MarketingCenter_CampaignInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CampaignInfoReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketingCenterServer).CampaignInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/marketing.MarketingCenter/CampaignInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketingCenterServer).CampaignInfo(ctx, req.(*CampaignInfoReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _MarketingCenter_DictQuery_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DictionaryReq)
 	if err := dec(in); err != nil {
@@ -180,6 +240,42 @@ func _MarketingCenter_DictQuery_Handler(srv interface{}, ctx context.Context, de
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MarketingCenterServer).DictQuery(ctx, req.(*DictionaryReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MarketingCenter_Continents_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyParamsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketingCenterServer).Continents(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/marketing.MarketingCenter/Continents",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketingCenterServer).Continents(ctx, req.(*EmptyParamsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MarketingCenter_GetCountries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyParamsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketingCenterServer).GetCountries(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/marketing.MarketingCenter/GetCountries",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketingCenterServer).GetCountries(ctx, req.(*EmptyParamsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -204,8 +300,20 @@ var MarketingCenter_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _MarketingCenter_PromotionUpdate_Handler,
 		},
 		{
+			MethodName: "CampaignInfo",
+			Handler:    _MarketingCenter_CampaignInfo_Handler,
+		},
+		{
 			MethodName: "DictQuery",
 			Handler:    _MarketingCenter_DictQuery_Handler,
+		},
+		{
+			MethodName: "Continents",
+			Handler:    _MarketingCenter_Continents_Handler,
+		},
+		{
+			MethodName: "GetCountries",
+			Handler:    _MarketingCenter_GetCountries_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

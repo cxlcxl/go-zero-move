@@ -198,11 +198,11 @@ func STF(d string) float64 {
 	return f
 }
 
-func StringInArray(ss []string, s string) bool {
-	for _, s2 := range ss {
+func StringInArray(ss []string, s string) (int, bool) {
+	for i, s2 := range ss {
 		if s2 == s {
-			return true
+			return i, true
 		}
 	}
-	return false
+	return -1, false
 }

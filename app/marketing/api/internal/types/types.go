@@ -2,13 +2,10 @@
 package types
 
 type Dictionary struct {
-	DictKey  string        `json:"dict_key"`
 	Id       string        `json:"id"`
 	Pid      string        `json:"pid"`
 	Label    string        `json:"label"`
 	Value    string        `json:"value"`
-	Code     string        `json:"code"`
-	Seq      string        `json:"seq"`
 	Children []*Dictionary `json:"children"`
 }
 
@@ -19,6 +16,28 @@ type DictReq struct {
 type DictResp struct {
 	BaseResp
 	Data map[string][]*Dictionary `json:"data"`
+}
+
+type ContinentCountry struct {
+	Continents []*Continent `json:"continents"`
+	Countries  []*Country   `json:"countries"`
+}
+
+type Continent struct {
+	Id    int64  `json:"id"`
+	CName string `json:"c_name"`
+}
+
+type Country struct {
+	CId         string `json:"c_id"`
+	CCode       string `json:"c_code"`
+	CName       string `json:"c_name"`
+	ContinentId int64  `json:"continent_id"`
+}
+
+type LocationResp struct {
+	BaseResp
+	Data ContinentCountry `json:"data"`
 }
 
 type BaseResp struct {
@@ -101,30 +120,36 @@ type CampaignResources struct {
 }
 
 type TargetingCreateReq struct {
-	AccountId                int64    `json:"account_id"`
-	TargetingType            string   `json:"targeting_type"`
-	TargetingName            string   `json:"targeting_name"`
-	GenderStruct             string   `json:"gender_struct"`
-	AgeStruct                []string `json:"age_struct"`
-	NetworkTypeStruct        []string `json:"network_type_struct"`
-	AppBehavior              string   `json:"app_behavior"`
-	AppBehaviors             []string `json:"app_behaviors"`
-	AppInterest              string   `json:"app_interest"`
-	AppInterests             []string `json:"app_interests"`
-	Audience                 string   `json:"audience"`
-	AudienceStruct           []string `json:"audience_struct"`
-	NotAudienceStruct        []string `json:"not_audience_struct"`
-	SeriesType               string   `json:"series_type"`
-	Series                   []string `json:"series"`
-	MediaAppCategory         string   `json:"media_app_category"`
-	AppCategoryOfMediaStruct []string `json:"app_category_of_media_struct"`
-	LanguageCheck            string   `json:"language_check"`
-	Language                 []string `json:"language"`
-	InstalledApps            string   `json:"installed_apps"`
+	CampaignId         string     `json:"campaign_id"`
+	TargetingType      string     `json:"targeting_type"`
+	TargetingName      string     `json:"targeting_name"`
+	Gender             string     `json:"gender"`
+	Age                []string   `json:"age"`
+	NetworkType        []string   `json:"network_type"`
+	Location           string     `json:"location"`
+	LocationType       string     `json:"location_type"`
+	IncludeLocation    []string   `json:"include_location"`
+	ExcludeLocation    []string   `json:"exclude_location"`
+	Carrier            string     `json:"carrier"`
+	Carriers           [][]string `json:"carriers"`
+	AppCategory        string     `json:"app_category"`
+	AppCategories      []string   `json:"app_categories"`
+	AppInterest        string     `json:"app_interest"`
+	AppInterests       [][]string `json:"app_interests"`
+	Audience           string     `json:"audience"`
+	Audiences          []string   `json:"audiences"`
+	NotAudience        []string   `json:"not_audience"`
+	SeriesType         string     `json:"series_type"`
+	Series             []string   `json:"series"`
+	MediaAppCategory   string     `json:"media_app_category"`
+	AppCategoryOfMedia [][]string `json:"app_category_of_media"`
+	LanguageCheck      string     `json:"language_check"`
+	Language           []string   `json:"language"`
+	InstalledApps      string     `json:"installed_apps"`
 }
 
 type TargetingCreateRsInfo struct {
-	TargetingId string `json:"targeting_id"`
+	TargetingId int64 `json:"targeting_id"`
 }
 
 type TargetingCreateResp struct {

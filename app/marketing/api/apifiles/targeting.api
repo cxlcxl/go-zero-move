@@ -2,30 +2,36 @@ syntax = "v1"
 
 type (
     TargetingCreateReq {
-        AccountId int64 `json:"account_id"`
+        CampaignId string `json:"campaign_id"`
         TargetingType string `json:"targeting_type"`
         TargetingName string `json:"targeting_name"`
-        GenderStruct string `json:"gender_struct"`
-        AgeStruct []string `json:"age_struct"`
-        NetworkTypeStruct []string `json:"network_type_struct"`
-        AppBehavior string `json:"app_behavior"`
-        AppBehaviors []string `json:"app_behaviors"`
+        Gender string `json:"gender"`
+        Age []string `json:"age"`
+        NetworkType []string `json:"network_type"`
+        Location string `json:"location"`
+        LocationType string `json:"location_type"`
+        IncludeLocation []string `json:"include_location"`
+        ExcludeLocation []string  `json:"exclude_location"`
+        Carrier string `json:"carrier"`
+        Carriers [][]string `json:"carriers"`
+        AppCategory string `json:"app_category"`
+        AppCategories []string `json:"app_categories"`
         AppInterest string `json:"app_interest"`
-        AppInterests []string `json:"app_interests"`
+        AppInterests [][]string `json:"app_interests"`
         Audience string `json:"audience"`
-        AudienceStruct []string `json:"audience_struct"`
-        NotAudienceStruct []string `json:"not_audience_struct"`
+        Audiences []string `json:"audiences"`
+        NotAudience []string `json:"not_audience"`
         SeriesType string `json:"series_type"`
         Series []string `json:"series"`
         MediaAppCategory string `json:"media_app_category"`
-        AppCategoryOfMediaStruct []string `json:"app_category_of_media_struct"`
+        AppCategoryOfMedia [][]string `json:"app_category_of_media"`
         LanguageCheck string `json:"language_check"`
         Language []string `json:"language"`
         InstalledApps string `json:"installed_apps"`
     }
 
     TargetingCreateRsInfo {
-        TargetingId string `json:"targeting_id"`
+        TargetingId int64 `json:"targeting_id"`
     }
     TargetingCreateResp {
         BaseResp

@@ -37,7 +37,22 @@ func (s *MarketingCenterServer) PromotionUpdate(ctx context.Context, in *marketi
 	return l.PromotionUpdate(in)
 }
 
+func (s *MarketingCenterServer) CampaignInfo(ctx context.Context, in *marketing.CampaignInfoReq) (*marketing.PromotionInfo, error) {
+	l := logic.NewCampaignInfoLogic(ctx, s.svcCtx)
+	return l.CampaignInfo(in)
+}
+
 func (s *MarketingCenterServer) DictQuery(ctx context.Context, in *marketing.DictionaryReq) (*marketing.DictionaryResp, error) {
 	l := logic.NewDictQueryLogic(ctx, s.svcCtx)
 	return l.DictQuery(in)
+}
+
+func (s *MarketingCenterServer) Continents(ctx context.Context, in *marketing.EmptyParamsReq) (*marketing.ContinentResp, error) {
+	l := logic.NewContinentsLogic(ctx, s.svcCtx)
+	return l.Continents(in)
+}
+
+func (s *MarketingCenterServer) GetCountries(ctx context.Context, in *marketing.EmptyParamsReq) (*marketing.CountriesResp, error) {
+	l := logic.NewGetCountriesLogic(ctx, s.svcCtx)
+	return l.GetCountries(in)
 }

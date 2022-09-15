@@ -35,7 +35,7 @@ func (m *defaultTargetingDictionariesModel) FindDictionaries(ctx context.Context
 		s, v := whereIn(keys)
 		sb = sb.Where("dict_key in "+s, v...)
 	}
-	query, args, err := sb.ToSql()
+	query, args, err := sb.OrderBy("id asc").ToSql()
 	if err != nil {
 		return nil, err
 	}

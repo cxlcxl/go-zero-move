@@ -1,5 +1,6 @@
 Name: marketing.client
 ListenOn: 0.0.0.0:28004
+Timeout: 5000
 
 #Etcd:
 #  Hosts:

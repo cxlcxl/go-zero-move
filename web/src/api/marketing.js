@@ -23,6 +23,21 @@ export function campaignResources() {
   });
 }
 
+export function targetingCreate(data) {
+  return request({
+    url: "/marketing/targeting/create",
+    method: "post",
+    data
+  });
+}
+
+export function targetingLocation() {
+  return request({
+    url: "/marketing/targeting/location",
+    method: "get"
+  });
+}
+
 export function dictionaryQuery(params) {
   return request({
     url: "/marketing/dictionary/query",

@@ -56,6 +56,9 @@ const (
 
 	TargetingDictionaryStructLine = 1
 	TargetingDictionaryStructTree = 2
+
+	TargetingTypeApp    = "TARGET_TYPE_APP"
+	TargetingTypeNotApp = "TARGET_TYPE_NOT_APP"
 )
 
 var (
@@ -168,5 +171,10 @@ var (
 			"location_category",
 		},
 		TargetingDictionaryStructTree: {"carrier", "app_category", "series_type"},
+	}
+	// TargetingType 定向包类型
+	TargetingType = map[string]string{
+		TargetingTypeApp:    "应用类",
+		TargetingTypeNotApp: "非应用类",
 	}
 )

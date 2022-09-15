@@ -8,13 +8,10 @@ import (
 
 type (
 	Dictionary {
-		DictKey  string        `json:"dict_key"`
 		Id       string        `json:"id"`
 		Pid      string        `json:"pid"`
 		Label    string        `json:"label"`
 		Value    string        `json:"value"`
-		Code     string        `json:"code"`
-		Seq      string        `json:"seq"`
 		Children []*Dictionary `json:"children"`
 	}
 	DictReq {
@@ -23,6 +20,24 @@ type (
 	DictResp {
 		BaseResp
 		Data map[string][]*Dictionary `json:"data"`
+	}
+	ContinentCountry {
+		Continents []*Continent `json:"continents"`
+		Countries  []*Country   `json:"countries"`
+	}
+	Continent {
+		Id    int64  `json:"id"`
+		CName string `json:"c_name"`
+	}
+	Country {
+		CId         string `json:"c_id"`
+		CCode       string `json:"c_code"`
+		CName       string `json:"c_name"`
+		ContinentId int64  `json:"continent_id"`
+	}
+	LocationResp {
+		BaseResp
+		Data ContinentCountry `json:"data"`
 	}
 )
 
@@ -48,8 +63,12 @@ service marketing-api {
 	@handler dictionaryQuery
 	get /dictionary/query (DictReq) returns (DictResp)
 	
+	@doc "定向包查询地域"
+	@handler targetingLocation
+	get /targeting/location returns (LocationResp)
+	
 	@doc "创建定向包"
 	@handler targetingCreate
-	get /targeting/create (TargetingCreateReq) returns (TargetingCreateResp)
+	post /targeting/create (TargetingCreateReq) returns (TargetingCreateResp)
 	
 }

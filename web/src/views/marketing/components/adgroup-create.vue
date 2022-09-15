@@ -27,10 +27,10 @@
               <el-select v-model="adgroupForm.targeting_package_id" placeholder="选择已有定向" style="width: 380px;">
                 <el-option v-for="targeting in targetingList" :label="targeting.targeting_name" :value="targeting.targeting_id"/>
               </el-select>
-              <el-button icon="el-icon-plus" type="primary" style="margin-left: 10px;" @click="createTargeting(__adgroup.tab_name)">新建定向</el-button>
-              <el-button icon="el-icon-refresh" style="margin-left: 10px;" @click="pullTargeting">同步定向数据</el-button>
-              <el-button icon="el-icon-document-copy" type="primary"
-                         @click="copyTab(__adgroup.tab_name, idx)" style="margin-left: 10px; float: right;">拷贝此任务</el-button>
+              <el-button type="primary" style="margin-left: 5px;" @click="createTargeting(__adgroup.tab_name)" icon="el-icon-edit"/>
+              <el-button type="primary" style="margin-left: 5px;" @click="createTargeting(__adgroup.tab_name)" icon="el-icon-plus"/>
+              <el-button style="margin-left: 5px;" @click="pullTargeting" icon="el-icon-refresh"/>
+              <el-button icon="el-icon-document-copy" type="primary" @click="copyTab(__adgroup.tab_name, idx)" style="float: right;">拷贝此任务</el-button>
             </el-form-item>
             <el-form-item label="版位" prop="creative_size_id">
               <el-radio-group v-model="__adgroup.category" @change="remoteCreative">
@@ -80,8 +80,7 @@
       </el-col>
     </el-form>
 
-    <targeting-create ref="targeting_create"
-                      :account-id="27" @success="targetingCallback"/>
+    <targeting-create ref="targeting_create" @handle-success="targetingCallback"/>
   </el-row>
 </template>
 
@@ -149,13 +148,13 @@ export default {
       }, 1000)
     },
     createTargeting(tab) {
-      this.$refs.targeting_create.initCreate(tab)
+      this.$refs.targeting_create.initCreate(tab, "69856985")
     },
     pullTargeting() {
       this.$message.info("定向数据拉取中，请稍后...")
     },
-    targetingCallback(tab) {
-      console.log(tab)
+    targetingCallback(targeting_id) {
+      console.log(targeting_id)
     },
     remoteCampaign() {
 

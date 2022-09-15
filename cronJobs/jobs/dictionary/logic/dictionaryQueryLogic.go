@@ -63,8 +63,8 @@ func (l *DictionaryQueryLogic) query(param *jobs.QueryParam) (err error) {
 	dict = append(dict, dataCopy("age", response.Data.LinearTargetingMap.Age)...)
 	dict = append(dict, dataCopy("device_price", response.Data.LinearTargetingMap.DevicePrice)...)
 	dict = append(dict, dataCopy("not_pre_define_audience", response.Data.LinearTargetingMap.NotPreDefineAudience)...)
-	dict = append(dict, dataCopy("gender", response.Data.LinearTargetingMap.Gender)...)
 	dict = append(dict, dataCopy("pre_define_audience", response.Data.LinearTargetingMap.PreDefineAudience)...)
+	dict = append(dict, dataCopy("gender", response.Data.LinearTargetingMap.Gender)...)
 	dict = append(dict, dataCopy("media_app_category", response.Data.LinearTargetingMap.MediaAppCategory)...)
 	dict = append(dict, dataCopy("network_type", response.Data.LinearTargetingMap.NetworkType)...)
 	dict = append(dict, dataCopy("app_interest", response.Data.LinearTargetingMap.AppInterest)...)
@@ -81,7 +81,7 @@ func dataCopy(key string, items []*statements.DictionaryItem) (dict []*model.Tar
 	dict = make([]*model.TargetingDictionaries, 0)
 	var dataStruct int64 = 0
 	for ds, keys := range vars.TargetingDictionaryStruct {
-		if utils.StringInArray(keys, key) {
+		if _, ok := utils.StringInArray(keys, key); ok {
 			dataStruct = ds
 			break
 		}

@@ -30,6 +30,11 @@ type Config struct {
 			Create string
 			Update string
 		}
+		Targeting struct {
+			Query  string
+			Create string
+			Update string
+		}
 	}
 
 	Kafka struct {

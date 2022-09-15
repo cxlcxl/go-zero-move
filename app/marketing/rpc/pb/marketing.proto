@@ -31,6 +31,9 @@ message  PromotionListResp{
   repeated PromotionInfo promotions = 1;
   int64 total = 2;
 }
+message CampaignInfoReq {
+  string campaign_id = 1;
+}
 message PromotionInfo{
   int64 id = 1;
   string campaign_id = 2;
@@ -69,11 +72,34 @@ message DictionaryResp {
   repeated Dictionary Dictionaries = 1;
 }
 
+message CountriesResp{
+  message OverseasRegionCountry {
+    string c_id = 1;
+    string pid = 2;
+    string c_name = 3;
+    string c_code = 4;
+    int64 level = 5;
+    int64 continent_id = 6;
+  }
+  repeated OverseasRegionCountry countries = 1;
+}
+message ContinentResp{
+  message Continent {
+    int64 id = 1;
+    string c_name = 2;
+  }
+  repeated Continent continents = 1;
+}
+
+message EmptyParamsReq {}
 message BaseResp {}
 
 service MarketingCenter{
   rpc PromotionCreate(PromotionCreateReq) returns(BaseResp);
   rpc PromotionList(PromotionListReq) returns(PromotionListResp);
   rpc PromotionUpdate(PromotionUpdateReq) returns(BaseResp);
+  rpc CampaignInfo(CampaignInfoReq) returns(PromotionInfo);
   rpc DictQuery(DictionaryReq) returns(DictionaryResp);
+  rpc Continents(EmptyParamsReq) returns(ContinentResp);
+  rpc GetCountries(EmptyParamsReq) returns(CountriesResp);
 }

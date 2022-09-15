@@ -13,21 +13,30 @@ import (
 )
 
 type (
-	BaseResp                  = marketing.BaseResp
-	DictionaryReq             = marketing.DictionaryReq
-	DictionaryResp            = marketing.DictionaryResp
-	DictionaryResp_Dictionary = marketing.DictionaryResp_Dictionary
-	PromotionCreateReq        = marketing.PromotionCreateReq
-	PromotionInfo             = marketing.PromotionInfo
-	PromotionListReq          = marketing.PromotionListReq
-	PromotionListResp         = marketing.PromotionListResp
-	PromotionUpdateReq        = marketing.PromotionUpdateReq
+	BaseResp                            = marketing.BaseResp
+	CampaignInfoReq                     = marketing.CampaignInfoReq
+	ContinentResp                       = marketing.ContinentResp
+	ContinentResp_Continent             = marketing.ContinentResp_Continent
+	CountriesResp                       = marketing.CountriesResp
+	CountriesResp_OverseasRegionCountry = marketing.CountriesResp_OverseasRegionCountry
+	DictionaryReq                       = marketing.DictionaryReq
+	DictionaryResp                      = marketing.DictionaryResp
+	DictionaryResp_Dictionary           = marketing.DictionaryResp_Dictionary
+	EmptyParamsReq                      = marketing.EmptyParamsReq
+	PromotionCreateReq                  = marketing.PromotionCreateReq
+	PromotionInfo                       = marketing.PromotionInfo
+	PromotionListReq                    = marketing.PromotionListReq
+	PromotionListResp                   = marketing.PromotionListResp
+	PromotionUpdateReq                  = marketing.PromotionUpdateReq
 
 	MarketingCenter interface {
 		PromotionCreate(ctx context.Context, in *PromotionCreateReq, opts ...grpc.CallOption) (*BaseResp, error)
 		PromotionList(ctx context.Context, in *PromotionListReq, opts ...grpc.CallOption) (*PromotionListResp, error)
 		PromotionUpdate(ctx context.Context, in *PromotionUpdateReq, opts ...grpc.CallOption) (*BaseResp, error)
+		CampaignInfo(ctx context.Context, in *CampaignInfoReq, opts ...grpc.CallOption) (*PromotionInfo, error)
 		DictQuery(ctx context.Context, in *DictionaryReq, opts ...grpc.CallOption) (*DictionaryResp, error)
+		Continents(ctx context.Context, in *EmptyParamsReq, opts ...grpc.CallOption) (*ContinentResp, error)
+		GetCountries(ctx context.Context, in *EmptyParamsReq, opts ...grpc.CallOption) (*CountriesResp, error)
 	}
 
 	defaultMarketingCenter struct {
@@ -56,7 +65,22 @@ func (m *defaultMarketingCenter) PromotionUpdate(ctx context.Context, in *Promot
 	return client.PromotionUpdate(ctx, in, opts...)
 }
 
+func (m *defaultMarketingCenter) CampaignInfo(ctx context.Context, in *CampaignInfoReq, opts ...grpc.CallOption) (*PromotionInfo, error) {
+	client := marketing.NewMarketingCenterClient(m.cli.Conn())
+	return client.CampaignInfo(ctx, in, opts...)
+}
+
 func (m *defaultMarketingCenter) DictQuery(ctx context.Context, in *DictionaryReq, opts ...grpc.CallOption) (*DictionaryResp, error) {
 	client := marketing.NewMarketingCenterClient(m.cli.Conn())
 	return client.DictQuery(ctx, in, opts...)
+}
+
+func (m *defaultMarketingCenter) Continents(ctx context.Context, in *EmptyParamsReq, opts ...grpc.CallOption) (*ContinentResp, error) {
+	client := marketing.NewMarketingCenterClient(m.cli.Conn())
+	return client.Continents(ctx, in, opts...)
+}
+
+func (m *defaultMarketingCenter) GetCountries(ctx context.Context, in *EmptyParamsReq, opts ...grpc.CallOption) (*CountriesResp, error) {
+	client := marketing.NewMarketingCenterClient(m.cli.Conn())
+	return client.GetCountries(ctx, in, opts...)
 }
