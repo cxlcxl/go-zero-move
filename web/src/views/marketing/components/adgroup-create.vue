@@ -24,11 +24,11 @@
           <el-tab-pane v-for="(__adgroup, idx) in adgroupForm.adgroups"
                        :label="__adgroup.adgroup_name" :name="__adgroup.tab_name" :key="__adgroup.tab_name">
             <el-form-item label="定向" prop="targeting_package_id">
-              <el-select v-model="adgroupForm.targeting_package_id" placeholder="选择已有定向" style="width: 380px;">
-                <el-option v-for="targeting in targetingList" :label="targeting.targeting_name" :value="targeting.targeting_id"/>
+              <el-select v-model="__adgroup.targeting_package_id" placeholder="选择已有定向" style="width: 380px;">
+                <el-option v-for="targeting in targetings" :label="targeting.targeting_name" :value="targeting.targeting_id"/>
               </el-select>
-              <el-button type="primary" style="margin-left: 5px;" @click="createTargeting(__adgroup.tab_name)" icon="el-icon-edit"/>
-              <el-button type="primary" style="margin-left: 5px;" @click="createTargeting(__adgroup.tab_name)" icon="el-icon-plus"/>
+              <el-button type="primary" style="margin-left: 5px;" @click="updateTargeting(__adgroup.tab_name, idx)" icon="el-icon-edit"/>
+              <el-button type="primary" style="margin-left: 5px;" @click="createTargeting(__adgroup.tab_name, idx)" icon="el-icon-plus"/>
               <el-button style="margin-left: 5px;" @click="pullTargeting" icon="el-icon-refresh"/>
               <el-button icon="el-icon-document-copy" type="primary" @click="copyTab(__adgroup.tab_name, idx)" style="float: right;">拷贝此任务</el-button>
             </el-form-item>
@@ -86,6 +86,7 @@
 
 <script>
 import TargetingCreate from './targeting-create'
+import {targetingList} from '@a/marketing'
 
 export default {
   // name: 'AdgroupCreate',
@@ -98,7 +99,7 @@ export default {
         remoteCampaignLoading: false,
         creativeLoading: false,
       },
-      targetingList: [],
+      targetings: [],
       campaigns: [],
       creativeList: [
         {creative_size_id: '111', name: 'Global High-quality traffic Banner_VIP', desc: 'Global High-quality traffic Banner_VIP 1'},
@@ -141,20 +142,52 @@ export default {
     this.getResources()
   },
   methods: {
+    getTargetingList() {
+      return new Promise((resolve, reject) => {
+        targetingList().then(res => {
+          this.targetings = res.data
+          resolve()
+        }).catch(() => {
+          this.$message.error('定向包列表读取失败')
+          reject()
+        })
+      })
+    },
     getResources() {
       this.loadings.pageLoading = true
-      setTimeout(() => {
+      Promise.all([
+        this.getTargetingList(),
+      ]).then(() => {
         this.loadings.pageLoading = false
-      }, 1000)
+      }).catch(() => {
+        this.loadings.pageLoading = false
+      })
     },
-    createTargeting(tab) {
-      this.$refs.targeting_create.initCreate(tab, "69856985")
+    createTargeting(tab, idx) {
+      this.$refs.targeting_create.initCreate(tab, "69856985", {}, idx)
+    },
+    updateTargeting(tab, idx) {
+      let targetingId = Number(this.adgroupForm.adgroups[idx].targeting_package_id)
+      if (targetingId === 0) {
+        this.$message.error('请先选择定向包')
+        return
+      }
+      let tmpTargeting = {}
+      for (let i = 0; i < this.targetings.length; i++) {
+        if (this.targetings[i].targeting_id === targetingId) {
+          tmpTargeting = Object.assign({}, this.targetings[i])
+          tmpTargeting.targeting_name = ''
+          break
+        }
+      }
+      this.$refs.targeting_create.initCreate(tab, '69856985', tmpTargeting, idx)
     },
     pullTargeting() {
       this.$message.info("定向数据拉取中，请稍后...")
     },
-    targetingCallback(targeting_id) {
-      console.log(targeting_id)
+    targetingCallback(targeting, adgroupIdx) {
+      this.targetings.push(targeting)
+      this.$set(this.adgroupForm.adgroups[adgroupIdx], 'targeting_package_id', targeting.targeting_id)
     },
     remoteCampaign() {
 

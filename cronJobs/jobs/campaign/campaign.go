@@ -41,4 +41,6 @@ func Campaign() {
 	}
 
 	fmt.Println("================= campaign job end ==================")
+	fmt.Println()
+	fmt.Println()
 }

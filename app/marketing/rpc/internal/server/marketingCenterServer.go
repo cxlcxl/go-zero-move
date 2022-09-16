@@ -56,3 +56,23 @@ func (s *MarketingCenterServer) GetCountries(ctx context.Context, in *marketing.
 	l := logic.NewGetCountriesLogic(ctx, s.svcCtx)
 	return l.GetCountries(in)
 }
+
+func (s *MarketingCenterServer) TargetingCreate(ctx context.Context, in *marketing.Targeting) (*marketing.BaseResp, error) {
+	l := logic.NewTargetingCreateLogic(ctx, s.svcCtx)
+	return l.TargetingCreate(in)
+}
+
+func (s *MarketingCenterServer) TargetingList(ctx context.Context, in *marketing.EmptyParamsReq) (*marketing.TargetingListResp, error) {
+	l := logic.NewTargetingListLogic(ctx, s.svcCtx)
+	return l.TargetingList(in)
+}
+
+func (s *MarketingCenterServer) GetTargetingByName(ctx context.Context, in *marketing.GetTargetingByNameReq) (*marketing.Targeting, error) {
+	l := logic.NewGetTargetingByNameLogic(ctx, s.svcCtx)
+	return l.GetTargetingByName(in)
+}
+
+func (s *MarketingCenterServer) GetTargetingByTargetingId(ctx context.Context, in *marketing.GetTargetingByTargetingIdReq) (*marketing.Targeting, error) {
+	l := logic.NewGetTargetingByTargetingIdLogic(ctx, s.svcCtx)
+	return l.GetTargetingByTargetingId(in)
+}

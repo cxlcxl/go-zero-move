@@ -1,6 +1,6 @@
 Name: marketing.rpc
 ListenOn: 0.0.0.0:28004
-Timeout: 5000
+Timeout: 10000
 
 Database:
   Driver: "mysql"

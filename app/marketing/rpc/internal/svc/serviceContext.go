@@ -12,6 +12,7 @@ type ServiceContext struct {
 	DictModel      model.TargetingDictionariesModel
 	RegionModel    model.OverseasRegionsModel
 	ContinentModel model.ContinentsModel
+	TargetingModel model.TargetingsModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -22,5 +23,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		DictModel:      model.NewTargetingDictionariesModel(DBConn),
 		RegionModel:    model.NewOverseasRegionsModel(DBConn),
 		ContinentModel: model.NewContinentsModel(DBConn),
+		TargetingModel: model.NewTargetingsModel(DBConn),
 	}
 }

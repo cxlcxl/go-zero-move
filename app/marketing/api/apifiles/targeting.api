@@ -37,4 +37,12 @@ type (
         BaseResp
         Data TargetingCreateRsInfo `json:"data"`
     }
+    TargetingListItem {
+        TargetingId int64 `json:"targeting_id"`
+        TargetingCreateReq
+    }
+    TargetingListResp {
+        BaseResp
+        Data []*TargetingListItem `json:"data"`
+    }
 )

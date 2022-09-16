@@ -59,7 +59,7 @@
           <el-radio-button label="0">未安装</el-radio-button>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="APP 行为" prop="app_behavior">
+      <el-form-item label="APP 行为" prop="app_category">
         <el-radio-group v-model="targetingForm.app_category">
           <el-radio-button label="">不限</el-radio-button>
           <el-radio-button label="1">一个月内活跃</el-radio-button>
@@ -157,7 +157,9 @@ export default {
       visible: false,
       loading: false,
       remoteLoading: false,
+      adgroupIndex: 0,
       targetingForm: {
+        targeting_id: 0,
         campaign_id: '',
         targeting_type: '',
         targeting_name: '',
@@ -170,9 +172,9 @@ export default {
         exclude_location: [],
         carrier: '',
         carriers: [],
-        app_category: '1',
+        app_category: '',
         app_categories: [],
-        app_interest: '1',
+        app_interest: '',
         app_interests: [],
         audience: '',
         audiences: [],
@@ -236,22 +238,63 @@ export default {
         })
       })
     },
-    initCreate(tab, campaignId) {
+    initCreate(tab, campaignId, source, idx) {
+      this.adgroupIndex = idx
       Promise.all([
-        this.getLocationInfo()
+        this.getLocationInfo(),
       ]).then(() => {
         dictionaryQuery({dict_key: this.defaultDictKeys}).then(res => {
-          this.$set(this.targetingForm, 'campaign_id', campaignId)
           this.dictionaries = res.data
           this.creativeTab = tab
           this.visible = true
+
+          if (source.hasOwnProperty('targeting_name')) {
+            this.loading = true
+            this.$nextTick(() => {
+              this.$refs.locationView.watchChange({
+                _include: source.include_location,
+                _exclude: source.exclude_location
+              })
+            })
+            this.targetingForm = source
+            this.loading = false
+          }
+          this.$set(this.targetingForm, 'campaign_id', campaignId)
         }).catch(() => {
           this.$message.error('字典参数请求失败')
         })
       }).catch(() => {})
     },
     cancel() {
-      this.$refs.targetingForm.resetFields()
+      this.targetingForm = {
+        targeting_id: 0,
+        campaign_id: '',
+        targeting_type: '',
+        targeting_name: '',
+        gender: '',
+        age: [''],
+        network_type: [''],
+        location: '',
+        location_type: 'current',
+        include_location: [],
+        exclude_location: [],
+        carrier: '',
+        carriers: [],
+        app_category: '',
+        app_categories: [],
+        app_interest: '',
+        app_interests: [],
+        audience: '',
+        audiences: [],
+        not_audience: [],
+        series_type: '',
+        series: [],
+        media_app_category: '',
+        app_category_of_media: [],
+        language_check: '',
+        language: [],
+        installed_apps: '1'
+      }
       this.visible = false
     },
     add() {
@@ -260,8 +303,10 @@ export default {
           this.loading = true
           targetingCreate(this.targetingForm).then(res => {
             this.loading = false
-            this.$refs.targetingForm.resetFields()
-            this.$emit('handle-success', res.data.targeting_id)
+            let assignForm = Object.assign({}, this.targetingForm)
+            assignForm.targeting_id = res.data.targeting_id
+            this.$emit('handle-success', assignForm, this.adgroupIndex)
+            this.cancel()
           }).catch(() => {
             this.loading = false
           })

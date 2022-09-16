@@ -31,6 +31,14 @@ export function targetingCreate(data) {
   });
 }
 
+export function targetingList(params) {
+  return request({
+    url: "/marketing/targeting/list",
+    method: "get",
+    params
+  });
+}
+
 export function targetingLocation() {
   return request({
     url: "/marketing/targeting/location",

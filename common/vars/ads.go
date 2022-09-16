@@ -59,6 +59,8 @@ const (
 
 	TargetingTypeApp    = "TARGET_TYPE_APP"
 	TargetingTypeNotApp = "TARGET_TYPE_NOT_APP"
+
+	TargetingDatabaseSeq = "&" // 定向包数据入库分隔符
 )
 
 var (

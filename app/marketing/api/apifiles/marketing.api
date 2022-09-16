@@ -67,6 +67,10 @@ service marketing-api {
 	@handler targetingLocation
 	get /targeting/location returns (LocationResp)
 	
+	@doc "定向包查询"
+	@handler targetingList
+	get /targeting/list returns (TargetingListResp)
+	
 	@doc "创建定向包"
 	@handler targetingCreate
 	post /targeting/create (TargetingCreateReq) returns (TargetingCreateResp)

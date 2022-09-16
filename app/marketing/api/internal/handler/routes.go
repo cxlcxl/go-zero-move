@@ -40,6 +40,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: targetingLocationHandler(serverCtx),
 				},
 				{
+					Method:  http.MethodGet,
+					Path:    "/targeting/list",
+					Handler: targetingListHandler(serverCtx),
+				},
+				{
 					Method:  http.MethodPost,
 					Path:    "/targeting/create",
 					Handler: targetingCreateHandler(serverCtx),

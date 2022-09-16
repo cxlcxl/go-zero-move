@@ -23,7 +23,8 @@ func Dictionary() {
 	if err := vars.SvcCtx.JobModel.UpdateJobDayByModule(ctx, vars.ApiModuleDictionary, time.Now().Format(vars.DateFormat)); err != nil {
 		fmt.Println("数据库调度时间修改失败: ", err)
 	}
-	time.Sleep(time.Millisecond * 500)
 
 	fmt.Println("================= Dictionary job end ==================")
+	fmt.Println()
+	fmt.Println()
 }

@@ -156,3 +156,13 @@ type TargetingCreateResp struct {
 	BaseResp
 	Data TargetingCreateRsInfo `json:"data"`
 }
+
+type TargetingListItem struct {
+	TargetingId int64 `json:"targeting_id"`
+	TargetingCreateReq
+}
+
+type TargetingListResp struct {
+	BaseResp
+	Data []*TargetingListItem `json:"data"`
+}

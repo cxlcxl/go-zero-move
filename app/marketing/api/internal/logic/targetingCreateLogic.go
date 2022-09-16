@@ -12,6 +12,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -35,11 +36,18 @@ func (l *TargetingCreateLogic) TargetingCreate(req *types.TargetingCreateReq) (r
 	if req.CampaignId == "" {
 		return nil, errors.New("参数错误，请先选择计划")
 	}
+	targeting, err := l.svcCtx.MarketingRpcClient.GetTargetingByName(l.ctx, &marketingcenter.GetTargetingByNameReq{TargetingName: req.TargetingName})
+	if err != nil && !utils.IsErrNotFound(err) {
+		return nil, utils.RpcError(err, "")
+	}
+	if targeting != nil {
+		return nil, errors.New("定向包名已存在")
+	}
 	campaign, err := l.svcCtx.MarketingRpcClient.CampaignInfo(l.ctx, &marketingcenter.CampaignInfoReq{CampaignId: req.CampaignId})
 	if err != nil {
 		return nil, utils.RpcError(err, "")
 	}
-	data, err := l.formatData(req, campaign.AdvertiserId)
+	data, err := l.formatAdsData(req, campaign.AdvertiserId)
 	if err != nil {
 		return nil, err
 	}
@@ -58,6 +66,11 @@ func (l *TargetingCreateLogic) TargetingCreate(req *types.TargetingCreateReq) (r
 	if rs.Code != "200" {
 		return nil, errors.New("Ads 调用失败：" + rs.Message)
 	}
+
+	_, err = l.svcCtx.MarketingRpcClient.TargetingCreate(l.ctx, l.formatRpcData(req, campaign.AdvertiserId, rs.Data.TargetingId, campaign.AccountId))
+	if err != nil {
+		return nil, utils.RpcError(err, "")
+	}
 	return &types.TargetingCreateResp{
 		BaseResp: types.BaseResp{
 			Code: vars.ResponseCodeOk,
@@ -69,7 +82,7 @@ func (l *TargetingCreateLogic) TargetingCreate(req *types.TargetingCreateReq) (r
 	}, nil
 }
 
-func (l *TargetingCreateLogic) formatData(req *types.TargetingCreateReq, advertiserId string) (rs map[string]interface{}, err error) {
+func (l *TargetingCreateLogic) formatAdsData(req *types.TargetingCreateReq, advertiserId string) (rs map[string]interface{}, err error) {
 	rs = make(map[string]interface{})
 	rs["targeting_name"] = req.TargetingName
 	rs["advertiser_id"] = advertiserId
@@ -180,6 +193,87 @@ func (l *TargetingCreateLogic) formatData(req *types.TargetingCreateReq, adverti
 			carriers = append(carriers, carrier[len(carrier)-1])
 		}
 		rs["carrier_struct"] = statements.TargetingValue{Value: carriers}
+	}
+
+	return
+}
+
+func (l *TargetingCreateLogic) formatRpcData(req *types.TargetingCreateReq, advertiserId string, targetingId, accountId int64) (targeting *marketingcenter.Targeting) {
+	// 地域
+	include, exclude, appInterests, mediaCategories, categories, series := "", "", "", "", "", ""
+	if req.Location == "1" {
+		include = strings.Join(req.IncludeLocation, vars.TargetingDatabaseSeq)
+		exclude = strings.Join(req.ExcludeLocation, vars.TargetingDatabaseSeq)
+	}
+	// App 兴趣
+	if req.AppInterest != "" {
+		var tmp []string
+		for _, interest := range req.AppInterests {
+			tmp = append(tmp, interest[len(interest)-1])
+		}
+		appInterests = strings.Join(tmp, vars.TargetingDatabaseSeq)
+	}
+	// 媒体类型
+	if req.MediaAppCategory == "1" {
+		var tmp []string
+		for _, appCategoryOfMedia := range req.AppCategoryOfMedia {
+			tmp = append(tmp, appCategoryOfMedia[len(appCategoryOfMedia)-1])
+		}
+		mediaCategories = strings.Join(tmp, vars.TargetingDatabaseSeq)
+	}
+	// 运营商
+	carriers := ""
+	if req.Carrier == "1" {
+		var tmp []string
+		for _, carrier := range req.Carriers {
+			tmp = append(tmp, carrier[len(carrier)-1])
+		}
+		carriers = strings.Join(tmp, vars.TargetingDatabaseSeq)
+	}
+	// 语言
+	language := ""
+	if req.LanguageCheck == "1" {
+		language = strings.Join(req.Language, vars.TargetingDatabaseSeq)
+	}
+	// App 行为
+	if req.AppCategory != "" {
+		categories = strings.Join(req.AppCategories, vars.TargetingDatabaseSeq)
+	}
+	// 设备
+	if req.SeriesType == "1" {
+		series = strings.Join(req.Series, vars.TargetingDatabaseSeq)
+	}
+	// 自定义人群
+	audiences, notAudiences := "", ""
+	if req.Audience == "1" {
+		audiences = strings.Join(req.Audiences, vars.TargetingDatabaseSeq)
+		notAudiences = strings.Join(req.NotAudience, vars.TargetingDatabaseSeq)
+	}
+	targeting = &marketingcenter.Targeting{
+		AccountId:          accountId,
+		AdvertiserId:       advertiserId,
+		TargetingId:        targetingId,
+		TargetingName:      req.TargetingName,
+		TargetingType:      vars.TargetingTypeApp,
+		LocationType:       req.LocationType,
+		IncludeLocation:    include,
+		ExcludeLocation:    exclude,
+		Carriers:           carriers,
+		Language:           language,
+		Age:                strings.Join(req.Age, vars.TargetingDatabaseSeq),
+		Gender:             req.Gender,
+		AppCategory:        req.AppCategory,
+		AppCategories:      categories,
+		InstalledApps:      req.InstalledApps,
+		AppInterest:        req.AppInterest,
+		AppInterests:       appInterests,
+		Series:             series,
+		NetworkType:        strings.Join(req.NetworkType, vars.TargetingDatabaseSeq),
+		NotAudiences:       notAudiences,
+		Audiences:          audiences,
+		AppCategoryOfMedia: mediaCategories,
+		CreatedAt:          time.Now().Unix(),
+		UpdatedAt:          time.Now().Unix(),
 	}
 
 	return

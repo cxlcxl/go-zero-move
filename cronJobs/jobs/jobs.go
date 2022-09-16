@@ -116,7 +116,7 @@ func Refresh(ctx context.Context, svcCtx *svc.ServiceContext, token *model.Token
 		AccountId:    token.AccountId,
 		AccessToken:  at.AccessToken,
 		RefreshToken: token.RefreshToken,
-		ExpiredAt:    time.Now().Add(time.Duration(at.ExpiresIn) - 20),
+		ExpiredAt:    time.Now().Add(time.Duration(at.ExpiresIn - 20)),
 		UpdatedAt:    time.Now(),
 		TokenType:    at.TokenType,
 	})
