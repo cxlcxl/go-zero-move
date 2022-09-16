@@ -28,6 +28,7 @@ type Config struct {
 
 		Tools struct {
 			Dictionary string `yaml:"Dictionary"`
+			Targeting  string `yaml:"Targeting"`
 		} `yaml:"Tools"`
 	} `yaml:"MarketingApis"`
 
