@@ -179,4 +179,9 @@ var (
 		TargetingTypeApp:    "应用类",
 		TargetingTypeNotApp: "非应用类",
 	}
+	// AppInterest App 兴趣一次类
+	AppInterest = map[string]string{
+		"99999999991": "应用",
+		"99999999992": "游戏",
+	}
 )

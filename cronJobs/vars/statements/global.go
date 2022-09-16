@@ -15,3 +15,8 @@ type Pages struct {
 	TotalNum  int64 `json:"total_num"`
 	TotalPage int64 `json:"total_page"`
 }
+
+type RequestPage struct {
+	Page     int64 `json:"page"`
+	PageSize int64 `json:"page_size"`
+}

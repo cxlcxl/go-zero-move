@@ -1,17 +1,14 @@
 package logic
 
 import (
+	"business/app/marketing/api/internal/svc"
+	"business/app/marketing/api/internal/types"
 	"business/app/marketing/rpc/marketingcenter"
 	"business/common/utils"
 	"business/common/vars"
 	"context"
 	"errors"
-	"fmt"
 	"strings"
-	"time"
-
-	"business/app/marketing/api/internal/svc"
-	"business/app/marketing/api/internal/types"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -91,32 +88,25 @@ func (l *DictionaryQueryLogic) DictionaryQuery(req *types.DictReq) (resp *types.
 
 func formatAppInterest(src []*types.Dictionary) (dist []*types.Dictionary) {
 	dist = make([]*types.Dictionary, 0)
-	distPid := make(map[string]string)
-	for i := range src {
-		if src[i].Pid != "" {
-			pidId := fmt.Sprintf("%d%d", time.Now().Unix(), len(distPid)+1)
-			pid := pidId
-			if existsPid, ok := distPid[src[i].Pid]; !ok {
-				distPid[src[i].Pid] = pidId
-			} else {
-				pid = existsPid
+	for s, s2 := range vars.AppInterest {
+		children := make([]*types.Dictionary, 0)
+		for _, dictionary := range src {
+			if dictionary.Pid == s2 {
+				children = append(children, &types.Dictionary{
+					Id:       dictionary.Id,
+					Pid:      s,
+					Label:    dictionary.Label,
+					Value:    dictionary.Value,
+					Children: nil,
+				})
 			}
-			dist = append(dist, &types.Dictionary{
-				Id:       src[i].Id,
-				Pid:      pid,
-				Label:    src[i].Label,
-				Value:    src[i].Value,
-				Children: nil,
-			})
 		}
-	}
-	for name, id := range distPid {
 		dist = append(dist, &types.Dictionary{
-			Id:       id,
+			Id:       s,
 			Pid:      "0",
-			Label:    name,
-			Value:    id,
-			Children: nil,
+			Label:    s2,
+			Value:    s,
+			Children: children,
 		})
 	}
 	return

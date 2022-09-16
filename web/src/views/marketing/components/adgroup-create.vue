@@ -183,7 +183,7 @@ export default {
       this.$refs.targeting_create.initCreate(tab, '69856985', tmpTargeting, idx)
     },
     pullTargeting() {
-      this.$message.info("定向数据拉取中，请稍后...")
+      this.$message.info("定向数据同步中，请稍后...")
     },
     targetingCallback(targeting, adgroupIdx) {
       this.targetings.push(targeting)

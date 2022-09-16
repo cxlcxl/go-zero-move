@@ -5,6 +5,7 @@ import (
 	"business/cronJobs/jobs/country"
 	"business/cronJobs/jobs/dictionary"
 	"business/cronJobs/jobs/refreshToken"
+	"business/cronJobs/jobs/targeting"
 	"business/cronJobs/vars"
 )
 
@@ -16,5 +17,6 @@ var (
 		vars.ApiModuleCampaign:     campaign.Campaign,
 		vars.ApiModuleDictionary:   dictionary.Dictionary,
 		vars.ApiModuleRefreshToken: refreshToken.RefreshToken,
+		vars.ApiModuleTargeting:    targeting.Targeting,
 	}
 )

@@ -25,7 +25,7 @@ func NewDictQueryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DictQue
 }
 
 func (l *DictQueryLogic) DictQuery(in *marketing.DictionaryReq) (*marketing.DictionaryResp, error) {
-	dictionaries, err := l.svcCtx.DictModel.FindDictionaries(l.ctx, in.DictKey)
+	dictionaries, err := l.svcCtx.DictModel.FindDictionaries(l.ctx, in.DictKey, in.Value)
 	if err != nil {
 		return nil, err
 	}

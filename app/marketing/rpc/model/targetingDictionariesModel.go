@@ -14,7 +14,7 @@ type (
 	// TargetingDictionariesModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customTargetingDictionariesModel.
 	TargetingDictionariesModel interface {
-		FindDictionaries(ctx context.Context, keys []string) (dictionaries []*TargetingDictionaries, err error)
+		FindDictionaries(ctx context.Context, keys, values []string) (dictionaries []*TargetingDictionaries, err error)
 	}
 
 	customTargetingDictionariesModel struct {
@@ -29,11 +29,15 @@ func NewTargetingDictionariesModel(conn sqlx.SqlConn) TargetingDictionariesModel
 	}
 }
 
-func (m *defaultTargetingDictionariesModel) FindDictionaries(ctx context.Context, keys []string) (dictionaries []*TargetingDictionaries, err error) {
+func (m *defaultTargetingDictionariesModel) FindDictionaries(ctx context.Context, keys, values []string) (dictionaries []*TargetingDictionaries, err error) {
 	sb := squirrel.Select(targetingDictionariesRows).From(m.table)
 	if len(keys) > 0 {
 		s, v := whereIn(keys)
 		sb = sb.Where("dict_key in "+s, v...)
+	}
+	if len(values) > 0 {
+		s, v := whereIn(values)
+		sb = sb.Where("value in "+s, v...)
 	}
 	query, args, err := sb.OrderBy("id asc").ToSql()
 	if err != nil {

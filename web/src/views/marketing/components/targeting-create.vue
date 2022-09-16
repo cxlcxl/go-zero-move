@@ -77,7 +77,7 @@
           <el-radio-button label="2">中等兴趣</el-radio-button>
           <el-radio-button label="3">高兴趣</el-radio-button>
         </el-radio-group>
-        <el-cascader-panel v-model="targetingForm.app_interests" class="dictionary-transfer" :options="dictionaries.app_interest|dataToTree"
+        <el-cascader-panel v-model="targetingForm.app_interests" class="dictionary-transfer" :options="dictionaries.app_interest"
                            v-show="targetingForm.app_interest !== ''" :props="{ multiple: true }"/>
       </el-form-item>
       <el-form-item label="设备" prop="series_type">

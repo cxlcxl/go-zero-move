@@ -111,6 +111,9 @@ func Refresh(ctx context.Context, svcCtx *svc.ServiceContext, token *model.Token
 	if at.Error != 0 {
 		return "", errors.New("华为接口调用失败：" + at.ErrorDescription)
 	}
+	fmt.Println()
+	fmt.Println("============ 时间错误：", time.Now().Add(time.Duration(at.ExpiresIn-20)), at.ExpiresIn)
+	fmt.Println()
 	_ = svcCtx.TokenModel.Update(ctx, &model.Tokens{
 		Id:           token.Id,
 		AccountId:    token.AccountId,

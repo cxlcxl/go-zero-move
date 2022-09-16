@@ -168,6 +168,19 @@ func ArrayUnique(arr []int64) []int64 {
 	return result
 }
 
+func UniqueStringArray(arr []string) []string {
+	size := len(arr)
+	result := make([]string, 0)
+	temp := map[string]struct{}{}
+	for i := 0; i < size; i++ {
+		if _, ok := temp[arr[i]]; !ok {
+			temp[arr[i]] = struct{}{}
+			result = append(result, arr[i])
+		}
+	}
+	return result
+}
+
 // WhereIn where in 条件组合
 func WhereIn(s interface{}) (w string, args []interface{}, err error) {
 	query := make([]string, 0)

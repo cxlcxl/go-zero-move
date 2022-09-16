@@ -12,6 +12,7 @@ const (
 	ApiModuleCampaign     = "Campaign"
 	ApiModuleDictionary   = "Dictionary"   // 定向字典数据
 	ApiModuleRefreshToken = "RefreshToken" //
+	ApiModuleTargeting    = "Targeting"    //
 )
 
 var (
