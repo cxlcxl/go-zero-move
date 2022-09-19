@@ -50,9 +50,10 @@ const (
 	BalanceNotExceed             = "ADVERTISER_BALANCE_NOT_EXCEED"
 	BalanceExceed                = "ADVERTISER_BALANCE_EXCEED"
 	FlowResourceShowAd           = "FLOW_RESOURCE_SHOWAD"
-	CreativeCategoryThirdParty   = "CREATIVE_SIZE_CATEGORY_THIRD_PARTY"
-	CreativeCategorySelf         = "CREATIVE_SIZE_CATEGORY_SELF_OWNED"
-	CreativeCategoryOther        = "CREATIVE_SIZE_CATEGORY_OTHER"
+
+	CreativeCategoryThirdParty = "CREATIVE_SIZE_CATEGORY_THIRD_PARTY"
+	CreativeCategorySelf       = "CREATIVE_SIZE_CATEGORY_SELF_OWNED"
+	CreativeCategoryOther      = "CREATIVE_SIZE_CATEGORY_OTHER"
 
 	TargetingDictionaryStructLine = 1
 	TargetingDictionaryStructTree = 2

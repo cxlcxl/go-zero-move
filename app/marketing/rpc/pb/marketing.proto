@@ -124,8 +124,36 @@ message Targeting {
   int64 created_at = 24;
   int64 updated_at = 25;
 }
+message TargetingListReq {
+  int64 account_id = 1;
+}
 message TargetingListResp {
   repeated Targeting targetings = 1;
+}
+message CreativeSizeSample  {
+  string  creative_size_sample = 1;
+  string preview_title = 2;
+}
+message CreativeSizePlacement  {
+  string placement_size_id=1;
+  string creative_size=2;
+  string creative_size_sub_type=3;
+  string is_support_multiple_creatives=4;
+}
+message CreativeSizeInfo  {
+  int64 creative_size_id = 1;
+  string creative_size_name_dsp = 2;
+  string creative_size_description = 3;
+  repeated CreativeSizeSample creative_size_sample_list = 4;
+  repeated CreativeSizePlacement creative_size_placement_list = 5;
+  string support_product_type = 6;
+  string support_objective_type = 7;
+  string is_support_time_period = 8;
+  string is_support_multiple_creatives = 9;
+  string support_price_type = 10;
+}
+message PositionResp {
+  repeated CreativeSizeInfo creative_size_info_list=1;
 }
 
 message EmptyParamsReq {}
@@ -140,7 +168,8 @@ service MarketingCenter{
   rpc Continents(EmptyParamsReq) returns(ContinentResp);
   rpc GetCountries(EmptyParamsReq) returns(CountriesResp);
   rpc TargetingCreate(Targeting) returns(BaseResp);
-  rpc TargetingList(EmptyParamsReq) returns(TargetingListResp);
+  rpc TargetingList(TargetingListReq) returns(TargetingListResp);
   rpc GetTargetingByName(GetTargetingByNameReq) returns(Targeting);
   rpc GetTargetingByTargetingId(GetTargetingByTargetingIdReq) returns(Targeting);
+  rpc GetPosition(TargetingListReq) returns(PositionResp);
 }

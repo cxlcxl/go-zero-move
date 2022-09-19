@@ -11,8 +11,9 @@ const (
 	ApiModuleCountry      = "Country"
 	ApiModuleCampaign     = "Campaign"
 	ApiModuleDictionary   = "Dictionary"   // 定向字典数据
-	ApiModuleRefreshToken = "RefreshToken" //
-	ApiModuleTargeting    = "Targeting"    //
+	ApiModuleRefreshToken = "RefreshToken" // Token 刷新
+	ApiModuleTargeting    = "Targeting"    // 定向列表
+	ApiModulePosition     = "Position"     // 版位
 )
 
 var (

@@ -57,7 +57,7 @@ func (l *TargetingLogic) query(param *jobs.QueryParam, advertiserId string, page
 		RequestPage:  statements.RequestPage{Page: page, PageSize: l.pageSize},
 		AdvertiserId: advertiserId,
 	}
-	c, err := curl.New(l.svcCtx.Config.MarketingApis.Tools.Dictionary).Get().JsonData(data)
+	c, err := curl.New(l.svcCtx.Config.MarketingApis.Tools.Targeting).Get().JsonData(data)
 	if err != nil {
 		return err
 	}
@@ -107,7 +107,7 @@ func formatTargeting(src []*statements.Targeting, accountId int64, advertiserId 
 		}
 		language := ""
 		if !isEmpty(targeting.Language) {
-			carriers = targetingValue(targeting.Language)
+			language = targetingValue(targeting.Language)
 		}
 		age := ""
 		if !isEmpty(targeting.Age) {

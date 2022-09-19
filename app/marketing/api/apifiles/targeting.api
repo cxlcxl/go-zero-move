@@ -41,6 +41,9 @@ type (
         TargetingId int64 `json:"targeting_id"`
         TargetingCreateReq
     }
+    TargetingListReq {
+        CampaignId string `form:"campaign_id"`
+    }
     TargetingListResp {
         BaseResp
         Data []*TargetingListItem `json:"data"`

@@ -49,8 +49,8 @@ func (m *defaultTargetingDictionariesModel) BatchInsert(ctx context.Context, dic
 				dictionaries[i].Seq,
 				dictionaries[i].DataStruct,
 			)
-			// 达到了 500 条数据，或最后一条了
-			if chunk == 500 || i == len(dictionaries)-1 {
+			// 达到了 300 条数据，或最后一条了
+			if chunk == 300 || i == len(dictionaries)-1 {
 				// 写入库
 				insertSQL := query + strings.Join(valueStatement, ",")
 				if _, err = session.ExecCtx(ctx, insertSQL, values...); err != nil {

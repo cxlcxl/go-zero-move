@@ -1,10 +1,9 @@
 package logic
 
 import (
-	"context"
-
 	"business/app/marketing/rpc/internal/svc"
 	"business/app/marketing/rpc/marketing"
+	"context"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -23,8 +22,8 @@ func NewTargetingListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Tar
 	}
 }
 
-func (l *TargetingListLogic) TargetingList(in *marketing.EmptyParamsReq) (*marketing.TargetingListResp, error) {
-	targetings, err := l.svcCtx.TargetingModel.GetTargetings(l.ctx)
+func (l *TargetingListLogic) TargetingList(in *marketing.TargetingListReq) (*marketing.TargetingListResp, error) {
+	targetings, err := l.svcCtx.TargetingModel.GetTargetings(l.ctx, in.AccountId)
 	if err != nil {
 		return nil, err
 	}

@@ -15,6 +15,7 @@ type ServiceContext struct {
 	AppModel           model.AppsModel
 	DictModel          model.TargetingDictionariesModel
 	TargetingModel     model.TargetingsModel
+	PositionModel      model.PositionsModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -28,5 +29,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		AccountModel:       model.NewAccountsModel(conn),
 		AppModel:           model.NewAppsModel(conn),
 		TargetingModel:     model.NewTargetingsModel(conn),
+		PositionModel:      model.NewPositionsModel(conn),
 	}
 }

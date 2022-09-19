@@ -12,7 +12,7 @@ import (
 func Targeting() {
 	fmt.Println()
 	fmt.Println()
-	fmt.Println("================= Dictionary job start ==================")
+	fmt.Println("================= Targeting job start ==================")
 
 	ctx := context.Background()
 	if err := logic.NewTargetingLogic(ctx, vars.SvcCtx).TargetingQuery(); err != nil {
@@ -24,7 +24,7 @@ func Targeting() {
 		fmt.Println("数据库调度时间修改失败: ", err)
 	}
 
-	fmt.Println("================= Dictionary job end ==================")
+	fmt.Println("================= Targeting job end ==================")
 	fmt.Println()
 	fmt.Println()
 }

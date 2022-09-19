@@ -69,7 +69,7 @@ service marketing-api {
 	
 	@doc "定向包查询"
 	@handler targetingList
-	get /targeting/list returns (TargetingListResp)
+	get /targeting/list(TargetingListReq) returns (TargetingListResp)
 	
 	@doc "创建定向包"
 	@handler targetingCreate

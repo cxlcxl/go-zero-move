@@ -62,7 +62,7 @@ func (s *MarketingCenterServer) TargetingCreate(ctx context.Context, in *marketi
 	return l.TargetingCreate(in)
 }
 
-func (s *MarketingCenterServer) TargetingList(ctx context.Context, in *marketing.EmptyParamsReq) (*marketing.TargetingListResp, error) {
+func (s *MarketingCenterServer) TargetingList(ctx context.Context, in *marketing.TargetingListReq) (*marketing.TargetingListResp, error) {
 	l := logic.NewTargetingListLogic(ctx, s.svcCtx)
 	return l.TargetingList(in)
 }
@@ -75,4 +75,9 @@ func (s *MarketingCenterServer) GetTargetingByName(ctx context.Context, in *mark
 func (s *MarketingCenterServer) GetTargetingByTargetingId(ctx context.Context, in *marketing.GetTargetingByTargetingIdReq) (*marketing.Targeting, error) {
 	l := logic.NewGetTargetingByTargetingIdLogic(ctx, s.svcCtx)
 	return l.GetTargetingByTargetingId(in)
+}
+
+func (s *MarketingCenterServer) GetPosition(ctx context.Context, in *marketing.TargetingListReq) (*marketing.PositionResp, error) {
+	l := logic.NewGetPositionLogic(ctx, s.svcCtx)
+	return l.GetPosition(in)
 }

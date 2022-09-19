@@ -19,18 +19,23 @@ type (
 	ContinentResp_Continent             = marketing.ContinentResp_Continent
 	CountriesResp                       = marketing.CountriesResp
 	CountriesResp_OverseasRegionCountry = marketing.CountriesResp_OverseasRegionCountry
+	CreativeSizeInfo                    = marketing.CreativeSizeInfo
+	CreativeSizePlacement               = marketing.CreativeSizePlacement
+	CreativeSizeSample                  = marketing.CreativeSizeSample
 	DictionaryReq                       = marketing.DictionaryReq
 	DictionaryResp                      = marketing.DictionaryResp
 	DictionaryResp_Dictionary           = marketing.DictionaryResp_Dictionary
 	EmptyParamsReq                      = marketing.EmptyParamsReq
 	GetTargetingByNameReq               = marketing.GetTargetingByNameReq
 	GetTargetingByTargetingIdReq        = marketing.GetTargetingByTargetingIdReq
+	PositionResp                        = marketing.PositionResp
 	PromotionCreateReq                  = marketing.PromotionCreateReq
 	PromotionInfo                       = marketing.PromotionInfo
 	PromotionListReq                    = marketing.PromotionListReq
 	PromotionListResp                   = marketing.PromotionListResp
 	PromotionUpdateReq                  = marketing.PromotionUpdateReq
 	Targeting                           = marketing.Targeting
+	TargetingListReq                    = marketing.TargetingListReq
 	TargetingListResp                   = marketing.TargetingListResp
 
 	MarketingCenter interface {
@@ -42,9 +47,10 @@ type (
 		Continents(ctx context.Context, in *EmptyParamsReq, opts ...grpc.CallOption) (*ContinentResp, error)
 		GetCountries(ctx context.Context, in *EmptyParamsReq, opts ...grpc.CallOption) (*CountriesResp, error)
 		TargetingCreate(ctx context.Context, in *Targeting, opts ...grpc.CallOption) (*BaseResp, error)
-		TargetingList(ctx context.Context, in *EmptyParamsReq, opts ...grpc.CallOption) (*TargetingListResp, error)
+		TargetingList(ctx context.Context, in *TargetingListReq, opts ...grpc.CallOption) (*TargetingListResp, error)
 		GetTargetingByName(ctx context.Context, in *GetTargetingByNameReq, opts ...grpc.CallOption) (*Targeting, error)
 		GetTargetingByTargetingId(ctx context.Context, in *GetTargetingByTargetingIdReq, opts ...grpc.CallOption) (*Targeting, error)
+		GetPosition(ctx context.Context, in *TargetingListReq, opts ...grpc.CallOption) (*PositionResp, error)
 	}
 
 	defaultMarketingCenter struct {
@@ -98,7 +104,7 @@ func (m *defaultMarketingCenter) TargetingCreate(ctx context.Context, in *Target
 	return client.TargetingCreate(ctx, in, opts...)
 }
 
-func (m *defaultMarketingCenter) TargetingList(ctx context.Context, in *EmptyParamsReq, opts ...grpc.CallOption) (*TargetingListResp, error) {
+func (m *defaultMarketingCenter) TargetingList(ctx context.Context, in *TargetingListReq, opts ...grpc.CallOption) (*TargetingListResp, error) {
 	client := marketing.NewMarketingCenterClient(m.cli.Conn())
 	return client.TargetingList(ctx, in, opts...)
 }
@@ -111,4 +117,9 @@ func (m *defaultMarketingCenter) GetTargetingByName(ctx context.Context, in *Get
 func (m *defaultMarketingCenter) GetTargetingByTargetingId(ctx context.Context, in *GetTargetingByTargetingIdReq, opts ...grpc.CallOption) (*Targeting, error) {
 	client := marketing.NewMarketingCenterClient(m.cli.Conn())
 	return client.GetTargetingByTargetingId(ctx, in, opts...)
+}
+
+func (m *defaultMarketingCenter) GetPosition(ctx context.Context, in *TargetingListReq, opts ...grpc.CallOption) (*PositionResp, error) {
+	client := marketing.NewMarketingCenterClient(m.cli.Conn())
+	return client.GetPosition(ctx, in, opts...)
 }

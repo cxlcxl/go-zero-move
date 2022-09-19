@@ -46,6 +46,17 @@ const (
 	CommonStateValid
 )
 
+const (
+	JobPauseRuleStop  = -1
+	JobPauseRuleToday = iota
+	JobPauseRuleADayAgo
+	JobPauseRuleTwoDayAgo
+	JobPauseRuleThreeDayAgo
+	JobPauseRuleFourDayAgo
+	JobPauseRuleFiveDayAgo
+	JobPauseRuleAWeekAgo
+)
+
 var (
 	ResponseMsg = map[int]string{
 		ResponseCodeOk:           "OK",
@@ -84,5 +95,15 @@ var (
 	CronModules = map[string]string{
 		ApiModuleCountry:  "国家/地区数据",
 		ApiModuleCampaign: "计划数据",
+	}
+	JobPauseRule = map[int]string{
+		JobPauseRuleStop:        "已停止",
+		JobPauseRuleToday:       "到当天",
+		JobPauseRuleADayAgo:     "一天前",
+		JobPauseRuleTwoDayAgo:   "两天前",
+		JobPauseRuleThreeDayAgo: "三天前",
+		JobPauseRuleFourDayAgo:  "四天前",
+		JobPauseRuleFiveDayAgo:  "五天前",
+		JobPauseRuleAWeekAgo:    "一周前",
 	}
 )

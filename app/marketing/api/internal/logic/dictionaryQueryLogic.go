@@ -77,6 +77,9 @@ func (l *DictionaryQueryLogic) DictionaryQuery(req *types.DictReq) (resp *types.
 	if _, ok := rs["pre_define_audience"]; ok {
 		rs["pre_define_audience"] = formatAudience(rs["pre_define_audience"])
 	}
+	if _, ok := rs["media_app_category"]; ok {
+		rs["media_app_category"] = formatMediaAppCategory(rs["media_app_category"])
+	}
 	return &types.DictResp{
 		BaseResp: types.BaseResp{
 			Code: vars.ResponseCodeOk,
@@ -122,6 +125,10 @@ func formatAppCategory(src []*types.Dictionary) (dist []*types.Dictionary) {
 	return
 }
 
+func formatMediaAppCategory(src []*types.Dictionary) (dist []*types.Dictionary) {
+	return dictionaryToTree(src, "0")
+}
+
 func formatCarrier(src []*types.Dictionary, countries []*marketingcenter.CountriesResp_OverseasRegionCountry) (dist []*types.Dictionary) {
 	tmp := make(map[string][]*types.Dictionary)
 	for _, dictionary := range src {
@@ -159,8 +166,7 @@ func formatAudience(src []*types.Dictionary) (dist []*types.Dictionary) {
 }
 
 // 数组转树
-func dictionaryToTree(origin []*types.Dictionary, pid string) []*types.Dictionary {
-	d := make([]*types.Dictionary, 0)
+func dictionaryToTree(origin []*types.Dictionary, pid string) (d []*types.Dictionary) {
 	for _, v := range origin {
 		if v.Pid == pid {
 			v.Children = dictionaryToTree(origin, v.Id)

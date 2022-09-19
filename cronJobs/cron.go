@@ -46,6 +46,7 @@ func (s Schedule) TaskScheduling() {
 		if job.StatDay.After(pauseDay) {
 			continue
 		}
+
 		if fn, ok := scripts.ScheduleJobs[job.ApiModule]; ok {
 			if _, err = c.AddFunc(job.JobSchedule, fn); err != nil {
 				fmt.Println(job.JobSchedule, " 添加调度失败：", err)

@@ -104,7 +104,7 @@
         <el-row :gutter="5" class="dictionary-audience" v-show="targetingForm.audience === '1'">
           <el-col :span="24">
             <p>包含人群</p>
-            <el-table :data="dictionaries.pre_define_audience" size="mini" max-height="244px" border
+            <el-table :data="dictionaries.pre_define_audience" size="mini" max-height="244px" border ref="audience"
                       @selection-change="audienceSelectionChange">
               <el-table-column prop="id" type="selection" width="50" align="center" :selectable="audienceSelectable"/>
               <el-table-column prop="label" label="人群包名称"/>
@@ -116,7 +116,7 @@
 
           <el-col :span="24">
             <p>排除人群</p>
-            <el-table :data="dictionaries.not_pre_define_audience" size="mini" max-height="244px" border
+            <el-table :data="dictionaries.not_pre_define_audience" size="mini" max-height="244px" border ref="not_audience"
                       @selection-change="notAudienceSelectionChange">
               <el-table-column prop="id" type="selection" width="50" align="center" :selectable="notAudienceSelectable"/>
               <el-table-column prop="label" label="人群包名称"/>
@@ -133,7 +133,7 @@
           <el-radio-button label="1">包含</el-radio-button>
         </el-radio-group>
         <el-cascader-panel v-model="targetingForm.app_category_of_media" class="dictionary-transfer"
-                           :options="dictionaries.media_app_category|dataToTree"
+                           :options="dictionaries.media_app_category"
                            v-show="targetingForm.media_app_category === '1'" :props="{ multiple: true }"/>
       </el-form-item>
     </el-form>
@@ -145,7 +145,6 @@ import DrawerPanel from '@c/Drawer'
 import TargetingLocation from './targeting-location'
 import TargetingLocationView from './targeting-location-view'
 import {dictionaryQuery, targetingLocation, targetingCreate} from '@a/marketing'
-import {arrayToTree} from '@/utils'
 
 export default {
   name: 'TargetingCreate',
@@ -212,13 +211,6 @@ export default {
     }
   },
   filters: {
-    dataToTree(origin) {
-      let d = []
-      if (Array.isArray(origin)) {
-        d = arrayToTree(origin, 0, 'pid', 'children')
-      }
-      return d
-    },
     audienceNumFilter(d) {
       if (Number(d) > 0) {
         return (Number(d)/10000).toFixed(0) + '万'
@@ -258,6 +250,27 @@ export default {
             })
             this.targetingForm = source
             this.loading = false
+            // 自定义人群设置 toggleRowSelection
+            if (Array.isArray(this.targetingForm.audiences) && this.targetingForm.audiences.length > 0) {
+              for (let i = 0; i < this.dictionaries.pre_define_audience.length; i++) {
+                if (this.targetingForm.audiences.includes(this.dictionaries.pre_define_audience[i].id)) {
+                  this.$nextTick(() => {
+                    this.$refs.audience.toggleRowSelection(this.dictionaries.pre_define_audience[i], true)
+                  })
+                }
+              }
+            }
+            if (Array.isArray(this.targetingForm.not_audience) && this.targetingForm.not_audience.length > 0) {
+              for (let i = 0; i < this.dictionaries.not_pre_define_audience.length; i++) {
+                if (this.targetingForm.not_audience.includes(this.dictionaries.not_pre_define_audience[i].id)) {
+                  this.$nextTick(() => {
+                    this.$refs.not_audience.toggleRowSelection(this.dictionaries.not_pre_define_audience[i], true)
+                  })
+                }
+              }
+            }
+          } else {
+            this.resetForm()
           }
           this.$set(this.targetingForm, 'campaign_id', campaignId)
         }).catch(() => {
@@ -265,7 +278,7 @@ export default {
         })
       }).catch(() => {})
     },
-    cancel() {
+    resetForm() {
       this.targetingForm = {
         targeting_id: 0,
         campaign_id: '',
@@ -295,6 +308,9 @@ export default {
         language: [],
         installed_apps: '1'
       }
+    },
+    cancel() {
+      this.resetForm()
       this.visible = false
     },
     add() {

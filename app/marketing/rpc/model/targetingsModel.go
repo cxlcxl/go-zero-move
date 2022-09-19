@@ -2,7 +2,7 @@ package model
 
 import (
 	"context"
-	"fmt"
+	"github.com/Masterminds/squirrel"
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -14,7 +14,7 @@ type (
 	// and implement the added methods in customTargetingsModel.
 	TargetingsModel interface {
 		targetingsModel
-		GetTargetings(ctx context.Context) (targetings []*Targetings, err error)
+		GetTargetings(ctx context.Context, accountId int64) (targetings []*Targetings, err error)
 	}
 
 	customTargetingsModel struct {
@@ -28,9 +28,16 @@ func NewTargetingsModel(conn sqlx.SqlConn) TargetingsModel {
 		defaultTargetingsModel: newTargetingsModel(conn),
 	}
 }
-func (m *defaultTargetingsModel) GetTargetings(ctx context.Context) (targetings []*Targetings, err error) {
-	query := fmt.Sprintf("select * from %s order by id desc", m.table)
-	err = m.conn.QueryRowsCtx(ctx, &targetings, query)
+func (m *defaultTargetingsModel) GetTargetings(ctx context.Context, accountId int64) (targetings []*Targetings, err error) {
+	query := squirrel.Select("*").From(m.table).OrderBy("id desc")
+	if accountId > 0 {
+		query = query.Where("account_id = ?", accountId)
+	}
+	sql, args, err := query.ToSql()
+	if err != nil {
+		return nil, err
+	}
+	err = m.conn.QueryRowsCtx(ctx, &targetings, sql, args...)
 	switch err {
 	case nil:
 		return targetings, nil

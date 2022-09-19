@@ -36,7 +36,7 @@ func (c *Curl) JsonData(data interface{}) (*Curl, error) {
 	}
 	if strings.ToLower(vars.Env) == "dev" {
 		fmt.Println()
-		fmt.Println("=================> 请求报文：", string(bs))
+		fmt.Println("===> 请求报文：", string(bs))
 		fmt.Println()
 	}
 	c.data = bytes.NewReader(bs)

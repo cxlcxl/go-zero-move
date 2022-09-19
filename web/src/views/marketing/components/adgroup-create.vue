@@ -1,13 +1,15 @@
 <template>
   <el-row :gutter="15" v-loading="loadings.pageLoading">
     <el-form :model="adgroupForm" ref="adgroupForm" label-width="120px" size="mini" :rules="adgroupRules">
-      <el-col :span="24">
+      <el-col :span="12">
         <el-form-item label="选择计划" prop="campaign_id">
           <el-select v-model="adgroupForm.campaign_id" remote filterable placeholder="可输入名称查询"
                      :remote-method="remoteCampaign" :loading="loadings.remoteCampaignLoading" style="width: 100%;">
             <el-option v-for="item in campaigns" :label="item.campaign_name" :value="Number(item.campaign_id)"/>
           </el-select>
         </el-form-item>
+      </el-col>
+      <el-col :span="12">
         <el-form-item label="选择应用" prop="campaign_id">
           <el-select v-model="adgroupForm.campaign_id" remote filterable placeholder="可输入名称查询"
                      :remote-method="remoteApplication" :loading="loadings.remoteAppLoading" style="width: 100%;">
@@ -23,16 +25,18 @@
         <el-tabs v-model="editableTabsValue" type="card" closable @tab-remove="removeTab">
           <el-tab-pane v-for="(__adgroup, idx) in adgroupForm.adgroups"
                        :label="__adgroup.adgroup_name" :name="__adgroup.tab_name" :key="__adgroup.tab_name">
-            <el-form-item label="定向" prop="targeting_package_id">
+            <el-form-item label="定向" prop="targeting_package_id"
+                          :prop="'adgroups.' + idx + '.targeting_package_id'" :rules="{required: true, message: '请选择定向'}">
               <el-select v-model="__adgroup.targeting_package_id" placeholder="选择已有定向" style="width: 380px;">
                 <el-option v-for="targeting in targetings" :label="targeting.targeting_name" :value="targeting.targeting_id"/>
               </el-select>
-              <el-button type="primary" style="margin-left: 5px;" @click="updateTargeting(__adgroup.tab_name, idx)" icon="el-icon-edit"/>
-              <el-button type="primary" style="margin-left: 5px;" @click="createTargeting(__adgroup.tab_name, idx)" icon="el-icon-plus"/>
-              <el-button style="margin-left: 5px;" @click="pullTargeting" icon="el-icon-refresh"/>
+              <el-button type="primary" style="margin-left: 5px;" @click="updateTargeting(__adgroup.tab_name, idx)" icon="el-icon-edit">修改</el-button>
+              <el-button type="primary" style="margin-left: 5px;" @click="createTargeting(__adgroup.tab_name, idx)" icon="el-icon-plus">新建</el-button>
               <el-button icon="el-icon-document-copy" type="primary" @click="copyTab(__adgroup.tab_name, idx)" style="float: right;">拷贝此任务</el-button>
             </el-form-item>
-            <el-form-item label="版位" prop="creative_size_id">
+
+            <el-form-item label="版位" prop="creative_size_id"
+                          :prop="'adgroups.' + idx + '.creative_size_id'" :rules="{required: true, message: '请选择版位'}">
               <el-radio-group v-model="__adgroup.category" @change="remoteCreative">
                 <el-radio-button label="CREATIVE_SIZE_CATEGORY_THIRD_PARTY">三方媒体资源</el-radio-button>
                 <el-radio-button label="CREATIVE_SIZE_CATEGORY_SELF_OWNED">自有媒体资源</el-radio-button>
@@ -54,10 +58,13 @@
                 </el-col>
               </el-row>
             </el-form-item>
-            <el-form-item label="投放日期" prop="adgroup_begin_date">
+
+            <el-form-item label="投放日期"
+                          :prop="'adgroups.' + idx + '.adgroup_begin_date'" :rules="{required: true, message: '请选择投放开始日期'}">
               <el-date-picker v-model="__adgroup.adgroup_begin_date" type="date" placeholder="选择开始日期"/> -
               <el-date-picker v-model="__adgroup.adgroup_end_date" type="date" placeholder="结束日期可不选"/>
             </el-form-item>
+
             <el-form-item label="出价" prop="price">
               <el-radio-group v-model="__adgroup.price_type">
                 <el-radio-button label="CREATIVE_SIZE_CATEGORY_THIRD_PARTY">CPC</el-radio-button>
@@ -67,12 +74,17 @@
                 <el-input-number class="w180" v-model="__adgroup.price"/>
               </p>
             </el-form-item>
-            <el-form-item label="任务名称" prop="adgroup_name">
+
+            <el-form-item label="任务名称"
+                          :prop="'adgroups.' + idx + '.adgroup_name'" :rules="{required: true, message: '请填写任务名称'}">
               <el-input v-model="__adgroup.adgroup_name" placeholder="限 100 字内的中英文、数字以及破折号 [ - ]"/>
             </el-form-item>
+
+            <el-divider />
           </el-tab-pane>
         </el-tabs>
 
+        <el-divider />
         <el-form-item>
           <el-button type="primary" icon="el-icon-check" @click="confirmAdgroup">提交</el-button>
           <el-button icon="el-icon-close">取消创建</el-button>
@@ -114,11 +126,11 @@ export default {
       ],
       editableTabsValue: 'adgroup-1',
       adgroupForm: {
-        campaign_id: '',
+        campaign_id: '69856985',
         adgroups: [
           {
             tab_name: 'adgroup-1',
-            adgroup_name: 'adgroup-1',
+            adgroup_name: '任务 1',
             category: '', // 版位类型
             targeting_package_id: '', // 定向 ID
             creative_size_id: '', // 版位 ID
@@ -130,7 +142,7 @@ export default {
         ]
       },
       adgroupRules: {
-
+        campaign_id: {required: true, message: '请选择计划'},
       },
       tabIndex: 1,
       resources: {
@@ -144,7 +156,7 @@ export default {
   methods: {
     getTargetingList() {
       return new Promise((resolve, reject) => {
-        targetingList().then(res => {
+        targetingList({campaign_id: this.adgroupForm.campaign_id}).then(res => {
           this.targetings = res.data
           resolve()
         }).catch(() => {
@@ -164,7 +176,7 @@ export default {
       })
     },
     createTargeting(tab, idx) {
-      this.$refs.targeting_create.initCreate(tab, "69856985", {}, idx)
+      this.$refs.targeting_create.initCreate(tab, this.adgroupForm.campaign_id, {}, idx)
     },
     updateTargeting(tab, idx) {
       let targetingId = Number(this.adgroupForm.adgroups[idx].targeting_package_id)
@@ -180,10 +192,7 @@ export default {
           break
         }
       }
-      this.$refs.targeting_create.initCreate(tab, '69856985', tmpTargeting, idx)
-    },
-    pullTargeting() {
-      this.$message.info("定向数据同步中，请稍后...")
+      this.$refs.targeting_create.initCreate(tab, this.adgroupForm.campaign_id, tmpTargeting, idx)
     },
     targetingCallback(targeting, adgroupIdx) {
       this.targetings.push(targeting)
@@ -227,7 +236,7 @@ export default {
       let adgroupName = 'adgroup-' + this.tabIndex
       this.adgroupForm.adgroups.push({
         tab_name: adgroupName,
-        adgroup_name: adgroupName,
+        adgroup_name: '任务 ' + this.tabIndex,
         category: '',
         targeting_package_id: '',
         creative_size_id: '',
@@ -243,7 +252,7 @@ export default {
       let adgroupName = 'adgroup-' + this.tabIndex
       let copyAdgroup = Object.assign({}, this.adgroupForm.adgroups[idx])
       copyAdgroup.tab_name = adgroupName
-      copyAdgroup.adgroup_name = adgroupName
+      copyAdgroup.adgroup_name = '任务 ' + this.tabIndex
       this.adgroupForm.adgroups.push(copyAdgroup)
       this.editableTabsValue = adgroupName
     },

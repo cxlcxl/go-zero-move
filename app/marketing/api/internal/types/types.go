@@ -162,6 +162,10 @@ type TargetingListItem struct {
 	TargetingCreateReq
 }
 
+type TargetingListReq struct {
+	CampaignId string `form:"campaign_id"`
+}
+
 type TargetingListResp struct {
 	BaseResp
 	Data []*TargetingListItem `json:"data"`

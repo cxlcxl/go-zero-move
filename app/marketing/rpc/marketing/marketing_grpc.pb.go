@@ -30,9 +30,10 @@ type MarketingCenterClient interface {
 	Continents(ctx context.Context, in *EmptyParamsReq, opts ...grpc.CallOption) (*ContinentResp, error)
 	GetCountries(ctx context.Context, in *EmptyParamsReq, opts ...grpc.CallOption) (*CountriesResp, error)
 	TargetingCreate(ctx context.Context, in *Targeting, opts ...grpc.CallOption) (*BaseResp, error)
-	TargetingList(ctx context.Context, in *EmptyParamsReq, opts ...grpc.CallOption) (*TargetingListResp, error)
+	TargetingList(ctx context.Context, in *TargetingListReq, opts ...grpc.CallOption) (*TargetingListResp, error)
 	GetTargetingByName(ctx context.Context, in *GetTargetingByNameReq, opts ...grpc.CallOption) (*Targeting, error)
 	GetTargetingByTargetingId(ctx context.Context, in *GetTargetingByTargetingIdReq, opts ...grpc.CallOption) (*Targeting, error)
+	GetPosition(ctx context.Context, in *TargetingListReq, opts ...grpc.CallOption) (*PositionResp, error)
 }
 
 type marketingCenterClient struct {
@@ -115,7 +116,7 @@ func (c *marketingCenterClient) TargetingCreate(ctx context.Context, in *Targeti
 	return out, nil
 }
 
-func (c *marketingCenterClient) TargetingList(ctx context.Context, in *EmptyParamsReq, opts ...grpc.CallOption) (*TargetingListResp, error) {
+func (c *marketingCenterClient) TargetingList(ctx context.Context, in *TargetingListReq, opts ...grpc.CallOption) (*TargetingListResp, error) {
 	out := new(TargetingListResp)
 	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/TargetingList", in, out, opts...)
 	if err != nil {
@@ -142,6 +143,15 @@ func (c *marketingCenterClient) GetTargetingByTargetingId(ctx context.Context, i
 	return out, nil
 }
 
+func (c *marketingCenterClient) GetPosition(ctx context.Context, in *TargetingListReq, opts ...grpc.CallOption) (*PositionResp, error) {
+	out := new(PositionResp)
+	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/GetPosition", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MarketingCenterServer is the server API for MarketingCenter service.
 // All implementations must embed UnimplementedMarketingCenterServer
 // for forward compatibility
@@ -154,9 +164,10 @@ type MarketingCenterServer interface {
 	Continents(context.Context, *EmptyParamsReq) (*ContinentResp, error)
 	GetCountries(context.Context, *EmptyParamsReq) (*CountriesResp, error)
 	TargetingCreate(context.Context, *Targeting) (*BaseResp, error)
-	TargetingList(context.Context, *EmptyParamsReq) (*TargetingListResp, error)
+	TargetingList(context.Context, *TargetingListReq) (*TargetingListResp, error)
 	GetTargetingByName(context.Context, *GetTargetingByNameReq) (*Targeting, error)
 	GetTargetingByTargetingId(context.Context, *GetTargetingByTargetingIdReq) (*Targeting, error)
+	GetPosition(context.Context, *TargetingListReq) (*PositionResp, error)
 	mustEmbedUnimplementedMarketingCenterServer()
 }
 
@@ -188,7 +199,7 @@ func (UnimplementedMarketingCenterServer) GetCountries(context.Context, *EmptyPa
 func (UnimplementedMarketingCenterServer) TargetingCreate(context.Context, *Targeting) (*BaseResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TargetingCreate not implemented")
 }
-func (UnimplementedMarketingCenterServer) TargetingList(context.Context, *EmptyParamsReq) (*TargetingListResp, error) {
+func (UnimplementedMarketingCenterServer) TargetingList(context.Context, *TargetingListReq) (*TargetingListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TargetingList not implemented")
 }
 func (UnimplementedMarketingCenterServer) GetTargetingByName(context.Context, *GetTargetingByNameReq) (*Targeting, error) {
@@ -196,6 +207,9 @@ func (UnimplementedMarketingCenterServer) GetTargetingByName(context.Context, *G
 }
 func (UnimplementedMarketingCenterServer) GetTargetingByTargetingId(context.Context, *GetTargetingByTargetingIdReq) (*Targeting, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTargetingByTargetingId not implemented")
+}
+func (UnimplementedMarketingCenterServer) GetPosition(context.Context, *TargetingListReq) (*PositionResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPosition not implemented")
 }
 func (UnimplementedMarketingCenterServer) mustEmbedUnimplementedMarketingCenterServer() {}
 
@@ -355,7 +369,7 @@ func _MarketingCenter_TargetingCreate_Handler(srv interface{}, ctx context.Conte
 }
 
 func _MarketingCenter_TargetingList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EmptyParamsReq)
+	in := new(TargetingListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -367,7 +381,7 @@ func _MarketingCenter_TargetingList_Handler(srv interface{}, ctx context.Context
 		FullMethod: "/marketing.MarketingCenter/TargetingList",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MarketingCenterServer).TargetingList(ctx, req.(*EmptyParamsReq))
+		return srv.(MarketingCenterServer).TargetingList(ctx, req.(*TargetingListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -404,6 +418,24 @@ func _MarketingCenter_GetTargetingByTargetingId_Handler(srv interface{}, ctx con
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MarketingCenterServer).GetTargetingByTargetingId(ctx, req.(*GetTargetingByTargetingIdReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MarketingCenter_GetPosition_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TargetingListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketingCenterServer).GetPosition(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/marketing.MarketingCenter/GetPosition",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketingCenterServer).GetPosition(ctx, req.(*TargetingListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -458,6 +490,10 @@ var MarketingCenter_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetTargetingByTargetingId",
 			Handler:    _MarketingCenter_GetTargetingByTargetingId_Handler,
+		},
+		{
+			MethodName: "GetPosition",
+			Handler:    _MarketingCenter_GetPosition_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -28,8 +28,12 @@ func NewTargetingListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Tar
 	}
 }
 
-func (l *TargetingListLogic) TargetingList() (resp *types.TargetingListResp, err error) {
-	list, err := l.svcCtx.MarketingRpcClient.TargetingList(l.ctx, &marketingcenter.EmptyParamsReq{})
+func (l *TargetingListLogic) TargetingList(req *types.TargetingListReq) (resp *types.TargetingListResp, err error) {
+	info, err := l.svcCtx.MarketingRpcClient.CampaignInfo(l.ctx, &marketingcenter.CampaignInfoReq{CampaignId: req.CampaignId})
+	if err != nil {
+		return nil, utils.RpcError(err, "")
+	}
+	list, err := l.svcCtx.MarketingRpcClient.TargetingList(l.ctx, &marketingcenter.TargetingListReq{AccountId: info.AccountId})
 	if err != nil {
 		return nil, utils.RpcError(err, "没有本地定向包，需要同步")
 	}
@@ -182,6 +186,7 @@ func (l *TargetingListLogic) unFormatRpcData(src []*marketingcenter.Targeting) (
 		appInterests = targetingSplit(targeting.AppInterests)
 		targetingCarriers := make([][]string, 0)
 		targetingMediaCategories := make([][]string, 0)
+		targetingAppInterests := make([][]string, 0)
 
 		for _, carrier := range carriers {
 			if cId, ok := carrierParents[carrierMap[carrier]]; !ok {
@@ -201,12 +206,13 @@ func (l *TargetingListLogic) unFormatRpcData(src []*marketingcenter.Targeting) (
 			if pid, ok := appInterestsParents[appInterest]; !ok {
 				return nil, errors.New("字典与定向包数据匹配异常：App 兴趣")
 			} else {
-				targetingMediaCategories = append(targetingMediaCategories, []string{interestParentMap[pid], appInterest})
+				targetingAppInterests = append(targetingAppInterests, []string{interestParentMap[pid], appInterest})
 			}
 		}
 
 		targetings[i].Carriers = targetingCarriers
 		targetings[i].AppCategoryOfMedia = targetingMediaCategories
+		targetings[i].AppInterests = targetingAppInterests
 	}
 	return
 }

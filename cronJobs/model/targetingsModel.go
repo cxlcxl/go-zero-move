@@ -30,7 +30,7 @@ func NewTargetingsModel(conn sqlx.SqlConn) TargetingsModel {
 }
 
 func (m *defaultTargetingsModel) BatchInsert(ctx context.Context, targetings []*Targetings) (err error) {
-	query := fmt.Sprintf("insert ignore into %s (%s) values ", m.table, targetingsRows)
+	query := fmt.Sprintf("insert ignore into %s (%s) values ", m.table, targetingsRowsExpectAutoSet)
 	values := make([]interface{}, 0)
 	valueStatement := make([]string, 0)
 	chunk := 1
