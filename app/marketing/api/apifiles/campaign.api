@@ -4,7 +4,7 @@ import "base.api"
 
 type (
     CampaignCreateReq {
-        AccountId int64 `json:"account_id"`
+        AppId string `json:"app_id"` // 应用 ID
         CampaignName string `json:"campaign_name" validate:"required"`                        // 计划名称
         ProductType string `json:"product_type" validate:"required,product_type"`             // 推广产品
         DailyBudget int64 `json:"daily_budget" validate:"numeric"`                            // 日预算
@@ -26,15 +26,19 @@ type (
         CampaignName string `form:"campaign_name,optional"`
         CampaignId string `form:"campaign_id,optional"`
         CampaignType string `form:"show_status,optional"`
+        AppId string `form:"app_id,optional"`
     }
     Campaign {
         Id int64 `json:"id"`
         CampaignName string `json:"campaign_name"`                             // 计划名称
         CampaignType string `json:"campaign_type"`                             // 计划类型
+        AccountId int64 `json:"account_id"`                                    //
+        AppId string `json:"app_id"` // 应用 ID
+        AdvertiserId int64 `json:"advertiser_id"`                              //
         FlowResource string `json:"flow_resource"`                             // 投放网络
         ProductType string `json:"product_type"`                               // 推广产品
         UserBalanceStatus string `json:"user_balance_status"`                  // 账户余额状态
-        OptStatus string `json:"opt_status"`                         // 操作状态
+        OptStatus string `json:"opt_status"`                                   // 操作状态
         CampaignDailyBudgetStatus string `json:"campaign_daily_budget_status"` // 计划日预算状态
         ShowStatus string `json:"show_status"`                                 // 计划状态
         MarketingGoal string `json:"marketing_goal"`                           //
@@ -45,6 +49,13 @@ type (
         IsCallback int64 `json:"is_callback"`
         CreatedAt int64 `json:"created_at"`                                    // 计划创建的时间
         UpdatedAt int64 `json:"updated_at"`
+        App AppInfo `json:"app"`
+    }
+    AppInfo {
+        ProductId string `json:"product_id"` // 产品ID
+        AppName string `json:"app_name"`
+        IconUrl string `json:"icon_url"`
+        AppStoreDownloadUrl string `json:"app_store_download_url"`
     }
     CampaignListResp {
         BaseResp
@@ -68,5 +79,12 @@ type (
     CampaignResources {
         BaseResp
         Data *Resources `json:"data"`
+    }
+    CampaignInfoReq {
+        CampaignId string `form:"campaign_id"`
+    }
+    CampaignInfoResp {
+        BaseResp
+        Data Campaign `json:"data"`
     }
 )

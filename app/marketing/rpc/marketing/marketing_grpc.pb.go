@@ -22,10 +22,10 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MarketingCenterClient interface {
-	PromotionCreate(ctx context.Context, in *PromotionCreateReq, opts ...grpc.CallOption) (*BaseResp, error)
-	PromotionList(ctx context.Context, in *PromotionListReq, opts ...grpc.CallOption) (*PromotionListResp, error)
-	PromotionUpdate(ctx context.Context, in *PromotionUpdateReq, opts ...grpc.CallOption) (*BaseResp, error)
-	CampaignInfo(ctx context.Context, in *CampaignInfoReq, opts ...grpc.CallOption) (*PromotionInfo, error)
+	CampaignCreate(ctx context.Context, in *CampaignCreateReq, opts ...grpc.CallOption) (*BaseResp, error)
+	CampaignList(ctx context.Context, in *CampaignListReq, opts ...grpc.CallOption) (*CampaignListResp, error)
+	CampaignUpdate(ctx context.Context, in *CampaignUpdateReq, opts ...grpc.CallOption) (*BaseResp, error)
+	GetCampaignInfo(ctx context.Context, in *CampaignInfoReq, opts ...grpc.CallOption) (*CampaignInfo, error)
 	DictQuery(ctx context.Context, in *DictionaryReq, opts ...grpc.CallOption) (*DictionaryResp, error)
 	Continents(ctx context.Context, in *EmptyParamsReq, opts ...grpc.CallOption) (*ContinentResp, error)
 	GetCountries(ctx context.Context, in *EmptyParamsReq, opts ...grpc.CallOption) (*CountriesResp, error)
@@ -33,7 +33,7 @@ type MarketingCenterClient interface {
 	TargetingList(ctx context.Context, in *TargetingListReq, opts ...grpc.CallOption) (*TargetingListResp, error)
 	GetTargetingByName(ctx context.Context, in *GetTargetingByNameReq, opts ...grpc.CallOption) (*Targeting, error)
 	GetTargetingByTargetingId(ctx context.Context, in *GetTargetingByTargetingIdReq, opts ...grpc.CallOption) (*Targeting, error)
-	GetPosition(ctx context.Context, in *TargetingListReq, opts ...grpc.CallOption) (*PositionResp, error)
+	GetPositions(ctx context.Context, in *PositionListReq, opts ...grpc.CallOption) (*PositionListResp, error)
 }
 
 type marketingCenterClient struct {
@@ -44,36 +44,36 @@ func NewMarketingCenterClient(cc grpc.ClientConnInterface) MarketingCenterClient
 	return &marketingCenterClient{cc}
 }
 
-func (c *marketingCenterClient) PromotionCreate(ctx context.Context, in *PromotionCreateReq, opts ...grpc.CallOption) (*BaseResp, error) {
+func (c *marketingCenterClient) CampaignCreate(ctx context.Context, in *CampaignCreateReq, opts ...grpc.CallOption) (*BaseResp, error) {
 	out := new(BaseResp)
-	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/PromotionCreate", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/CampaignCreate", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *marketingCenterClient) PromotionList(ctx context.Context, in *PromotionListReq, opts ...grpc.CallOption) (*PromotionListResp, error) {
-	out := new(PromotionListResp)
-	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/PromotionList", in, out, opts...)
+func (c *marketingCenterClient) CampaignList(ctx context.Context, in *CampaignListReq, opts ...grpc.CallOption) (*CampaignListResp, error) {
+	out := new(CampaignListResp)
+	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/CampaignList", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *marketingCenterClient) PromotionUpdate(ctx context.Context, in *PromotionUpdateReq, opts ...grpc.CallOption) (*BaseResp, error) {
+func (c *marketingCenterClient) CampaignUpdate(ctx context.Context, in *CampaignUpdateReq, opts ...grpc.CallOption) (*BaseResp, error) {
 	out := new(BaseResp)
-	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/PromotionUpdate", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/CampaignUpdate", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *marketingCenterClient) CampaignInfo(ctx context.Context, in *CampaignInfoReq, opts ...grpc.CallOption) (*PromotionInfo, error) {
-	out := new(PromotionInfo)
-	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/CampaignInfo", in, out, opts...)
+func (c *marketingCenterClient) GetCampaignInfo(ctx context.Context, in *CampaignInfoReq, opts ...grpc.CallOption) (*CampaignInfo, error) {
+	out := new(CampaignInfo)
+	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/GetCampaignInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -143,9 +143,9 @@ func (c *marketingCenterClient) GetTargetingByTargetingId(ctx context.Context, i
 	return out, nil
 }
 
-func (c *marketingCenterClient) GetPosition(ctx context.Context, in *TargetingListReq, opts ...grpc.CallOption) (*PositionResp, error) {
-	out := new(PositionResp)
-	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/GetPosition", in, out, opts...)
+func (c *marketingCenterClient) GetPositions(ctx context.Context, in *PositionListReq, opts ...grpc.CallOption) (*PositionListResp, error) {
+	out := new(PositionListResp)
+	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/GetPositions", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -156,10 +156,10 @@ func (c *marketingCenterClient) GetPosition(ctx context.Context, in *TargetingLi
 // All implementations must embed UnimplementedMarketingCenterServer
 // for forward compatibility
 type MarketingCenterServer interface {
-	PromotionCreate(context.Context, *PromotionCreateReq) (*BaseResp, error)
-	PromotionList(context.Context, *PromotionListReq) (*PromotionListResp, error)
-	PromotionUpdate(context.Context, *PromotionUpdateReq) (*BaseResp, error)
-	CampaignInfo(context.Context, *CampaignInfoReq) (*PromotionInfo, error)
+	CampaignCreate(context.Context, *CampaignCreateReq) (*BaseResp, error)
+	CampaignList(context.Context, *CampaignListReq) (*CampaignListResp, error)
+	CampaignUpdate(context.Context, *CampaignUpdateReq) (*BaseResp, error)
+	GetCampaignInfo(context.Context, *CampaignInfoReq) (*CampaignInfo, error)
 	DictQuery(context.Context, *DictionaryReq) (*DictionaryResp, error)
 	Continents(context.Context, *EmptyParamsReq) (*ContinentResp, error)
 	GetCountries(context.Context, *EmptyParamsReq) (*CountriesResp, error)
@@ -167,7 +167,7 @@ type MarketingCenterServer interface {
 	TargetingList(context.Context, *TargetingListReq) (*TargetingListResp, error)
 	GetTargetingByName(context.Context, *GetTargetingByNameReq) (*Targeting, error)
 	GetTargetingByTargetingId(context.Context, *GetTargetingByTargetingIdReq) (*Targeting, error)
-	GetPosition(context.Context, *TargetingListReq) (*PositionResp, error)
+	GetPositions(context.Context, *PositionListReq) (*PositionListResp, error)
 	mustEmbedUnimplementedMarketingCenterServer()
 }
 
@@ -175,17 +175,17 @@ type MarketingCenterServer interface {
 type UnimplementedMarketingCenterServer struct {
 }
 
-func (UnimplementedMarketingCenterServer) PromotionCreate(context.Context, *PromotionCreateReq) (*BaseResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PromotionCreate not implemented")
+func (UnimplementedMarketingCenterServer) CampaignCreate(context.Context, *CampaignCreateReq) (*BaseResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CampaignCreate not implemented")
 }
-func (UnimplementedMarketingCenterServer) PromotionList(context.Context, *PromotionListReq) (*PromotionListResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PromotionList not implemented")
+func (UnimplementedMarketingCenterServer) CampaignList(context.Context, *CampaignListReq) (*CampaignListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CampaignList not implemented")
 }
-func (UnimplementedMarketingCenterServer) PromotionUpdate(context.Context, *PromotionUpdateReq) (*BaseResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PromotionUpdate not implemented")
+func (UnimplementedMarketingCenterServer) CampaignUpdate(context.Context, *CampaignUpdateReq) (*BaseResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CampaignUpdate not implemented")
 }
-func (UnimplementedMarketingCenterServer) CampaignInfo(context.Context, *CampaignInfoReq) (*PromotionInfo, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CampaignInfo not implemented")
+func (UnimplementedMarketingCenterServer) GetCampaignInfo(context.Context, *CampaignInfoReq) (*CampaignInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCampaignInfo not implemented")
 }
 func (UnimplementedMarketingCenterServer) DictQuery(context.Context, *DictionaryReq) (*DictionaryResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DictQuery not implemented")
@@ -208,8 +208,8 @@ func (UnimplementedMarketingCenterServer) GetTargetingByName(context.Context, *G
 func (UnimplementedMarketingCenterServer) GetTargetingByTargetingId(context.Context, *GetTargetingByTargetingIdReq) (*Targeting, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTargetingByTargetingId not implemented")
 }
-func (UnimplementedMarketingCenterServer) GetPosition(context.Context, *TargetingListReq) (*PositionResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetPosition not implemented")
+func (UnimplementedMarketingCenterServer) GetPositions(context.Context, *PositionListReq) (*PositionListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPositions not implemented")
 }
 func (UnimplementedMarketingCenterServer) mustEmbedUnimplementedMarketingCenterServer() {}
 
@@ -224,74 +224,74 @@ func RegisterMarketingCenterServer(s grpc.ServiceRegistrar, srv MarketingCenterS
 	s.RegisterService(&MarketingCenter_ServiceDesc, srv)
 }
 
-func _MarketingCenter_PromotionCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PromotionCreateReq)
+func _MarketingCenter_CampaignCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CampaignCreateReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MarketingCenterServer).PromotionCreate(ctx, in)
+		return srv.(MarketingCenterServer).CampaignCreate(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/marketing.MarketingCenter/PromotionCreate",
+		FullMethod: "/marketing.MarketingCenter/CampaignCreate",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MarketingCenterServer).PromotionCreate(ctx, req.(*PromotionCreateReq))
+		return srv.(MarketingCenterServer).CampaignCreate(ctx, req.(*CampaignCreateReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MarketingCenter_PromotionList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PromotionListReq)
+func _MarketingCenter_CampaignList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CampaignListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MarketingCenterServer).PromotionList(ctx, in)
+		return srv.(MarketingCenterServer).CampaignList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/marketing.MarketingCenter/PromotionList",
+		FullMethod: "/marketing.MarketingCenter/CampaignList",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MarketingCenterServer).PromotionList(ctx, req.(*PromotionListReq))
+		return srv.(MarketingCenterServer).CampaignList(ctx, req.(*CampaignListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MarketingCenter_PromotionUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PromotionUpdateReq)
+func _MarketingCenter_CampaignUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CampaignUpdateReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MarketingCenterServer).PromotionUpdate(ctx, in)
+		return srv.(MarketingCenterServer).CampaignUpdate(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/marketing.MarketingCenter/PromotionUpdate",
+		FullMethod: "/marketing.MarketingCenter/CampaignUpdate",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MarketingCenterServer).PromotionUpdate(ctx, req.(*PromotionUpdateReq))
+		return srv.(MarketingCenterServer).CampaignUpdate(ctx, req.(*CampaignUpdateReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MarketingCenter_CampaignInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MarketingCenter_GetCampaignInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CampaignInfoReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MarketingCenterServer).CampaignInfo(ctx, in)
+		return srv.(MarketingCenterServer).GetCampaignInfo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/marketing.MarketingCenter/CampaignInfo",
+		FullMethod: "/marketing.MarketingCenter/GetCampaignInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MarketingCenterServer).CampaignInfo(ctx, req.(*CampaignInfoReq))
+		return srv.(MarketingCenterServer).GetCampaignInfo(ctx, req.(*CampaignInfoReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -422,20 +422,20 @@ func _MarketingCenter_GetTargetingByTargetingId_Handler(srv interface{}, ctx con
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MarketingCenter_GetPosition_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TargetingListReq)
+func _MarketingCenter_GetPositions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PositionListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MarketingCenterServer).GetPosition(ctx, in)
+		return srv.(MarketingCenterServer).GetPositions(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/marketing.MarketingCenter/GetPosition",
+		FullMethod: "/marketing.MarketingCenter/GetPositions",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MarketingCenterServer).GetPosition(ctx, req.(*TargetingListReq))
+		return srv.(MarketingCenterServer).GetPositions(ctx, req.(*PositionListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -448,20 +448,20 @@ var MarketingCenter_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*MarketingCenterServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "PromotionCreate",
-			Handler:    _MarketingCenter_PromotionCreate_Handler,
+			MethodName: "CampaignCreate",
+			Handler:    _MarketingCenter_CampaignCreate_Handler,
 		},
 		{
-			MethodName: "PromotionList",
-			Handler:    _MarketingCenter_PromotionList_Handler,
+			MethodName: "CampaignList",
+			Handler:    _MarketingCenter_CampaignList_Handler,
 		},
 		{
-			MethodName: "PromotionUpdate",
-			Handler:    _MarketingCenter_PromotionUpdate_Handler,
+			MethodName: "CampaignUpdate",
+			Handler:    _MarketingCenter_CampaignUpdate_Handler,
 		},
 		{
-			MethodName: "CampaignInfo",
-			Handler:    _MarketingCenter_CampaignInfo_Handler,
+			MethodName: "GetCampaignInfo",
+			Handler:    _MarketingCenter_GetCampaignInfo_Handler,
 		},
 		{
 			MethodName: "DictQuery",
@@ -492,8 +492,8 @@ var MarketingCenter_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _MarketingCenter_GetTargetingByTargetingId_Handler,
 		},
 		{
-			MethodName: "GetPosition",
-			Handler:    _MarketingCenter_GetPosition_Handler,
+			MethodName: "GetPositions",
+			Handler:    _MarketingCenter_GetPositions_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

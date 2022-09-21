@@ -18,8 +18,8 @@ import (
 var (
 	campaignsFieldNames          = builder.RawFieldNames(&Campaigns{})
 	campaignsRows                = strings.Join(campaignsFieldNames, ",")
-	campaignsRowsExpectAutoSet   = strings.Join(stringx.Remove(campaignsFieldNames, "`id`", "`create_time`", "`update_time`", "`create_at`", "`update_at`"), ",")
-	campaignsRowsWithPlaceHolder = strings.Join(stringx.Remove(campaignsFieldNames, "`id`", "`create_time`", "`update_time`", "`create_at`", "`update_at`"), "=?,") + "=?"
+	campaignsRowsExpectAutoSet   = strings.Join(stringx.Remove(campaignsFieldNames, "`id`", "`create_at`", "`update_at`"), ",")
+	campaignsRowsWithPlaceHolder = strings.Join(stringx.Remove(campaignsFieldNames, "`id`", "`create_at`", "`update_at`"), "=?,") + "=?"
 )
 
 type (
@@ -41,6 +41,7 @@ type (
 		CampaignId                string    `db:"campaign_id"`                  // 计划 ID
 		CampaignName              string    `db:"campaign_name"`                // 计划名称
 		AccountId                 int64     `db:"account_id"`                   // 账户 ID
+		AppId                     string    `db:"app_id"`                       // 账户 ID
 		AdvertiserId              string    `db:"advertiser_id"`                // 广告主账户 ID
 		OptStatus                 string    `db:"opt_status"`                   // 操作状态
 		CampaignDailyBudgetStatus string    `db:"campaign_daily_budget_status"` // 计划日预算状态
@@ -101,8 +102,8 @@ func (m *defaultCampaignsModel) FindOneByCampaignId(ctx context.Context, campaig
 }
 
 func (m *defaultCampaignsModel) Insert(ctx context.Context, data *Campaigns) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, campaignsRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.CampaignId, data.CampaignName, data.AccountId, data.AdvertiserId, data.OptStatus, data.CampaignDailyBudgetStatus, data.ProductType, data.ShowStatus, data.UserBalanceStatus, data.FlowResource, data.SyncFlowResource, data.CampaignType, data.TodayDailyBudget, data.TomorrowDailyBudget, data.MarketingGoal, data.IsCallback, data.CreatedAt, data.UpdatedAt)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, campaignsRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.CampaignId, data.CampaignName, data.AccountId, data.AppId, data.AdvertiserId, data.OptStatus, data.CampaignDailyBudgetStatus, data.ProductType, data.ShowStatus, data.UserBalanceStatus, data.FlowResource, data.SyncFlowResource, data.CampaignType, data.TodayDailyBudget, data.TomorrowDailyBudget, data.MarketingGoal, data.IsCallback, data.CreatedAt, data.UpdatedAt)
 	return ret, err
 }
 

@@ -10,8 +10,8 @@
         </el-form-item>
         <el-form-item>
           <el-select v-model="search.app_type" class="w130">
-            <el-option label="全部应用类型" :value="0"/>
-            <el-option v-for="(key, val) in appList.app_type" :label="key" :value="Number(val)"/>
+            <el-option label="全部应用类型" value=""/>
+            <el-option v-for="(key, val) in appList.app_type" :label="key" :value="val"/>
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -26,6 +26,7 @@
       </el-form>
     </el-col>
     <el-col :span="24">
+      <el-button type="primary" icon="el-icon-download" size="mini" @click="pullApp">拉取应用</el-button>
       <el-button type="primary" icon="el-icon-plus" size="mini" @click="add">添加应用</el-button>
     </el-col>
     <el-col :span="24">
@@ -59,6 +60,7 @@
 
     <create-application ref="appCreate" :app-type="appList.app_type" :app-channel="appList.app_channel" @success="getApplicationList"/>
     <update-application ref="appUpdate" :app-type="appList.app_type" :app-channel="appList.app_channel" @success="getApplicationList"/>
+    <pull-application ref="appPull" :app-type="appList.app_type" @success="getApplicationList"/>
   </el-row>
 </template>
 
@@ -68,17 +70,18 @@ import { parseTime } from '@/utils'
 import Page from '@c/Page'
 import CreateApplication from './components/add-app'
 import UpdateApplication from './components/edit-app'
+import PullApplication from './components/pull-app'
 
 export default {
   name: 'AppList',
-  components: {Page, CreateApplication, UpdateApplication},
+  components: {Page, CreateApplication, UpdateApplication, PullApplication},
   data() {
     return {
       loading: false,
       search: {
         app_name: '',
         app_id: '',
-        app_type: 0,
+        app_type: "",
         channel: 0,
         page: 1,
         page_size: 10
@@ -102,6 +105,9 @@ export default {
   methods: {
     add() {
       this.$refs.appCreate.initCreate()
+    },
+    pullApp() {
+      this.$refs.appPull.initPull()
     },
     doSearch() {
       this.search.page = 1

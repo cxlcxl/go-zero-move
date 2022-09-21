@@ -13,6 +13,9 @@ type ServiceContext struct {
 	RegionModel    model.OverseasRegionsModel
 	ContinentModel model.ContinentsModel
 	TargetingModel model.TargetingsModel
+	PositionModel  model.PositionsModel
+	SampleModel    model.PositionSamplesModel
+	PlacementModel model.PositionPlacementsModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -24,5 +27,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		RegionModel:    model.NewOverseasRegionsModel(DBConn),
 		ContinentModel: model.NewContinentsModel(DBConn),
 		TargetingModel: model.NewTargetingsModel(DBConn),
+		PositionModel:  model.NewPositionsModel(DBConn),
+		SampleModel:    model.NewPositionSamplesModel(DBConn),
+		PlacementModel: model.NewPositionPlacementsModel(DBConn),
 	}
 }

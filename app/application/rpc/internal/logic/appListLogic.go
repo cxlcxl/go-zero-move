@@ -33,16 +33,19 @@ func (l *AppListLogic) AppList(in *apps.AppListReq) (*apps.AppListResp, error) {
 	if total > 0 {
 		for _, app := range list {
 			info = append(info, &apps.AppInfo{
-				Id:        app.Id,
-				AppName:   app.AppName,
-				AppId:     app.AppId,
-				AccountId: app.AccountId,
-				PkgName:   app.PkgName,
-				Channel:   app.Channel,
-				AppType:   app.AppType,
-				Tags:      app.Tags,
-				CreatedAt: app.CreatedAt.Unix(),
-				UpdatedAt: app.UpdatedAt.Unix(),
+				Id:           app.Id,
+				AppName:      app.AppName,
+				AppId:        app.AppId,
+				IconUrl:      app.IconUrl,
+				AccountId:    app.AccountId,
+				AdvertiserId: app.AdvertiserId,
+				ProductId:    app.ProductId,
+				PkgName:      app.PkgName,
+				Channel:      app.Channel,
+				AppType:      app.AppType,
+				Tags:         app.Tags,
+				CreatedAt:    app.CreatedAt.Unix(),
+				UpdatedAt:    app.UpdatedAt.Unix(),
 			})
 		}
 	}

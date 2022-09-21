@@ -27,15 +27,16 @@ func NewUpdateAppLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateA
 
 func (l *UpdateAppLogic) UpdateApp(in *apps.AppInfo) (*apps.BaseResp, error) {
 	err := l.svcCtx.AppModel.Update(l.ctx, &model.Apps{
-		Id:        in.Id,
-		AccountId: in.AccountId,
-		AppId:     in.AppId,
-		AppName:   in.AppName,
-		PkgName:   in.PkgName,
-		Channel:   in.Channel,
-		AppType:   in.AppType,
-		Tags:      in.Tags,
-		UpdatedAt: time.Now(),
+		Id:           in.Id,
+		AccountId:    in.AccountId,
+		AdvertiserId: in.AdvertiserId,
+		AppId:        in.AppId,
+		AppName:      in.AppName,
+		PkgName:      in.PkgName,
+		Channel:      in.Channel,
+		AppType:      in.AppType,
+		Tags:         in.Tags,
+		UpdatedAt:    time.Now(),
 	})
 	if err != nil {
 		return nil, err

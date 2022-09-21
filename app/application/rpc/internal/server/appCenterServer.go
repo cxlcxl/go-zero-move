@@ -32,6 +32,11 @@ func (s *AppCenterServer) UpdateApp(ctx context.Context, in *apps.AppInfo) (*app
 	return l.UpdateApp(in)
 }
 
+func (s *AppCenterServer) BatchCreateApp(ctx context.Context, in *apps.BatchCreateAppReq) (*apps.BaseResp, error) {
+	l := logic.NewBatchCreateAppLogic(ctx, s.svcCtx)
+	return l.BatchCreateApp(in)
+}
+
 func (s *AppCenterServer) GetAppInfo(ctx context.Context, in *apps.AppInfoReq) (*apps.AppInfo, error) {
 	l := logic.NewGetAppInfoLogic(ctx, s.svcCtx)
 	return l.GetAppInfo(in)

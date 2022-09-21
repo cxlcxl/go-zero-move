@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/zeromicro/go-zero/core/stores/builder"
-	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
@@ -19,11 +18,8 @@ import (
 var (
 	appsFieldNames          = builder.RawFieldNames(&Apps{})
 	appsRows                = strings.Join(appsFieldNames, ",")
-	appsRowsExpectAutoSet   = strings.Join(stringx.Remove(appsFieldNames, "`id`", "`create_time`", "`update_time`", "`create_at`", "`update_at`"), ",")
-	appsRowsWithPlaceHolder = strings.Join(stringx.Remove(appsFieldNames, "`id`", "`create_time`", "`update_time`", "`created_at`", "`update_at`"), "=?,") + "=?"
-
-	cacheAppsIdPrefix    = "cache:apps:id:"
-	cacheAppsAppIdPrefix = "cache:apps:appId:"
+	appsRowsExpectAutoSet   = strings.Join(stringx.Remove(appsFieldNames, "`id`", "`create_at`", "`update_at`"), ",")
+	appsRowsWithPlaceHolder = strings.Join(stringx.Remove(appsFieldNames, "`id`", "`created_at`", "`update_at`"), "=?,") + "=?"
 )
 
 type (
@@ -36,53 +32,45 @@ type (
 	}
 
 	defaultAppsModel struct {
-		sqlc.CachedConn
+		conn  sqlx.SqlConn
 		table string
 	}
 
 	Apps struct {
-		Id        int64     `db:"id"`
-		AccountId int64     `db:"account_id"` // 账户ID;对应 accounts 表的id字段
-		AppId     string    `db:"app_id"`     // 第三方应用ID，例如华为APP ID : C10134672；可能存在GP的应用ID 32位
-		AppName   string    `db:"app_name"`   // 应用名称
-		PkgName   string    `db:"pkg_name"`   // 应用包名或BundleID
-		Channel   int64     `db:"channel"`    // 系统平台(渠道)：华为 AppGallery；GooglePlay; AppStore
-		AppType   int64     `db:"app_type"`   // 应用分类
-		Tags      string    `db:"tags"`       // 应用标签
-		CreatedAt time.Time `db:"created_at"` // 创建时间
-		UpdatedAt time.Time `db:"updated_at"` // 最后更新时间
+		Id                  int64     `db:"id"`
+		AccountId           int64     `db:"account_id"`    // 账户ID;对应 accounts 表的id字段
+		AdvertiserId        string    `db:"advertiser_id"` // 广告主账户ID
+		AppId               string    `db:"app_id"`        // 第三方应用ID，例如华为APP ID : C10134672；可能存在GP的应用ID 32位
+		AppName             string    `db:"app_name"`      // 应用名称
+		AppType             string    `db:"app_type"`      // 产品/应用类型
+		PkgName             string    `db:"pkg_name"`      // 应用包名或BundleID
+		Channel             int64     `db:"channel"`       // 系统平台(渠道)：华为 AppGallery；GooglePlay; AppStore
+		Tags                string    `db:"tags"`          // 应用标签
+		IconUrl             string    `db:"icon_url"`      // 图标
+		ProductId           string    `db:"product_id"`    // 产品ID，创建任务时需要
+		AppStoreDownloadUrl string    `db:"app_store_download_url"`
+		CreatedAt           time.Time `db:"created_at"` // 创建时间
+		UpdatedAt           time.Time `db:"updated_at"` // 最后更新时间
 	}
 )
 
-func newAppsModel(conn sqlx.SqlConn, c cache.CacheConf) *defaultAppsModel {
+func newAppsModel(conn sqlx.SqlConn) *defaultAppsModel {
 	return &defaultAppsModel{
-		CachedConn: sqlc.NewConn(conn, c),
-		table:      "`apps`",
+		conn:  conn,
+		table: "`apps`",
 	}
 }
 
 func (m *defaultAppsModel) Delete(ctx context.Context, id int64) error {
-	data, err := m.FindOne(ctx, id)
-	if err != nil {
-		return err
-	}
-
-	appsAppIdKey := fmt.Sprintf("%s%v", cacheAppsAppIdPrefix, data.AppId)
-	appsIdKey := fmt.Sprintf("%s%v", cacheAppsIdPrefix, id)
-	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
-		return conn.ExecCtx(ctx, query, id)
-	}, appsAppIdKey, appsIdKey)
+	query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
+	_, err := m.conn.ExecCtx(ctx, query, id)
 	return err
 }
 
 func (m *defaultAppsModel) FindOne(ctx context.Context, id int64) (*Apps, error) {
-	appsIdKey := fmt.Sprintf("%s%v", cacheAppsIdPrefix, id)
+	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", appsRows, m.table)
 	var resp Apps
-	err := m.QueryRowCtx(ctx, &resp, appsIdKey, func(ctx context.Context, conn sqlx.SqlConn, v interface{}) error {
-		query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", appsRows, m.table)
-		return conn.QueryRowCtx(ctx, v, query, id)
-	})
+	err := m.conn.QueryRowCtx(ctx, &resp, query, id)
 	switch err {
 	case nil:
 		return &resp, nil
@@ -94,15 +82,9 @@ func (m *defaultAppsModel) FindOne(ctx context.Context, id int64) (*Apps, error)
 }
 
 func (m *defaultAppsModel) FindOneByAppId(ctx context.Context, appId string) (*Apps, error) {
-	appsAppIdKey := fmt.Sprintf("%s%v", cacheAppsAppIdPrefix, appId)
 	var resp Apps
-	err := m.QueryRowIndexCtx(ctx, &resp, appsAppIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v interface{}) (i interface{}, e error) {
-		query := fmt.Sprintf("select %s from %s where `app_id` = ? limit 1", appsRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, appId); err != nil {
-			return nil, err
-		}
-		return resp.Id, nil
-	}, m.queryPrimary)
+	query := fmt.Sprintf("select %s from %s where `app_id` = ? limit 1", appsRows, m.table)
+	err := m.conn.QueryRowCtx(ctx, &resp, query, appId)
 	switch err {
 	case nil:
 		return &resp, nil
@@ -114,37 +96,15 @@ func (m *defaultAppsModel) FindOneByAppId(ctx context.Context, appId string) (*A
 }
 
 func (m *defaultAppsModel) Insert(ctx context.Context, data *Apps) (sql.Result, error) {
-	appsAppIdKey := fmt.Sprintf("%s%v", cacheAppsAppIdPrefix, data.AppId)
-	appsIdKey := fmt.Sprintf("%s%v", cacheAppsIdPrefix, data.Id)
-	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, appsRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.AccountId, data.AppId, data.AppName, data.PkgName, data.Channel, data.AppType, data.Tags, data.CreatedAt, data.UpdatedAt)
-	}, appsAppIdKey, appsIdKey)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, appsRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.AccountId, data.AdvertiserId, data.AppId, data.AppName, data.AppType, data.PkgName, data.Channel, data.Tags, data.IconUrl, data.ProductId, data.AppStoreDownloadUrl, data.CreatedAt, data.UpdatedAt)
 	return ret, err
 }
 
 func (m *defaultAppsModel) Update(ctx context.Context, newData *Apps) error {
-	data, err := m.FindOne(ctx, newData.Id)
-	if err != nil {
-		return err
-	}
-
-	appsAppIdKey := fmt.Sprintf("%s%v", cacheAppsAppIdPrefix, data.AppId)
-	appsIdKey := fmt.Sprintf("%s%v", cacheAppsIdPrefix, data.Id)
-	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, appsRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.AccountId, newData.AppId, newData.AppName, newData.PkgName, newData.Channel, newData.AppType, newData.Tags, newData.UpdatedAt, newData.Id)
-	}, appsAppIdKey, appsIdKey)
+	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, appsRowsWithPlaceHolder)
+	_, err := m.conn.ExecCtx(ctx, query, newData.AccountId, newData.AdvertiserId, newData.AppId, newData.AppName, newData.AppType, newData.PkgName, newData.Channel, newData.Tags, newData.IconUrl, newData.ProductId, newData.AppStoreDownloadUrl, newData.UpdatedAt, newData.Id)
 	return err
-}
-
-func (m *defaultAppsModel) formatPrimary(primary interface{}) string {
-	return fmt.Sprintf("%s%v", cacheAppsIdPrefix, primary)
-}
-
-func (m *defaultAppsModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary interface{}) error {
-	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", appsRows, m.table)
-	return conn.QueryRowCtx(ctx, v, query, primary)
 }
 
 func (m *defaultAppsModel) tableName() string {

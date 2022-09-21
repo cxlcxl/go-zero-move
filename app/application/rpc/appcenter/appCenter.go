@@ -13,21 +13,24 @@ import (
 )
 
 type (
-	AppInfo         = apps.AppInfo
-	AppInfoReq      = apps.AppInfoReq
-	AppListReq      = apps.AppListReq
-	AppListResp     = apps.AppListResp
-	AppsResp        = apps.AppsResp
-	BaseResp        = apps.BaseResp
-	CreateAppReq    = apps.CreateAppReq
-	GetByAppIdReq   = apps.GetByAppIdReq
-	GetByAppIdsReq  = apps.GetByAppIdsReq
-	GetByAppNameReq = apps.GetByAppNameReq
-	GetByIdsReq     = apps.GetByIdsReq
+	AppInfo           = apps.AppInfo
+	AppInfoReq        = apps.AppInfoReq
+	AppListReq        = apps.AppListReq
+	AppListResp       = apps.AppListResp
+	Apps              = apps.Apps
+	AppsResp          = apps.AppsResp
+	BaseResp          = apps.BaseResp
+	BatchCreateAppReq = apps.BatchCreateAppReq
+	CreateAppReq      = apps.CreateAppReq
+	GetByAppIdReq     = apps.GetByAppIdReq
+	GetByAppIdsReq    = apps.GetByAppIdsReq
+	GetByAppNameReq   = apps.GetByAppNameReq
+	GetByIdsReq       = apps.GetByIdsReq
 
 	AppCenter interface {
 		CreateApp(ctx context.Context, in *CreateAppReq, opts ...grpc.CallOption) (*BaseResp, error)
 		UpdateApp(ctx context.Context, in *AppInfo, opts ...grpc.CallOption) (*BaseResp, error)
+		BatchCreateApp(ctx context.Context, in *BatchCreateAppReq, opts ...grpc.CallOption) (*BaseResp, error)
 		GetAppInfo(ctx context.Context, in *AppInfoReq, opts ...grpc.CallOption) (*AppInfo, error)
 		GetAppInfoByAppId(ctx context.Context, in *GetByAppIdReq, opts ...grpc.CallOption) (*AppInfo, error)
 		AppList(ctx context.Context, in *AppListReq, opts ...grpc.CallOption) (*AppListResp, error)
@@ -55,6 +58,11 @@ func (m *defaultAppCenter) CreateApp(ctx context.Context, in *CreateAppReq, opts
 func (m *defaultAppCenter) UpdateApp(ctx context.Context, in *AppInfo, opts ...grpc.CallOption) (*BaseResp, error) {
 	client := apps.NewAppCenterClient(m.cli.Conn())
 	return client.UpdateApp(ctx, in, opts...)
+}
+
+func (m *defaultAppCenter) BatchCreateApp(ctx context.Context, in *BatchCreateAppReq, opts ...grpc.CallOption) (*BaseResp, error) {
+	client := apps.NewAppCenterClient(m.cli.Conn())
+	return client.BatchCreateApp(ctx, in, opts...)
 }
 
 func (m *defaultAppCenter) GetAppInfo(ctx context.Context, in *AppInfoReq, opts ...grpc.CallOption) (*AppInfo, error) {

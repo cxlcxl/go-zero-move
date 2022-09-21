@@ -1,0 +1,77 @@
+.creative-container {
+  height: 300px;
+  margin-top: 5px;
+  border: 1px solid #e3e3e3;
+  border-radius: 3px;
+  overflow-y: scroll;
+
+  .creative-active {
+    color: #1890ff;
+    font-weight: 600;
+  }
+
+  .creative-list {
+    cursor: pointer;
+    display: flex;
+    line-height: 20px;
+    border-bottom: 1px solid #e3e3e3;
+
+    &:hover {
+      background: #f5f5f5;
+    }
+  }
+
+  .creative-name, .creative-desc {
+    display: inline-block;
+    padding: 8px;
+    font-size: 12px;
+  }
+
+  .creative-name {
+    width: 300px;
+    border-right: 1px solid #e3e3e3;
+  }
+
+  .creative-desc {
+    flex: 1;
+  }
+
+  &::-webkit-scrollbar {
+    /*滚动条整体样式*/
+    width: 6px; /*高宽分别对应横竖滚动条的尺寸*/
+    height: 0;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    /*滚动条里面小方块*/
+    border-radius: 10px;
+    background-color: rgb(131, 138, 150);
+  }
+
+  &::-webkit-scrollbar-track {
+    /*滚动条里面轨道*/
+    box-shadow: inset 0 0 5px rgba(100, 98, 98, 0.2);
+    background: #ededed;
+    border-radius: 2px;
+  }
+}
+
+.creative-banner {
+  .banner-panel {
+    text-align: center;
+    padding: 5px 0 10px;
+
+    img {
+      max-height: 260px;
+      max-width: 260px;
+    }
+
+    p {
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+      height: 25px;
+      line-height: 25px;
+    }
+  }
+}

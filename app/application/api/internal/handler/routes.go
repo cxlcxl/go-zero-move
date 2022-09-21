@@ -25,6 +25,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: appUpdateHandler(serverCtx),
 				},
 				{
+					Method:  http.MethodPost,
+					Path:    "/pull",
+					Handler: appPullHandler(serverCtx),
+				},
+				{
 					Method:  http.MethodGet,
 					Path:    "/info",
 					Handler: getAppInfoHandler(serverCtx),
@@ -33,6 +38,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/list",
 					Handler: getAppListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/campaign-list",
+					Handler: campaignAppListHandler(serverCtx),
 				},
 			}...,
 		),

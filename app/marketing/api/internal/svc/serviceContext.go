@@ -2,6 +2,7 @@ package svc
 
 import (
 	"business/app/account/rpc/accountcenter"
+	"business/app/application/rpc/appcenter"
 	"business/app/marketing/api/internal/config"
 	"business/app/marketing/api/internal/middleware"
 	"business/app/marketing/rpc/marketingcenter"
@@ -19,6 +20,7 @@ type ServiceContext struct {
 	Validator            *validator.Validate
 	MarketingRpcClient   marketingcenter.MarketingCenter
 	AccountRpcClient     accountcenter.AccountCenter
+	AppRpcClient         appcenter.AppCenter
 	RedisCache           *redis.Redis
 }
 
@@ -30,6 +32,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Validator:            validators.New(),
 		MarketingRpcClient:   marketingcenter.NewMarketingCenter(zrpc.MustNewClient(c.MarketingRpcClient)),
 		AccountRpcClient:     accountcenter.NewAccountCenter(zrpc.MustNewClient(c.AccountRpcClient)),
+		AppRpcClient:         appcenter.NewAppCenter(zrpc.MustNewClient(c.AppRpcClient)),
 		RedisCache:           redis.New(c.Redis.Host),
 	}
 }

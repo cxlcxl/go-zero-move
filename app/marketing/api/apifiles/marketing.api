@@ -39,6 +39,38 @@ type (
 		BaseResp
 		Data ContinentCountry `json:"data"`
 	}
+	AdsMapResourceResp {
+		BaseResp
+		Data map[string]string `json:"data"`
+	}
+	CreativeQueryReq {
+		Category  string `form:"category"`
+		AccountId int64  `form:"account_id"`
+	}
+	CreativeQueryResp {
+		BaseResp
+		Data []*CreativeSizeInfo `json:"data"`
+	}
+	CreativeSizeInfo {
+		CreativeSizeId              int64            `json:"creative_size_id"`
+		CreativeSizeNameDsp         string           `json:"creative_size_name_dsp"`
+		CreativeSizeNameDescription string           `json:"creative_size_description"`
+		SupportProductType          string           `json:"support_product_type"`
+		IsSupportTimePeriod         string           `json:"is_support_time_period"`
+		IsSupportMultipleCreatives  string           `json:"is_support_multiple_creatives"`
+		SupportPriceType            string           `json:"support_price_type"`
+		Samples                     []*SampleInfo    `json:"samples"`
+		Placements                  []*PlacementInfo `json:"placements"`
+	}
+	SampleInfo {
+		CreativeSizeSample string `json:"creative_size_ample"`
+		PreviewTitle       string `json:"preview_title"`
+	}
+	PlacementInfo {
+		PlacementSizeId     string `json:"placement_size_id"`
+		CreativeSize        string `json:"creative_size"`
+		CreativeSizeSubType string `json:"creative_size_sub_type"`
+	}
 )
 
 @server(
@@ -54,6 +86,10 @@ service marketing-api {
 	@doc "创建计划"
 	@handler campaignCreate
 	post /campaign/create (CampaignCreateReq) returns (CampaignCreateResp)
+	
+	@doc "计划详情"
+	@handler campaignInfo
+	get /campaign/info (CampaignInfoReq) returns (CampaignInfoResp)
 	
 	@doc "计划列表"
 	@handler campaignList
@@ -75,4 +111,15 @@ service marketing-api {
 	@handler targetingCreate
 	post /targeting/create (TargetingCreateReq) returns (TargetingCreateResp)
 	
+	@doc "版位类别"
+	@handler creativeCategory
+	get /resource/creative-category returns (AdsMapResourceResp)
+	
+	@doc "付费方式"
+	@handler Pricing
+	get /resource/pricing returns (AdsMapResourceResp)
+	
+	@doc "版位查询"
+	@handler creativeQuery
+	get /creative/query(CreativeQueryReq) returns (CreativeQueryResp)
 }

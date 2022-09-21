@@ -8,7 +8,7 @@
         <el-input v-model="appForm.app_id" placeholder="请填写APP ID"/>
       </el-form-item>
       <el-form-item prop="account_id" label="关联账户">
-        <el-select v-model="appForm.account_id" remote filterable placeholder="可输入名称查询"
+        <el-select v-model="appForm.account_id" remote filterable placeholder="可输入名称查询" @change="handleChange"
                    :remote-method="remoteMethod" :loading="remoteLoading" style="width: 100%;">
           <el-option v-for="item in accounts" :label="item.account_name" :value="Number(item.id)"/>
         </el-select>
@@ -23,7 +23,7 @@
       </el-form-item>
       <el-form-item label="应用类型" prop="app_type">
         <el-select v-model="appForm.app_type" style="width: 100%;">
-          <el-option v-for="(key, val) in appType" :label="key" :value="Number(val)"/>
+          <el-option v-for="(key, val) in appType" :label="key" :value="val"/>
         </el-select>
       </el-form-item>
       <el-form-item label="标签" prop="tags">
@@ -56,6 +56,7 @@
           app_name: '',
           app_id: '',
           account_id: '',
+          advertiser_id: '',
           pkg_name: '',
           tags: '',
           channel: '',
@@ -110,11 +111,17 @@
           })
         })
       },
+      handleChange(v) {
+        for (let i = 0; i < this.accounts.length; i++) {
+          if (Number(v) === this.accounts[i].id) {
+            this.$set(this.appForm, 'advertiser_id', this.accounts[i].advertiser_id)
+          }
+        }
+      },
       save() {
         this.$refs.appForm.validate(v => {
           if (v) {
             this.loading = true
-            this.$set(this.appForm, 'app_type', Number(this.appForm.app_type))
             appUpdate(this.appForm).then(res => {
               this.$message.success("修改成功")
               this.$emit('success')

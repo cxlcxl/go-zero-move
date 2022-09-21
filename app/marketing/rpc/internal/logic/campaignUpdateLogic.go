@@ -1,28 +1,29 @@
 package logic
 
 import (
+	"context"
+
 	"business/app/marketing/rpc/internal/svc"
 	"business/app/marketing/rpc/marketing"
-	"context"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type PromotionUpdateLogic struct {
+type CampaignUpdateLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewPromotionUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PromotionUpdateLogic {
-	return &PromotionUpdateLogic{
+func NewCampaignUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CampaignUpdateLogic {
+	return &CampaignUpdateLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *PromotionUpdateLogic) PromotionUpdate(in *marketing.PromotionUpdateReq) (*marketing.BaseResp, error) {
+func (l *CampaignUpdateLogic) CampaignUpdate(in *marketing.CampaignUpdateReq) (*marketing.BaseResp, error) {
 	values := map[string]interface{}{
 		"campaign_name":         in.CampaignName,
 		"product_type":          in.ProductType,

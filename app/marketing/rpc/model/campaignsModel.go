@@ -15,7 +15,7 @@ type (
 	CampaignsModel interface {
 		campaignsModel
 		Trans(ctx context.Context, fn func(context context.Context, session sqlx.Session) error) error
-		CampaignList(ctx context.Context, campaignId, campaignName, campaignType string, offset, limit uint64) ([]*Campaigns, int64, error)
+		CampaignList(ctx context.Context, appId, campaignId, campaignName, campaignType string, offset, limit uint64) ([]*Campaigns, int64, error)
 		UpdateByCampaignId(ctx context.Context, campaignId string, values map[string]interface{}) error
 	}
 
@@ -38,12 +38,15 @@ func (m *defaultCampaignsModel) Trans(ctx context.Context, fn func(ctx context.C
 	})
 }
 
-func (m *defaultCampaignsModel) CampaignList(ctx context.Context, campaignId, campaignName, campaignType string, offset, limit uint64) (campaigns []*Campaigns, total int64, err error) {
-	total, err = m.campaignListCount(ctx, campaignId, campaignName, campaignType)
+func (m *defaultCampaignsModel) CampaignList(ctx context.Context, appId, campaignId, campaignName, campaignType string, offset, limit uint64) (campaigns []*Campaigns, total int64, err error) {
+	total, err = m.campaignListCount(ctx, appId, campaignId, campaignName, campaignType)
 	if total == 0 || err != nil {
 		return
 	}
 	query := squirrel.Select(campaignsRows).From(m.table)
+	if len(appId) > 0 {
+		query = query.Where("app_id = ?", appId)
+	}
 	if len(campaignId) > 0 {
 		query = query.Where("campaign_id like ?", "%"+campaignId+"%")
 	}
@@ -58,8 +61,11 @@ func (m *defaultCampaignsModel) CampaignList(ctx context.Context, campaignId, ca
 	return
 }
 
-func (m *defaultCampaignsModel) campaignListCount(ctx context.Context, campaignId, campaignName, campaignType string) (total int64, err error) {
+func (m *defaultCampaignsModel) campaignListCount(ctx context.Context, appId, campaignId, campaignName, campaignType string) (total int64, err error) {
 	query := squirrel.Select("COUNT(id) as ct").From(m.table)
+	if len(appId) > 0 {
+		query = query.Where("app_id = ?", appId)
+	}
 	if len(campaignId) > 0 {
 		query = query.Where("campaign_id like ?", "%"+campaignId+"%")
 	}

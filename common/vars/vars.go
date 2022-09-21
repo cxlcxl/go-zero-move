@@ -3,7 +3,6 @@ package vars
 const (
 	MaxPageSize    uint64 = 100
 	SysCachePrefix string = "business:cache:"
-	Env            string = "dev"
 
 	ApiModuleCountry  = "Country"
 	ApiModuleCampaign = "Campaign"
@@ -33,12 +32,6 @@ const (
 	AppChannelGooglePlay
 	AppChannelAppStore
 	AppChannelOther
-)
-
-const (
-	_ = iota
-	AppAppTypeA
-	AppAppTypeB
 )
 
 const (
@@ -85,11 +78,6 @@ var (
 		AppChannelGooglePlay: "GooglePlay",
 		AppChannelAppStore:   "AppStore",
 		AppChannelOther:      "Other",
-	}
-	// AppType 应用类型
-	AppType = map[int]string{
-		AppAppTypeA: "A",
-		AppAppTypeB: "B",
 	}
 	// CronModules 调度模块 - 与 cronJobs 模块保持一致
 	CronModules = map[string]string{

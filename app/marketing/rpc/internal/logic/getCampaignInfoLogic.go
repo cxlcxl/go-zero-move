@@ -9,30 +9,31 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type CampaignInfoLogic struct {
+type GetCampaignInfoLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewCampaignInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CampaignInfoLogic {
-	return &CampaignInfoLogic{
+func NewGetCampaignInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetCampaignInfoLogic {
+	return &GetCampaignInfoLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *CampaignInfoLogic) CampaignInfo(in *marketing.CampaignInfoReq) (*marketing.PromotionInfo, error) {
+func (l *GetCampaignInfoLogic) GetCampaignInfo(in *marketing.CampaignInfoReq) (*marketing.CampaignInfo, error) {
 	campaign, err := l.svcCtx.CampaignModel.FindOneByCampaignId(l.ctx, in.CampaignId)
 	if err != nil {
 		return nil, err
 	}
-	return &marketing.PromotionInfo{
+	return &marketing.CampaignInfo{
 		Id:                        campaign.Id,
 		CampaignId:                campaign.CampaignId,
 		CampaignName:              campaign.CampaignName,
 		AccountId:                 campaign.AccountId,
+		AppId:                     campaign.AppId,
 		AdvertiserId:              campaign.AdvertiserId,
 		OptStatus:                 campaign.OptStatus,
 		CampaignDailyBudgetStatus: campaign.CampaignDailyBudgetStatus,

@@ -1,41 +1,43 @@
 package logic
 
 import (
-	"business/app/marketing/rpc/internal/svc"
-	"business/app/marketing/rpc/marketing"
 	"business/common/utils"
 	"context"
+
+	"business/app/marketing/rpc/internal/svc"
+	"business/app/marketing/rpc/marketing"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type PromotionListLogic struct {
+type CampaignListLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewPromotionListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PromotionListLogic {
-	return &PromotionListLogic{
+func NewCampaignListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CampaignListLogic {
+	return &CampaignListLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *PromotionListLogic) PromotionList(in *marketing.PromotionListReq) (*marketing.PromotionListResp, error) {
+func (l *CampaignListLogic) CampaignList(in *marketing.CampaignListReq) (*marketing.CampaignListResp, error) {
 	offset, limit := utils.Pagination(in.Page, in.PageSize)
-	list, total, err := l.svcCtx.CampaignModel.CampaignList(l.ctx, in.CampaignId, in.CampaignName, in.CampaignType, offset, limit)
+	list, total, err := l.svcCtx.CampaignModel.CampaignList(l.ctx, in.AppId, in.CampaignId, in.CampaignName, in.CampaignType, offset, limit)
 	if err != nil {
 		return nil, err
 	}
-	promotions := make([]*marketing.PromotionInfo, len(list))
+	promotions := make([]*marketing.CampaignInfo, len(list))
 	for i, campaigns := range list {
-		promotions[i] = &marketing.PromotionInfo{
+		promotions[i] = &marketing.CampaignInfo{
 			Id:                        campaigns.Id,
 			CampaignId:                campaigns.CampaignId,
 			CampaignName:              campaigns.CampaignName,
 			AccountId:                 campaigns.AccountId,
+			AppId:                     campaigns.AppId,
 			AdvertiserId:              campaigns.AdvertiserId,
 			OptStatus:                 campaigns.OptStatus,
 			CampaignDailyBudgetStatus: campaigns.CampaignDailyBudgetStatus,
@@ -53,8 +55,8 @@ func (l *PromotionListLogic) PromotionList(in *marketing.PromotionListReq) (*mar
 			UpdatedAt:                 campaigns.UpdatedAt.Unix(),
 		}
 	}
-	return &marketing.PromotionListResp{
-		Promotions: promotions,
-		Total:      total,
+	return &marketing.CampaignListResp{
+		Campaigns: promotions,
+		Total:     total,
 	}, nil
 }

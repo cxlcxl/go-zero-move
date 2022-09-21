@@ -31,13 +31,14 @@ func (l *AppCreateLogic) AppCreate(req *types.AppCreateReq) (resp *types.BaseRes
 		return nil, err
 	}
 	_, err = l.svcCtx.AppRpcClient.CreateApp(l.ctx, &appcenter.CreateAppReq{
-		AppName:   req.AppName,
-		AppId:     req.AppId,
-		AccountId: req.AccountId,
-		PkgName:   req.PkgName,
-		Channel:   req.Channel,
-		AppType:   req.AppType,
-		Tags:      req.Tags,
+		AppName:      req.AppName,
+		AppId:        req.AppId,
+		AccountId:    req.AccountId,
+		AdvertiserId: req.AdvertiserId,
+		PkgName:      req.PkgName,
+		Channel:      req.Channel,
+		AppType:      req.AppType,
+		Tags:         req.Tags,
 	})
 	if err != nil {
 		return nil, utils.RpcError(err, "")

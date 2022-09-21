@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type AppCenterClient interface {
 	CreateApp(ctx context.Context, in *CreateAppReq, opts ...grpc.CallOption) (*BaseResp, error)
 	UpdateApp(ctx context.Context, in *AppInfo, opts ...grpc.CallOption) (*BaseResp, error)
+	BatchCreateApp(ctx context.Context, in *BatchCreateAppReq, opts ...grpc.CallOption) (*BaseResp, error)
 	GetAppInfo(ctx context.Context, in *AppInfoReq, opts ...grpc.CallOption) (*AppInfo, error)
 	GetAppInfoByAppId(ctx context.Context, in *GetByAppIdReq, opts ...grpc.CallOption) (*AppInfo, error)
 	AppList(ctx context.Context, in *AppListReq, opts ...grpc.CallOption) (*AppListResp, error)
@@ -52,6 +53,15 @@ func (c *appCenterClient) CreateApp(ctx context.Context, in *CreateAppReq, opts 
 func (c *appCenterClient) UpdateApp(ctx context.Context, in *AppInfo, opts ...grpc.CallOption) (*BaseResp, error) {
 	out := new(BaseResp)
 	err := c.cc.Invoke(ctx, "/apps.AppCenter/UpdateApp", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appCenterClient) BatchCreateApp(ctx context.Context, in *BatchCreateAppReq, opts ...grpc.CallOption) (*BaseResp, error) {
+	out := new(BaseResp)
+	err := c.cc.Invoke(ctx, "/apps.AppCenter/BatchCreateApp", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -118,6 +128,7 @@ func (c *appCenterClient) GetAppsByAppIds(ctx context.Context, in *GetByAppIdsRe
 type AppCenterServer interface {
 	CreateApp(context.Context, *CreateAppReq) (*BaseResp, error)
 	UpdateApp(context.Context, *AppInfo) (*BaseResp, error)
+	BatchCreateApp(context.Context, *BatchCreateAppReq) (*BaseResp, error)
 	GetAppInfo(context.Context, *AppInfoReq) (*AppInfo, error)
 	GetAppInfoByAppId(context.Context, *GetByAppIdReq) (*AppInfo, error)
 	AppList(context.Context, *AppListReq) (*AppListResp, error)
@@ -136,6 +147,9 @@ func (UnimplementedAppCenterServer) CreateApp(context.Context, *CreateAppReq) (*
 }
 func (UnimplementedAppCenterServer) UpdateApp(context.Context, *AppInfo) (*BaseResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateApp not implemented")
+}
+func (UnimplementedAppCenterServer) BatchCreateApp(context.Context, *BatchCreateAppReq) (*BaseResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BatchCreateApp not implemented")
 }
 func (UnimplementedAppCenterServer) GetAppInfo(context.Context, *AppInfoReq) (*AppInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAppInfo not implemented")
@@ -200,6 +214,24 @@ func _AppCenter_UpdateApp_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AppCenterServer).UpdateApp(ctx, req.(*AppInfo))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AppCenter_BatchCreateApp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BatchCreateAppReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppCenterServer).BatchCreateApp(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/apps.AppCenter/BatchCreateApp",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppCenterServer).BatchCreateApp(ctx, req.(*BatchCreateAppReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -326,6 +358,10 @@ var AppCenter_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateApp",
 			Handler:    _AppCenter_UpdateApp_Handler,
+		},
+		{
+			MethodName: "BatchCreateApp",
+			Handler:    _AppCenter_BatchCreateApp_Handler,
 		},
 		{
 			MethodName: "GetAppInfo",

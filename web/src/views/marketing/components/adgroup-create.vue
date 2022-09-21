@@ -2,20 +2,17 @@
   <el-row :gutter="15" v-loading="loadings.pageLoading">
     <el-form :model="adgroupForm" ref="adgroupForm" label-width="120px" size="mini" :rules="adgroupRules">
       <el-col :span="12">
-        <el-form-item label="选择计划" prop="campaign_id">
-          <el-select v-model="adgroupForm.campaign_id" remote filterable placeholder="可输入名称查询"
-                     :remote-method="remoteCampaign" :loading="loadings.remoteCampaignLoading" style="width: 100%;">
-            <el-option v-for="item in campaigns" :label="item.campaign_name" :value="Number(item.campaign_id)"/>
-          </el-select>
+        <el-form-item label="所属计划" prop="campaign_id" :rules="{required: true, message: '计划必需选择'}">
+          <el-input :value="campaign.campaign_name" disabled/>
         </el-form-item>
       </el-col>
       <el-col :span="12">
-        <el-form-item label="选择应用" prop="campaign_id">
-          <el-select v-model="adgroupForm.campaign_id" remote filterable placeholder="可输入名称查询"
-                     :remote-method="remoteApplication" :loading="loadings.remoteAppLoading" style="width: 100%;">
-            <el-option v-for="item in campaigns" :label="item.campaign_name" :value="Number(item.campaign_id)"/>
-          </el-select>
+        <el-form-item label="推广产品" prop="product_id" :rules="{required: true, message: '计划必需选择'}">
+          <el-input :value="campaign.app.app_name" disabled/>
         </el-form-item>
+      </el-col>
+      <el-col :span="12">
+
       </el-col>
       <el-col :span="24" style="border-top: 1px solid #e3e3e3;">
         <p style="margin: 10px 0 8px 0;">
@@ -37,24 +34,31 @@
 
             <el-form-item label="版位" prop="creative_size_id"
                           :prop="'adgroups.' + idx + '.creative_size_id'" :rules="{required: true, message: '请选择版位'}">
-              <el-radio-group v-model="__adgroup.category" @change="remoteCreative">
-                <el-radio-button label="CREATIVE_SIZE_CATEGORY_THIRD_PARTY">三方媒体资源</el-radio-button>
-                <el-radio-button label="CREATIVE_SIZE_CATEGORY_SELF_OWNED">自有媒体资源</el-radio-button>
-                <el-radio-button label="CREATIVE_SIZE_CATEGORY_OTHER">其他首选资</el-radio-button>
+              <el-radio-group v-model="__adgroup.category" @change="getCreativeList($event, __adgroup.tab_name)">
+                <el-radio-button v-for="(c_label, c_k) in resources.creative_category" :label="c_k">{{ c_label }}</el-radio-button>
               </el-radio-group>
-              <el-row :gutter="10" v-loading="loadings.creativeLoading">
+              <el-row :gutter="15" v-loading="loadings.creativeLoading" v-show="creativeList[__adgroup.tab_name].length > 0">
                 <el-col :span="17">
                   <div class="creative-container">
-                    <div v-for="creative in creativeList"
+                    <div v-for="creative in creativeList[__adgroup.tab_name]"
                          :class="{'creative-list': true, 'creative-active': creative.creative_size_id === __adgroup.creative_size_id}"
-                         @click="handleSelectCreative(creative.creative_size_id)">
-                      <span class="creative-name">{{creative.name}}</span>
-                      <span class="creative-desc">{{creative.desc}}</span>
+                         @click="handleSelectCreative(creative.creative_size_id, creative.samples, creative.support_price_type)">
+                      <span class="creative-name">{{creative.creative_size_name_dsp}}</span>
+                      <span class="creative-desc">{{creative.creative_size_description}}</span>
                     </div>
                   </div>
                 </el-col>
-                <el-col :span="7">
-                  <div class="creative-banner"></div>
+                <el-col :span="7" style="background: #99a9bf;">
+                  <div class="creative-banner" v-show="creativeSamples[__adgroup.tab_name].length > 0">
+                    <el-carousel height="305px">
+                      <el-carousel-item v-for="(sample, sampleIdx) in creativeSamples[__adgroup.tab_name]" :key="sampleIdx">
+                        <div class="banner-panel">
+                          <p>{{sample.preview_title}}</p>
+                          <img :src="sample.creative_size_ample"/>
+                        </div>
+                      </el-carousel-item>
+                    </el-carousel>
+                  </div>
                 </el-col>
               </el-row>
             </el-form-item>
@@ -66,13 +70,16 @@
             </el-form-item>
 
             <el-form-item label="出价" prop="price">
-              <el-radio-group v-model="__adgroup.price_type">
-                <el-radio-button label="CREATIVE_SIZE_CATEGORY_THIRD_PARTY">CPC</el-radio-button>
-                <el-radio-button label="CREATIVE_SIZE_CATEGORY_SELF_OWNED">CPM</el-radio-button>
-              </el-radio-group>
-              <p style="margin: 5px 0 0 0;">
-                <el-input-number class="w180" v-model="__adgroup.price"/>
-              </p>
+              <div v-if="Number(__adgroup.creative_size_id) === 0" style="color: #909399;">未选择版位与产品信息</div>
+              <div v-else>
+                <el-radio-group v-model="__adgroup.price_type">
+                  <el-radio-button :label="key" v-for="(label,key) in resources.pricing"
+                                   v-if="pricing[__adgroup.tab_name].includes(label)">{{ label }}</el-radio-button>
+                </el-radio-group>
+                <p style="margin: 5px 0 0 0;">
+                  <el-input-number class="w180" v-model="__adgroup.price"/>
+                </p>
+              </div>
             </el-form-item>
 
             <el-form-item label="任务名称"
@@ -98,7 +105,9 @@
 
 <script>
 import TargetingCreate from './targeting-create'
-import {targetingList} from '@a/marketing'
+import {targetingList, creativeList} from '@a/marketing'
+import {creativeCategory, pricing} from '@a/marketing-resource'
+import {campaignInfo} from '@a/campaign'
 
 export default {
   // name: 'AdgroupCreate',
@@ -108,29 +117,21 @@ export default {
       loadings: {
         pageLoading: false,
         remoteAppLoading: false,
-        remoteCampaignLoading: false,
         creativeLoading: false,
       },
       targetings: [],
-      campaigns: [],
-      creativeList: [
-        {creative_size_id: '111', name: 'Global High-quality traffic Banner_VIP', desc: 'Global High-quality traffic Banner_VIP 1'},
-        {creative_size_id: '222', name: 'Global High-quality traffic Banner_VIP', desc: 'Global High-quality traffic Banner_VIP 2'},
-        {creative_size_id: '333', name: 'Global High-quality traffic Banner_VIP', desc: 'Global High-quality traffic Banner_VIP 3'},
-        {creative_size_id: '444', name: 'Global High-quality traffic Banner_VIP', desc: 'Global High-quality traffic Banner_VIP 4'},
-        {creative_size_id: '555', name: 'Global High-quality traffic Banner_VIP', desc: 'Global High-quality traffic Banner_VIP 5'},
-        {creative_size_id: '666', name: 'Global High-quality traffic Banner_VIP', desc: 'Global High-quality traffic Banner_VIP 6'},
-        {creative_size_id: '777', name: 'Global High-quality traffic Banner_VIP', desc: 'Global High-quality traffic Banner_VIP 7'},
-        {creative_size_id: '888', name: 'Global High-quality traffic Banner_VIP', desc: 'Global High-quality traffic Banner_VIP 8'},
-        {creative_size_id: '999', name: 'Global High-quality traffic Banner_VIP', desc: 'Global High-quality traffic Banner_VIP 9'},
-      ],
-      editableTabsValue: 'adgroup-1',
+      campaign: {app: {}},
+      creativeList: {adgroup0: []},
+      creativeSamples: {adgroup0: []},
+      pricing: {adgroup0: []},
+      editableTabsValue: 'adgroup0',
       adgroupForm: {
-        campaign_id: '69856985',
+        campaign_id: '',
+        product_id: '',
         adgroups: [
           {
-            tab_name: 'adgroup-1',
-            adgroup_name: '任务 1',
+            tab_name: 'adgroup0',
+            adgroup_name: '任务 0',
             category: '', // 版位类型
             targeting_package_id: '', // 定向 ID
             creative_size_id: '', // 版位 ID
@@ -142,11 +143,12 @@ export default {
         ]
       },
       adgroupRules: {
-        campaign_id: {required: true, message: '请选择计划'},
+
       },
       tabIndex: 1,
       resources: {
-
+        creative_category: {},
+        pricing: {},
       }
     }
   },
@@ -154,6 +156,44 @@ export default {
     this.getResources()
   },
   methods: {
+    getPricing() {
+      return new Promise((resolve, reject) => {
+        pricing().then(res => {
+          this.resources.pricing = res.data
+          resolve()
+        }).catch(() => {
+          this.$message.error('付费方式读取失败')
+          reject()
+        })
+      })
+    },
+    getCreativeCategory() {
+      return new Promise((resolve, reject) => {
+        creativeCategory().then(res => {
+          this.resources.creative_category = res.data
+          resolve()
+        }).catch(() => {
+          this.$message.error('定向包列表读取失败')
+          reject()
+        })
+      })
+    },
+    getCampaignInfo() {
+      return new Promise((resolve, reject) => {
+        campaignInfo(this.adgroupForm.campaign_id).then(res => {
+          this.campaign = res.data
+          if (!this.campaign.app.hasOwnProperty('product_id') || this.campaign.app.product_id === '') {
+            this.$message.error('产品信息未同步，请到应用列表拉取关联账户应用数据')
+          } else {
+            this.$set(this.adgroupForm, 'product_id', this.campaign.app.product_id)
+          }
+          resolve()
+        }).catch(() => {
+          this.$message.error('计划信息读取失败')
+          reject()
+        })
+      })
+    },
     getTargetingList() {
       return new Promise((resolve, reject) => {
         targetingList({campaign_id: this.adgroupForm.campaign_id}).then(res => {
@@ -165,15 +205,34 @@ export default {
         })
       })
     },
+    getCreativeList(category, tabName) {
+      this.loadings.creativeLoading = true
+      creativeList({category, account_id: this.campaign.account_id}).then(res => {
+        this.creativeList[tabName] = res.data
+        this.loadings.creativeLoading = false
+      }).catch(() => {
+        this.creativeList[tabName] = []
+        this.loadings.creativeLoading = false
+      })
+    },
     getResources() {
       this.loadings.pageLoading = true
-      Promise.all([
-        this.getTargetingList(),
-      ]).then(() => {
-        this.loadings.pageLoading = false
-      }).catch(() => {
-        this.loadings.pageLoading = false
-      })
+      if (this.$route.query.hasOwnProperty('campaign_id') && this.$route.query.campaign_id !== '') {
+        this.$set(this.adgroupForm, 'campaign_id', this.$route.query.campaign_id)
+
+        Promise.all([
+          this.getPricing(),
+          this.getCreativeCategory(),
+          this.getCampaignInfo(),
+          this.getTargetingList(),
+        ]).then(() => {
+          this.loadings.pageLoading = false
+        }).catch(() => {
+          this.loadings.pageLoading = false
+        })
+      } else {
+        this.$message.error("计划参数错误，请重新进入此页面")
+      }
     },
     createTargeting(tab, idx) {
       this.$refs.targeting_create.initCreate(tab, this.adgroupForm.campaign_id, {}, idx)
@@ -198,42 +257,17 @@ export default {
       this.targetings.push(targeting)
       this.$set(this.adgroupForm.adgroups[adgroupIdx], 'targeting_package_id', targeting.targeting_id)
     },
-    remoteCampaign() {
-
-    },
-    remoteCreative(q) {
-      this.loadings.creativeLoading = true
-      setTimeout(() => {
-        this.loadings.creativeLoading = false
-      }, 1000)
-    },
-    handleSelectCreative(creativeSizeId) {
+    handleSelectCreative(creativeSizeId, samples, supportPriceType) {
+      this.$set(this.creativeSamples, this.editableTabsValue, (Array.isArray(samples) ? samples : []))
+      this.$set(this.pricing, this.editableTabsValue, supportPriceType.split(","))
       this.adgroupForm.adgroups.forEach((tab, index) => {
         if (tab.tab_name === this.editableTabsValue) {
           this.$set(this.adgroupForm.adgroups[index], 'creative_size_id', creativeSizeId)
         }
       })
     },
-    remoteApplication() {
-      if (query.trim() !== '') {
-        this.remoteLoading = true;
-        // searchAccounts(query).then(res => {
-        //   this.remoteLoading = false
-        //   if (Array.isArray(res.data)) {
-        //     this.accounts = res.data
-        //   } else {
-        //     this.accounts = []
-        //   }
-        // }).catch(() => {
-        //   this.remoteLoading = false
-        // })
-      } else {
-        this.campaigns = [];
-      }
-    },
     addTab(targetName) {
-      this.tabIndex++
-      let adgroupName = 'adgroup-' + this.tabIndex
+      let adgroupName = 'adgroup' + this.tabIndex
       this.adgroupForm.adgroups.push({
         tab_name: adgroupName,
         adgroup_name: '任务 ' + this.tabIndex,
@@ -245,16 +279,17 @@ export default {
         price_type: '',
         price: 0,
       })
-      this.editableTabsValue = adgroupName;
+      this.editableTabsValue = adgroupName
+      this.tabIndex++
     },
     copyTab(targetName, idx) {
-      this.tabIndex++
-      let adgroupName = 'adgroup-' + this.tabIndex
+      let adgroupName = 'adgroup' + this.tabIndex
       let copyAdgroup = Object.assign({}, this.adgroupForm.adgroups[idx])
       copyAdgroup.tab_name = adgroupName
       copyAdgroup.adgroup_name = '任务 ' + this.tabIndex
       this.adgroupForm.adgroups.push(copyAdgroup)
       this.editableTabsValue = adgroupName
+      this.tabIndex++
     },
     removeTab(targetName) {
       if (this.adgroupForm.adgroups.length === 1) {
@@ -296,59 +331,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.creative-container {
-  height: 230px;
-  margin-top: 5px;
-  border: 1px solid #e3e3e3;
-  border-radius: 3px;
-  overflow-y: scroll;
-
-  .creative-active {
-    color: #1890ff;
-    font-weight: 600;
-  }
-
-  .creative-list {
-    cursor: pointer;
-    display: flex;
-    line-height: 20px;
-    border-bottom: 1px solid #e3e3e3;
-
-    &:hover {
-      background: #f5f5f5;
-    }
-  }
-
-  .creative-name,.creative-desc {
-    display: inline-block;
-    padding: 8px;
-    font-size: 12px;
-  }
-  .creative-name {
-    width: 300px;
-    border-right: 1px solid #e3e3e3;
-  }
-  .creative-desc {
-    flex: 1;
-  }
-
-  &::-webkit-scrollbar {
-    /*滚动条整体样式*/
-    width: 6px; /*高宽分别对应横竖滚动条的尺寸*/
-    height: 0;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    /*滚动条里面小方块*/
-    border-radius: 10px;
-    background-color: rgb(131, 138, 150);
-  }
-
-  &::-webkit-scrollbar-track {
-    /*滚动条里面轨道*/
-    box-shadow: inset 0 0 5px rgba(100, 98, 98, 0.2);
-    background: #ededed;
-    border-radius: 2px;
-  }
-}
+@import "../styles/adgroup-create.scss";
 </style>

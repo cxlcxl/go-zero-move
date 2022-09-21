@@ -14,4 +14,10 @@ type Config struct {
 
 	AppRpcConf     zrpc.RpcClientConf
 	AccountRpcConf zrpc.RpcClientConf
+
+	MarketingApis struct {
+		App struct {
+			Query string
+		}
+	}
 }

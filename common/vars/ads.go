@@ -62,6 +62,14 @@ const (
 	TargetingTypeNotApp = "TARGET_TYPE_NOT_APP"
 
 	TargetingDatabaseSeq = "&" // 定向包数据入库分隔符
+
+	PricingTypeCpm  = "PRICING_CPM"
+	PricingTypeCpc  = "PRICING_CPC"
+	PricingTypeOCpc = "PRICING_OCPC"
+	//PricingTypeCpv   = "PRICING_CPCV"
+	//PricingTypeCpa   = "PRICING_CPA"
+	//PricingTypeCpi   = "PRICING_CPI"
+	//PricingTypeTroas = "PRICING_TROAS"
 )
 
 var (
@@ -184,5 +192,15 @@ var (
 	AppInterest = map[string]string{
 		"99999999991": "应用",
 		"99999999992": "游戏",
+	}
+	// Pricing 付费方式
+	Pricing = map[string]string{
+		PricingTypeCpm:  "CPM",
+		PricingTypeCpc:  "CPC",
+		PricingTypeOCpc: "oCPC",
+		//PricingTypeCpv:   "CPCV",
+		//PricingTypeCpa:   "CPA",
+		//PricingTypeCpi:   "CPI",
+		//PricingTypeTroas: "TROAS",
 	}
 )

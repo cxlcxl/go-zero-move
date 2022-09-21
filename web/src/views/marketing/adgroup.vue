@@ -11,9 +11,6 @@
       </el-form>
     </el-col>
     <el-col :span="24">
-      <el-button type="primary" icon="el-icon-plus" size="mini" @click="add">创建任务</el-button>
-    </el-col>
-    <el-col :span="24" style="margin-top: 15px">
       <el-table v-loading="loadings.pageLoading" :data="adgroup.adgroups" highlight-current-row stripe border size="mini">
         <el-table-column prop="adgroup_id" label="任务 ID" width="120" align="center" fixed="left"></el-table-column>
         <el-table-column prop="campaign_name" label="任务名称" min-width="160" show-overflow-tooltip fixed="left"/>
@@ -101,9 +98,6 @@ export default {
     doSearch() {
       this.search.page = 1
       this.getAdgroupList()
-    },
-    add() {
-      this.$router.push({name: "AdgroupCreate"})
     },
     editRow() {
 

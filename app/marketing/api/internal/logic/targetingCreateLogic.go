@@ -43,7 +43,7 @@ func (l *TargetingCreateLogic) TargetingCreate(req *types.TargetingCreateReq) (r
 	if targeting != nil {
 		return nil, errors.New("定向包名已存在")
 	}
-	campaign, err := l.svcCtx.MarketingRpcClient.CampaignInfo(l.ctx, &marketingcenter.CampaignInfoReq{CampaignId: req.CampaignId})
+	campaign, err := l.svcCtx.MarketingRpcClient.GetCampaignInfo(l.ctx, &marketingcenter.CampaignInfoReq{CampaignId: req.CampaignId})
 	if err != nil {
 		return nil, utils.RpcError(err, "")
 	}

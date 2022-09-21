@@ -40,13 +40,51 @@ type LocationResp struct {
 	Data ContinentCountry `json:"data"`
 }
 
+type AdsMapResourceResp struct {
+	BaseResp
+	Data map[string]string `json:"data"`
+}
+
+type CreativeQueryReq struct {
+	Category  string `form:"category"`
+	AccountId int64  `form:"account_id"`
+}
+
+type CreativeQueryResp struct {
+	BaseResp
+	Data []*CreativeSizeInfo `json:"data"`
+}
+
+type CreativeSizeInfo struct {
+	CreativeSizeId              int64            `json:"creative_size_id"`
+	CreativeSizeNameDsp         string           `json:"creative_size_name_dsp"`
+	CreativeSizeNameDescription string           `json:"creative_size_description"`
+	SupportProductType          string           `json:"support_product_type"`
+	IsSupportTimePeriod         string           `json:"is_support_time_period"`
+	IsSupportMultipleCreatives  string           `json:"is_support_multiple_creatives"`
+	SupportPriceType            string           `json:"support_price_type"`
+	Samples                     []*SampleInfo    `json:"samples"`
+	Placements                  []*PlacementInfo `json:"placements"`
+}
+
+type SampleInfo struct {
+	CreativeSizeSample string `json:"creative_size_ample"`
+	PreviewTitle       string `json:"preview_title"`
+}
+
+type PlacementInfo struct {
+	PlacementSizeId     string `json:"placement_size_id"`
+	CreativeSize        string `json:"creative_size"`
+	CreativeSizeSubType string `json:"creative_size_sub_type"`
+}
+
 type BaseResp struct {
 	Code int64  `json:"code"`
 	Msg  string `json:"msg"`
 }
 
 type CampaignCreateReq struct {
-	AccountId    int64  `json:"account_id"`
+	AppId        string `json:"app_id"`                                          // 应用 ID
 	CampaignName string `json:"campaign_name" validate:"required"`               // 计划名称
 	ProductType  string `json:"product_type" validate:"required,product_type"`   // 推广产品
 	DailyBudget  int64  `json:"daily_budget" validate:"numeric"`                 // 日预算
@@ -70,26 +108,38 @@ type CampaignListReq struct {
 	CampaignName string `form:"campaign_name,optional"`
 	CampaignId   string `form:"campaign_id,optional"`
 	CampaignType string `form:"show_status,optional"`
+	AppId        string `form:"app_id,optional"`
 }
 
 type Campaign struct {
-	Id                        int64  `json:"id"`
-	CampaignName              string `json:"campaign_name"`                // 计划名称
-	CampaignType              string `json:"campaign_type"`                // 计划类型
-	FlowResource              string `json:"flow_resource"`                // 投放网络
-	ProductType               string `json:"product_type"`                 // 推广产品
-	UserBalanceStatus         string `json:"user_balance_status"`          // 账户余额状态
-	OptStatus                 string `json:"opt_status"`                   // 操作状态
-	CampaignDailyBudgetStatus string `json:"campaign_daily_budget_status"` // 计划日预算状态
-	ShowStatus                string `json:"show_status"`                  // 计划状态
-	MarketingGoal             string `json:"marketing_goal"`               //
-	CampaignId                string `json:"campaign_id"`                  // 计划ID
-	TodayDailyBudget          int64  `json:"today_daily_budget"`           // 当日计划日限额
-	TomorrowDailyBudget       int64  `json:"tomorrow_daily_budget"`        // 次日计划日限额，不返回表示与当日计划日限额相同
-	SyncFlowResourceSearchad  string `json:"sync_flow_resource_searchad"`  // 同时同步投放搜索广告网络 YES|NO
-	IsCallback                int64  `json:"is_callback"`
-	CreatedAt                 int64  `json:"created_at"` // 计划创建的时间
-	UpdatedAt                 int64  `json:"updated_at"`
+	Id                        int64   `json:"id"`
+	CampaignName              string  `json:"campaign_name"`                // 计划名称
+	CampaignType              string  `json:"campaign_type"`                // 计划类型
+	AccountId                 int64   `json:"account_id"`                   //
+	AppId                     string  `json:"app_id"`                       // 应用 ID
+	AdvertiserId              int64   `json:"advertiser_id"`                //
+	FlowResource              string  `json:"flow_resource"`                // 投放网络
+	ProductType               string  `json:"product_type"`                 // 推广产品
+	UserBalanceStatus         string  `json:"user_balance_status"`          // 账户余额状态
+	OptStatus                 string  `json:"opt_status"`                   // 操作状态
+	CampaignDailyBudgetStatus string  `json:"campaign_daily_budget_status"` // 计划日预算状态
+	ShowStatus                string  `json:"show_status"`                  // 计划状态
+	MarketingGoal             string  `json:"marketing_goal"`               //
+	CampaignId                string  `json:"campaign_id"`                  // 计划ID
+	TodayDailyBudget          int64   `json:"today_daily_budget"`           // 当日计划日限额
+	TomorrowDailyBudget       int64   `json:"tomorrow_daily_budget"`        // 次日计划日限额，不返回表示与当日计划日限额相同
+	SyncFlowResourceSearchad  string  `json:"sync_flow_resource_searchad"`  // 同时同步投放搜索广告网络 YES|NO
+	IsCallback                int64   `json:"is_callback"`
+	CreatedAt                 int64   `json:"created_at"` // 计划创建的时间
+	UpdatedAt                 int64   `json:"updated_at"`
+	App                       AppInfo `json:"app"`
+}
+
+type AppInfo struct {
+	ProductId           string `json:"product_id"` // 产品ID
+	AppName             string `json:"app_name"`
+	IconUrl             string `json:"icon_url"`
+	AppStoreDownloadUrl string `json:"app_store_download_url"`
 }
 
 type CampaignListResp struct {
@@ -117,6 +167,15 @@ type Resources struct {
 type CampaignResources struct {
 	BaseResp
 	Data *Resources `json:"data"`
+}
+
+type CampaignInfoReq struct {
+	CampaignId string `form:"campaign_id"`
+}
+
+type CampaignInfoResp struct {
+	BaseResp
+	Data Campaign `json:"data"`
 }
 
 type TargetingCreateReq struct {

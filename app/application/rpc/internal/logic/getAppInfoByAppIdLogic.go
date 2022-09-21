@@ -29,15 +29,19 @@ func (l *GetAppInfoByAppIdLogic) GetAppInfoByAppId(in *apps.GetByAppIdReq) (*app
 		return nil, err
 	}
 	return &apps.AppInfo{
-		Id:        app.Id,
-		AppName:   app.AppName,
-		AppId:     app.AppId,
-		AccountId: app.AccountId,
-		PkgName:   app.PkgName,
-		Channel:   app.Channel,
-		AppType:   app.AppType,
-		Tags:      app.Tags,
-		CreatedAt: app.CreatedAt.Unix(),
-		UpdatedAt: app.UpdatedAt.Unix(),
+		Id:                  app.Id,
+		AppName:             app.AppName,
+		AppId:               app.AppId,
+		AccountId:           app.AccountId,
+		AdvertiserId:        app.AdvertiserId,
+		IconUrl:             app.IconUrl,
+		ProductId:           app.ProductId,
+		AppStoreDownloadUrl: app.AppStoreDownloadUrl,
+		PkgName:             app.PkgName,
+		Channel:             app.Channel,
+		AppType:             app.AppType,
+		Tags:                app.Tags,
+		CreatedAt:           app.CreatedAt.Unix(),
+		UpdatedAt:           app.UpdatedAt.Unix(),
 	}, nil
 }

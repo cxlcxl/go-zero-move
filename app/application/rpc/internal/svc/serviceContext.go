@@ -15,6 +15,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	DBConn := sqlx.NewSqlConn(c.Database.Driver, c.Database.Dsn)
 	return &ServiceContext{
 		Config:   c,
-		AppModel: model.NewAppsModel(DBConn, c.Cache),
+		AppModel: model.NewAppsModel(DBConn),
 	}
 }

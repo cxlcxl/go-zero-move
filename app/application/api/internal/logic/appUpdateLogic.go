@@ -32,15 +32,16 @@ func (l *AppUpdateLogic) AppUpdate(req *types.AppInfo) (resp *types.BaseResp, er
 		return nil, err
 	}
 	_, err = l.svcCtx.AppRpcClient.UpdateApp(l.ctx, &appcenter.AppInfo{
-		Id:        req.Id,
-		AppName:   req.AppName,
-		AppId:     req.AppId,
-		AccountId: req.AccountId,
-		PkgName:   req.PkgName,
-		Channel:   req.Channel,
-		AppType:   req.AppType,
-		Tags:      req.Tags,
-		UpdatedAt: time.Now().Unix(),
+		Id:           req.Id,
+		AppName:      req.AppName,
+		AppId:        req.AppId,
+		AccountId:    req.AccountId,
+		AdvertiserId: req.AdvertiserId,
+		PkgName:      req.PkgName,
+		Channel:      req.Channel,
+		AppType:      req.AppType,
+		Tags:         req.Tags,
+		UpdatedAt:    time.Now().Unix(),
 	})
 	if err != nil {
 		return nil, utils.RpcError(err, "")

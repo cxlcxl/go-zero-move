@@ -14,7 +14,12 @@ import (
 
 type (
 	BaseResp                            = marketing.BaseResp
+	CampaignCreateReq                   = marketing.CampaignCreateReq
+	CampaignInfo                        = marketing.CampaignInfo
 	CampaignInfoReq                     = marketing.CampaignInfoReq
+	CampaignListReq                     = marketing.CampaignListReq
+	CampaignListResp                    = marketing.CampaignListResp
+	CampaignUpdateReq                   = marketing.CampaignUpdateReq
 	ContinentResp                       = marketing.ContinentResp
 	ContinentResp_Continent             = marketing.ContinentResp_Continent
 	CountriesResp                       = marketing.CountriesResp
@@ -28,21 +33,17 @@ type (
 	EmptyParamsReq                      = marketing.EmptyParamsReq
 	GetTargetingByNameReq               = marketing.GetTargetingByNameReq
 	GetTargetingByTargetingIdReq        = marketing.GetTargetingByTargetingIdReq
-	PositionResp                        = marketing.PositionResp
-	PromotionCreateReq                  = marketing.PromotionCreateReq
-	PromotionInfo                       = marketing.PromotionInfo
-	PromotionListReq                    = marketing.PromotionListReq
-	PromotionListResp                   = marketing.PromotionListResp
-	PromotionUpdateReq                  = marketing.PromotionUpdateReq
+	PositionListReq                     = marketing.PositionListReq
+	PositionListResp                    = marketing.PositionListResp
 	Targeting                           = marketing.Targeting
 	TargetingListReq                    = marketing.TargetingListReq
 	TargetingListResp                   = marketing.TargetingListResp
 
 	MarketingCenter interface {
-		PromotionCreate(ctx context.Context, in *PromotionCreateReq, opts ...grpc.CallOption) (*BaseResp, error)
-		PromotionList(ctx context.Context, in *PromotionListReq, opts ...grpc.CallOption) (*PromotionListResp, error)
-		PromotionUpdate(ctx context.Context, in *PromotionUpdateReq, opts ...grpc.CallOption) (*BaseResp, error)
-		CampaignInfo(ctx context.Context, in *CampaignInfoReq, opts ...grpc.CallOption) (*PromotionInfo, error)
+		CampaignCreate(ctx context.Context, in *CampaignCreateReq, opts ...grpc.CallOption) (*BaseResp, error)
+		CampaignList(ctx context.Context, in *CampaignListReq, opts ...grpc.CallOption) (*CampaignListResp, error)
+		CampaignUpdate(ctx context.Context, in *CampaignUpdateReq, opts ...grpc.CallOption) (*BaseResp, error)
+		GetCampaignInfo(ctx context.Context, in *CampaignInfoReq, opts ...grpc.CallOption) (*CampaignInfo, error)
 		DictQuery(ctx context.Context, in *DictionaryReq, opts ...grpc.CallOption) (*DictionaryResp, error)
 		Continents(ctx context.Context, in *EmptyParamsReq, opts ...grpc.CallOption) (*ContinentResp, error)
 		GetCountries(ctx context.Context, in *EmptyParamsReq, opts ...grpc.CallOption) (*CountriesResp, error)
@@ -50,7 +51,7 @@ type (
 		TargetingList(ctx context.Context, in *TargetingListReq, opts ...grpc.CallOption) (*TargetingListResp, error)
 		GetTargetingByName(ctx context.Context, in *GetTargetingByNameReq, opts ...grpc.CallOption) (*Targeting, error)
 		GetTargetingByTargetingId(ctx context.Context, in *GetTargetingByTargetingIdReq, opts ...grpc.CallOption) (*Targeting, error)
-		GetPosition(ctx context.Context, in *TargetingListReq, opts ...grpc.CallOption) (*PositionResp, error)
+		GetPositions(ctx context.Context, in *PositionListReq, opts ...grpc.CallOption) (*PositionListResp, error)
 	}
 
 	defaultMarketingCenter struct {
@@ -64,24 +65,24 @@ func NewMarketingCenter(cli zrpc.Client) MarketingCenter {
 	}
 }
 
-func (m *defaultMarketingCenter) PromotionCreate(ctx context.Context, in *PromotionCreateReq, opts ...grpc.CallOption) (*BaseResp, error) {
+func (m *defaultMarketingCenter) CampaignCreate(ctx context.Context, in *CampaignCreateReq, opts ...grpc.CallOption) (*BaseResp, error) {
 	client := marketing.NewMarketingCenterClient(m.cli.Conn())
-	return client.PromotionCreate(ctx, in, opts...)
+	return client.CampaignCreate(ctx, in, opts...)
 }
 
-func (m *defaultMarketingCenter) PromotionList(ctx context.Context, in *PromotionListReq, opts ...grpc.CallOption) (*PromotionListResp, error) {
+func (m *defaultMarketingCenter) CampaignList(ctx context.Context, in *CampaignListReq, opts ...grpc.CallOption) (*CampaignListResp, error) {
 	client := marketing.NewMarketingCenterClient(m.cli.Conn())
-	return client.PromotionList(ctx, in, opts...)
+	return client.CampaignList(ctx, in, opts...)
 }
 
-func (m *defaultMarketingCenter) PromotionUpdate(ctx context.Context, in *PromotionUpdateReq, opts ...grpc.CallOption) (*BaseResp, error) {
+func (m *defaultMarketingCenter) CampaignUpdate(ctx context.Context, in *CampaignUpdateReq, opts ...grpc.CallOption) (*BaseResp, error) {
 	client := marketing.NewMarketingCenterClient(m.cli.Conn())
-	return client.PromotionUpdate(ctx, in, opts...)
+	return client.CampaignUpdate(ctx, in, opts...)
 }
 
-func (m *defaultMarketingCenter) CampaignInfo(ctx context.Context, in *CampaignInfoReq, opts ...grpc.CallOption) (*PromotionInfo, error) {
+func (m *defaultMarketingCenter) GetCampaignInfo(ctx context.Context, in *CampaignInfoReq, opts ...grpc.CallOption) (*CampaignInfo, error) {
 	client := marketing.NewMarketingCenterClient(m.cli.Conn())
-	return client.CampaignInfo(ctx, in, opts...)
+	return client.GetCampaignInfo(ctx, in, opts...)
 }
 
 func (m *defaultMarketingCenter) DictQuery(ctx context.Context, in *DictionaryReq, opts ...grpc.CallOption) (*DictionaryResp, error) {
@@ -119,7 +120,7 @@ func (m *defaultMarketingCenter) GetTargetingByTargetingId(ctx context.Context, 
 	return client.GetTargetingByTargetingId(ctx, in, opts...)
 }
 
-func (m *defaultMarketingCenter) GetPosition(ctx context.Context, in *TargetingListReq, opts ...grpc.CallOption) (*PositionResp, error) {
+func (m *defaultMarketingCenter) GetPositions(ctx context.Context, in *PositionListReq, opts ...grpc.CallOption) (*PositionListResp, error) {
 	client := marketing.NewMarketingCenterClient(m.cli.Conn())
-	return client.GetPosition(ctx, in, opts...)
+	return client.GetPositions(ctx, in, opts...)
 }

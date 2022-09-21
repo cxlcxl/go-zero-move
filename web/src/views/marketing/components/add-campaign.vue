@@ -4,12 +4,6 @@
       <el-form-item label="计划名称" prop="campaign_name">
         <el-input v-model="campaignForm.campaign_name" placeholder="不能使用“^”,“|”，换行符；最大长度不得超过100；计划名称不得重复"/>
       </el-form-item>
-      <el-form-item label="选择账户" prop="account_id">
-        <el-select v-model="campaignForm.account_id" remote filterable placeholder="可输入名称查询"
-                   :remote-method="remoteMethod" :loading="remoteLoading" style="width: 100%;">
-          <el-option v-for="item in accounts" :label="item.account_name" :value="Number(item.id)" v-if="Number(item.is_auth) === 1"/>
-        </el-select>
-      </el-form-item>
       <el-form-item label="推广产品" prop="product_type">
         <el-radio-group v-model="campaignForm.product_type">
           <el-radio-button v-for="(v,k) in ProductType" :label="k">{{v}}</el-radio-button>
@@ -35,8 +29,7 @@
 
 <script>
   import DialogPanel from '@c/DialogPanel'
-  import {campaignCreate} from '@a/marketing'
-  import { defaultAccounts, searchAccounts } from '@/api/account'
+  import {campaignCreate} from '@a/campaign'
 
   export default {
     components: {
@@ -54,6 +47,10 @@
       SyncFlow: {
         required: true,
         type: Object
+      },
+      AppId: {
+        required: true,
+        type: String
       }
     },
     data() {
@@ -62,7 +59,7 @@
         loading: false,
         remoteLoading: false,
         campaignForm: {
-          account_id: '',
+          app_id: '',
           campaign_name: '',
           daily_budget: 10,
           product_type: '',
@@ -72,26 +69,16 @@
         campaignRules: {
           campaign_name: {required: true, message: '请填写计划名称'},
           daily_budget: {required: true, message: '请填写日预算'},
-          account_id: {required: true, message: '请选择账户'},
           campaign_type: {required: true, message: '请选择计划类型'},
           product_type: {required: true, message: '请选择推广产品'},
           sync_flow_resource_searchad: {required: true, message: '请选择同步投放网络'},
-        },
-        accounts: []
+        }
       }
     },
     methods: {
       initCreate() {
-        defaultAccounts().then(res => {
-          this.visible = true
-          if (Array.isArray(res.data)) {
-            this.accounts = res.data
-          } else {
-            this.accounts = []
-          }
-        }).catch(err => {
-          this.$message.error("请求错误")
-        })
+        this.visible = true
+        this.$set(this.campaignForm, 'app_id', this.AppId)
       },
       cancel() {
         this.$refs.campaignForm.resetFields()
@@ -114,23 +101,6 @@
             return false
           }
         })
-      },
-      remoteMethod(query) {
-        if (query.trim() !== '') {
-          this.remoteLoading = true;
-          searchAccounts(query).then(res => {
-            this.remoteLoading = false
-            if (Array.isArray(res.data)) {
-              this.accounts = res.data
-            } else {
-              this.accounts = []
-            }
-          }).catch(() => {
-            this.remoteLoading = false
-          })
-        } else {
-          this.accounts = [];
-        }
       }
     }
   }

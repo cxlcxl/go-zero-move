@@ -44,16 +44,18 @@ func (l *GetAppListLogic) GetAppList(req *types.AppListReq) (resp *types.AppList
 			actIds = append(actIds, app.AccountId)
 			apps = append(apps, &types.ListAppInfo{
 				AppInfo: types.AppInfo{
-					Id:        app.Id,
-					AppName:   app.AppName,
-					AppId:     app.AppId,
-					AccountId: app.AccountId,
-					PkgName:   app.PkgName,
-					Channel:   app.Channel,
-					AppType:   app.AppType,
-					Tags:      app.Tags,
-					CreatedAt: app.CreatedAt,
-					UpdatedAt: app.UpdatedAt,
+					Id:           app.Id,
+					AppName:      app.AppName,
+					AppId:        app.AppId,
+					AccountId:    app.AccountId,
+					IconUrl:      app.IconUrl,
+					AdvertiserId: app.AdvertiserId,
+					PkgName:      app.PkgName,
+					Channel:      app.Channel,
+					AppType:      app.AppType,
+					Tags:         app.Tags,
+					CreatedAt:    app.CreatedAt,
+					UpdatedAt:    app.UpdatedAt,
 				},
 				AccountInfo: types.AccountInfo{},
 			})
@@ -77,7 +79,7 @@ func (l *GetAppListLogic) GetAppList(req *types.AppListReq) (resp *types.AppList
 		},
 		AppChannel: vars.AppChannel,
 		Total:      list.Total,
-		AppType:    vars.AppType,
+		AppType:    vars.ProductType,
 		Data:       apps,
 	}, nil
 }

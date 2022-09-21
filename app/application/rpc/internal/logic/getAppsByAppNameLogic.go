@@ -31,16 +31,20 @@ func (l *GetAppsByAppNameLogic) GetAppsByAppName(in *apps.GetByAppNameReq) (*app
 	var info []*apps.AppInfo
 	for _, a := range appInfos {
 		info = append(info, &apps.AppInfo{
-			Id:        a.Id,
-			AppName:   a.AppName,
-			AppId:     a.AppId,
-			AccountId: a.AccountId,
-			PkgName:   a.PkgName,
-			Channel:   a.Channel,
-			AppType:   a.AppType,
-			Tags:      a.Tags,
-			CreatedAt: a.CreatedAt.Unix(),
-			UpdatedAt: a.UpdatedAt.Unix(),
+			Id:                  a.Id,
+			AppName:             a.AppName,
+			AppId:               a.AppId,
+			AccountId:           a.AccountId,
+			PkgName:             a.PkgName,
+			AdvertiserId:        a.AdvertiserId,
+			ProductId:           a.ProductId,
+			AppStoreDownloadUrl: a.AppStoreDownloadUrl,
+			IconUrl:             a.IconUrl,
+			Channel:             a.Channel,
+			AppType:             a.AppType,
+			Tags:                a.Tags,
+			CreatedAt:           a.CreatedAt.Unix(),
+			UpdatedAt:           a.UpdatedAt.Unix(),
 		})
 	}
 	return &apps.AppsResp{

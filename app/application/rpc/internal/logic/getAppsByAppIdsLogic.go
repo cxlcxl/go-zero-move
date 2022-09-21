@@ -32,16 +32,19 @@ func (l *GetAppsByAppIdsLogic) GetAppsByAppIds(in *apps.GetByAppIdsReq) (*apps.A
 	if len(appInfos) > 0 {
 		for _, info := range appInfos {
 			infos = append(infos, &apps.AppInfo{
-				Id:        info.Id,
-				AppName:   info.AppName,
-				AppId:     info.AppId,
-				AccountId: info.AccountId,
-				PkgName:   info.PkgName,
-				Channel:   info.Channel,
-				AppType:   info.AppType,
-				Tags:      info.Tags,
-				CreatedAt: info.CreatedAt.Unix(),
-				UpdatedAt: info.UpdatedAt.Unix(),
+				Id:           info.Id,
+				AppName:      info.AppName,
+				AppId:        info.AppId,
+				AccountId:    info.AccountId,
+				AdvertiserId: info.AdvertiserId,
+				IconUrl:      info.IconUrl,
+				PkgName:      info.PkgName,
+				ProductId:    info.ProductId,
+				Channel:      info.Channel,
+				AppType:      info.AppType,
+				Tags:         info.Tags,
+				CreatedAt:    info.CreatedAt.Unix(),
+				UpdatedAt:    info.UpdatedAt.Unix(),
 			})
 		}
 	}

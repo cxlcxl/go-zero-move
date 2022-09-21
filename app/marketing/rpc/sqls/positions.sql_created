@@ -1,0 +1,40 @@
+CREATE TABLE `positions`
+(
+    `id`                            bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+    `account_id`                    bigint(15) unsigned NOT NULL DEFAULT '0',
+    `advertiser_id`                 varchar(30) COLLATE utf8mb4_unicode_ci  NOT NULL DEFAULT '' COMMENT '广告主账户ID',
+    `creative_size_id`              bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '版位ID',
+    `creative_size_name_dsp`        varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '版位名称',
+    `creative_size_description`     varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '版位描述',
+    `category`                      varchar(50) COLLATE utf8mb4_unicode_ci  NOT NULL DEFAULT '' COMMENT '版位所属分类',
+    `support_product_type`          varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '支持的推广产品',
+    `support_objective_type`        varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+    `is_support_time_period`        varchar(50) COLLATE utf8mb4_unicode_ci  NOT NULL DEFAULT '' COMMENT '是否支持选择投放时段',
+    `is_support_multiple_creatives` varchar(50) COLLATE utf8mb4_unicode_ci  NOT NULL DEFAULT '' COMMENT '是否支持多创意',
+    `support_price_type`            varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '付费方式',
+    `last_pull_time`                timestamp                               NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '最后拉取时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `idx_creative_size_id` (`creative_size_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=8362 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `position_samples`
+(
+    `id`                   bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+    `creative_size_id`     bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '版位ID',
+    `creative_size_sample` varchar(2000) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '预览图地址',
+    `preview_title`        varchar(200) COLLATE utf8mb4_unicode_ci  NOT NULL DEFAULT '' COMMENT '预览图标题',
+    PRIMARY KEY (`id`),
+    KEY                    `idx_creative_size_id` (`creative_size_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=26027 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `position_placements`
+(
+    `id`                            bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+    `creative_size_id`              bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '版位ID',
+    `placement_size_id`             varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '规格ID',
+    `creative_size`                 varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '尺寸',
+    `creative_size_sub_type`        varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '版位子形式',
+    `is_support_multiple_creatives` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '是否支持多创意',
+    PRIMARY KEY (`id`),
+    KEY                             `idx_creative_size_id` (`creative_size_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=223028 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

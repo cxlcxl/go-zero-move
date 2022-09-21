@@ -20,12 +20,13 @@ type Config struct {
 
 	MarketingRpcClient zrpc.RpcClientConf
 	AccountRpcClient   zrpc.RpcClientConf
+	AppRpcClient       zrpc.RpcClientConf
 
 	MarketingApis struct {
 		Authorize struct {
 			Refresh string
 		}
-		Promotion struct {
+		Campaign struct {
 			Query  string
 			Create string
 			Update string

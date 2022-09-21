@@ -7,26 +7,29 @@ type BaseResp struct {
 }
 
 type AppCreateReq struct {
-	AppName   string `json:"app_name" validate:"required"`
-	AppId     string `json:"app_id" validate:"required"`
-	AccountId int64  `json:"account_id" validate:"required"`
-	PkgName   string `json:"pkg_name" validate:"required"`
-	Channel   int64  `json:"channel" validate:"required"`
-	AppType   int64  `json:"app_type"`
-	Tags      string `json:"tags"`
+	AppName      string `json:"app_name" validate:"required"`
+	AppId        string `json:"app_id" validate:"required"`
+	AccountId    int64  `json:"account_id" validate:"required"`
+	AdvertiserId string `json:"advertiser_id" validate:"required"`
+	PkgName      string `json:"pkg_name" validate:"required"`
+	Channel      int64  `json:"channel" validate:"required"`
+	AppType      string `json:"app_type"`
+	Tags         string `json:"tags"`
 }
 
 type AppInfo struct {
-	Id        int64  `json:"id" validate:"required"`
-	AppName   string `json:"app_name" validate:"required"`
-	AppId     string `json:"app_id" validate:"required"`
-	AccountId int64  `json:"account_id" validate:"required"`
-	PkgName   string `json:"pkg_name" validate:"required"`
-	Channel   int64  `json:"channel" validate:"required"`
-	AppType   int64  `json:"app_type"`
-	Tags      string `json:"tags"`
-	CreatedAt int64  `json:"created_at,optional"`
-	UpdatedAt int64  `json:"updated_at,optional"`
+	Id           int64  `json:"id" validate:"required"`
+	AppName      string `json:"app_name" validate:"required"`
+	AppId        string `json:"app_id" validate:"required"`
+	AdvertiserId string `json:"advertiser_id"`
+	IconUrl      string `json:"icon_url"`
+	AccountId    int64  `json:"account_id" validate:"required"`
+	PkgName      string `json:"pkg_name" validate:"required"`
+	Channel      int64  `json:"channel" validate:"required"`
+	AppType      string `json:"app_type"`
+	Tags         string `json:"tags"`
+	CreatedAt    int64  `json:"created_at,optional"`
+	UpdatedAt    int64  `json:"updated_at,optional"`
 }
 
 type AppInfoReq struct {
@@ -43,8 +46,14 @@ type AppListReq struct {
 	PageSize int64  `form:"page_size"`
 	AppId    string `form:"app_id,optional"`
 	AppName  string `form:"app_name,optional"`
-	AppType  int64  `form:"app_type,optional"`
+	AppType  string `form:"app_type,optional"`
 	Channel  int64  `form:"channel,optional"`
+}
+
+type CampaignAppReq struct {
+	AppName  string `form:"app_name,optional"`
+	Page     int64  `form:"page"`
+	PageSize int64  `form:"page_size"`
 }
 
 type AccountInfo struct {
@@ -58,8 +67,27 @@ type ListAppInfo struct {
 
 type AppListResp struct {
 	BaseResp
-	Total      int64          `json:"total"`
-	AppType    map[int]string `json:"app_type"`
-	AppChannel map[int]string `json:"app_channel"`
-	Data       []*ListAppInfo `json:"data"`
+	Total      int64             `json:"total"`
+	AppType    map[string]string `json:"app_type"`
+	AppChannel map[int]string    `json:"app_channel"`
+	Data       []*ListAppInfo    `json:"data"`
+}
+
+type CampaignAppListResp struct {
+	BaseResp
+	Total int64              `json:"total"`
+	Data  []*CampaignAppInfo `json:"data"`
+}
+
+type CampaignAppInfo struct {
+	AppName      string `json:"app_name"`
+	AppId        string `json:"app_id"`
+	AdvertiserId string `json:"advertiser_id"`
+	IconUrl      string `json:"icon_url"`
+	AccountId    int64  `json:"account_id" validate:"required"`
+}
+
+type AppPullReq struct {
+	AccountId    int64  `json:"account_id"`
+	AdvertiserId string `json:"advertiser_id"`
 }

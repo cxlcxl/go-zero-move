@@ -11,23 +11,23 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type PromotionCreateLogic struct {
+type CampaignCreateLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewPromotionCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PromotionCreateLogic {
-	return &PromotionCreateLogic{
+func NewCampaignCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CampaignCreateLogic {
+	return &CampaignCreateLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *PromotionCreateLogic) PromotionCreate(in *marketing.PromotionCreateReq) (*marketing.BaseResp, error) {
-
+func (l *CampaignCreateLogic) CampaignCreate(in *marketing.CampaignCreateReq) (*marketing.BaseResp, error) {
 	_, err := l.svcCtx.CampaignModel.Insert(l.ctx, &model.Campaigns{
+		AppId:            in.AppId,
 		CampaignId:       in.CampaignId,
 		CampaignName:     in.CampaignName,
 		AccountId:        in.AccountId,

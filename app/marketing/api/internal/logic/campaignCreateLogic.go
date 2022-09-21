@@ -2,6 +2,7 @@ package logic
 
 import (
 	"business/app/account/rpc/accountcenter"
+	"business/app/application/rpc/appcenter"
 	"business/app/marketing/api/internal/statements"
 	"business/app/marketing/rpc/marketingcenter"
 	"business/common/curl"
@@ -35,22 +36,22 @@ func (l *CampaignCreateLogic) CampaignCreate(req *types.CampaignCreateReq) (resp
 	if err = l.svcCtx.Validator.StructCtx(l.ctx, req); err != nil {
 		return nil, err
 	}
-	info, err := l.svcCtx.AccountRpcClient.GetAccountInfo(l.ctx, &accountcenter.AccountInfoReq{Id: req.AccountId})
+	app, err := l.svcCtx.AppRpcClient.GetAppInfoByAppId(l.ctx, &appcenter.GetByAppIdReq{AppId: req.AppId})
 	if err != nil {
-		return nil, utils.RpcError(err, "账户信息请求错误")
+		return nil, utils.RpcError(err, "应用信息错误")
 	}
-	token, err := l.svcCtx.AccountRpcClient.GetToken(l.ctx, &accountcenter.GetTokenReq{AccountId: req.AccountId})
+	token, err := l.svcCtx.AccountRpcClient.GetToken(l.ctx, &accountcenter.GetTokenReq{AccountId: app.AccountId})
 	if err != nil {
 		return nil, utils.RpcError(err, "账户信息请求错误")
 	}
 	if token.ExpiredAt <= time.Now().Unix() {
-		token, err = l.svcCtx.AccountRpcClient.RefreshToken(l.ctx, &accountcenter.GetTokenReq{AccountId: req.AccountId})
+		token, err = l.svcCtx.AccountRpcClient.RefreshToken(l.ctx, &accountcenter.GetTokenReq{AccountId: app.AccountId})
 		if err != nil {
 			return nil, utils.RpcError(err, "数据异常")
 		}
 	}
-	c, err := curl.New(l.svcCtx.Config.MarketingApis.Promotion.Create).Post().JsonData(statements.CampaignCreate{
-		AdvertiserId: info.AdvertiserId,
+	c, err := curl.New(l.svcCtx.Config.MarketingApis.Campaign.Create).Post().JsonData(statements.CampaignCreate{
+		AdvertiserId: app.AdvertiserId,
 		CampaignName: req.CampaignName,
 		ProductType:  req.ProductType,
 		DailyBudget:  req.DailyBudget,
@@ -67,13 +68,14 @@ func (l *CampaignCreateLogic) CampaignCreate(req *types.CampaignCreateReq) (resp
 	if rs.Code != "200" {
 		return nil, errors.New("华为 ADS 接口调用失败：" + rs.Message)
 	}
-	_, err = l.svcCtx.MarketingRpcClient.PromotionCreate(l.ctx, &marketingcenter.PromotionCreateReq{
+	_, err = l.svcCtx.MarketingRpcClient.CampaignCreate(l.ctx, &marketingcenter.CampaignCreateReq{
 		CampaignId:   rs.Data.CampaignId,
 		CampaignName: req.CampaignName,
-		AdvertiserId: info.AdvertiserId,
+		AdvertiserId: app.AdvertiserId,
 		ProductType:  req.ProductType,
 		DailyBudget:  req.DailyBudget,
-		AccountId:    req.AccountId,
+		AccountId:    app.AccountId,
+		AppId:        req.AppId,
 		CampaignType: req.CampaignType,
 		SyncFlow:     req.SyncFlow,
 	})

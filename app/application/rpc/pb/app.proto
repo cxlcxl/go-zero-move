@@ -8,13 +8,17 @@ message AppInfo{
   int64 id = 1;
   string app_name = 2;
   string app_id = 3;
-  int64 account_id = 4;
-  string pkg_name = 5;
-  int64 channel = 6;
-  int64 app_type = 7;
-  string tags = 8;
-  int64 created_at = 9;
-  int64 updated_at = 10;
+  string icon_url = 4;
+  string product_id = 5;
+  int64 account_id = 6;
+  string advertiser_id = 7;
+  string pkg_name = 8;
+  int64 channel = 9;
+  string app_type = 10;
+  string tags = 11;
+  string app_store_download_url = 12;
+  int64 created_at = 13;
+  int64 updated_at = 14;
 }
 
 message AppInfoReq {
@@ -26,7 +30,7 @@ message GetByAppIdReq {
 message AppListReq {
   string app_name = 1;
   string app_id = 2;
-  int64 app_type = 3;
+  string app_type = 3;
   int64 channel = 4;
   int64 page = 5;
   int64 page_size = 6;
@@ -36,12 +40,13 @@ message AppListResp {
   repeated AppInfo apps = 2;
 }
 message CreateAppReq {
+  string advertiser_id = 1;
   string app_name = 2;
   string app_id = 3;
   int64 account_id = 4;
   string pkg_name = 5;
   int64 channel = 6;
-  int64 app_type = 7;
+  string app_type = 7;
   string tags = 8;
 }
 message GetByIdsReq {
@@ -56,11 +61,26 @@ message GetByAppIdsReq {
 message AppsResp {
   repeated AppInfo apps = 1;
 }
+message BatchCreateAppReq{
+  repeated Apps apps = 1;
+}
+message Apps {
+  string advertiser_id = 1;
+  string app_name = 2;
+  string app_id = 3;
+  int64 account_id = 4;
+  string pkg_name = 5;
+  string app_type = 6;
+  string icon_url = 7;
+  string product_id = 8;
+  string app_store_download_url = 9;
+}
 message BaseResp {}
 
 service AppCenter {
   rpc CreateApp(CreateAppReq) returns (BaseResp);
   rpc UpdateApp(AppInfo) returns (BaseResp);
+  rpc BatchCreateApp(BatchCreateAppReq) returns (BaseResp);
   rpc GetAppInfo(AppInfoReq) returns (AppInfo);
   rpc GetAppInfoByAppId(GetByAppIdReq) returns (AppInfo);
   rpc AppList(AppListReq) returns (AppListResp);

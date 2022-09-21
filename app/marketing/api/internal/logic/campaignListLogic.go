@@ -28,7 +28,8 @@ func NewCampaignListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Camp
 }
 
 func (l *CampaignListLogic) CampaignList(req *types.CampaignListReq) (resp *types.CampaignListResp, err error) {
-	list, err := l.svcCtx.MarketingRpcClient.PromotionList(l.ctx, &marketingcenter.PromotionListReq{
+	list, err := l.svcCtx.MarketingRpcClient.CampaignList(l.ctx, &marketingcenter.CampaignListReq{
+		AppId:        req.AppId,
 		CampaignId:   req.CampaignId,
 		CampaignName: req.CampaignName,
 		CampaignType: req.CampaignType,
@@ -39,7 +40,7 @@ func (l *CampaignListLogic) CampaignList(req *types.CampaignListReq) (resp *type
 		return nil, utils.RpcError(err, "")
 	}
 	var campaigns []*types.Campaign
-	if err = copier.Copy(&campaigns, list.Promotions); err != nil {
+	if err = copier.Copy(&campaigns, list.Campaigns); err != nil {
 		return nil, err
 	}
 	return &types.CampaignListResp{

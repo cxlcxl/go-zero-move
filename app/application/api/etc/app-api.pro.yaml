@@ -11,3 +11,7 @@ AppRpcConf:
 
 AccountRpcConf:
   Target: "k8s://business/account-rpc-svc:28002"
+
+MarketingApis:
+  App:
+    Query: "https://ads-dra.cloud.huawei.com/ads/v1/promotion/product/query"

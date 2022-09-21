@@ -26,6 +26,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodGet,
+					Path:    "/campaign/info",
+					Handler: campaignInfoHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
 					Path:    "/campaign/list",
 					Handler: campaignListHandler(serverCtx),
 				},
@@ -48,6 +53,21 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/targeting/create",
 					Handler: targetingCreateHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/resource/creative-category",
+					Handler: creativeCategoryHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/resource/pricing",
+					Handler: PricingHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/creative/query",
+					Handler: creativeQueryHandler(serverCtx),
 				},
 			}...,
 		),

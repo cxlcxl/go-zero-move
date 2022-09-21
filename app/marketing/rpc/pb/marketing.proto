@@ -4,7 +4,7 @@ option go_package = "./marketing";
 
 package marketing;
 
-message PromotionCreateReq{
+message CampaignCreateReq{
   string campaign_id = 1;
   string campaign_name = 2;
   string product_type = 3;
@@ -13,28 +13,30 @@ message PromotionCreateReq{
   string campaign_type = 6;
   string sync_flow = 7;
   string advertiser_id = 8;
+  string app_id = 9;
 }
-message PromotionUpdateReq{
+message CampaignUpdateReq{
   string campaign_id = 1;
   string campaign_name = 2;
   string product_type = 3;
   int64 daily_budget = 4;
 }
-message PromotionListReq{
-  string campaign_id = 1;
-  string campaign_name = 2;
-  string campaign_type = 3;
-  int64 page = 4;
-  int64 page_size = 5;
+message CampaignListReq{
+  string app_id = 1;
+  string campaign_id = 2;
+  string campaign_name = 3;
+  string campaign_type = 4;
+  int64 page = 5;
+  int64 page_size = 6;
 }
-message  PromotionListResp{
-  repeated PromotionInfo promotions = 1;
+message  CampaignListResp{
+  repeated CampaignInfo Campaigns = 1;
   int64 total = 2;
 }
 message CampaignInfoReq {
   string campaign_id = 1;
 }
-message PromotionInfo{
+message CampaignInfo{
   int64 id = 1;
   string campaign_id = 2;
   string campaign_name = 3;
@@ -54,6 +56,7 @@ message PromotionInfo{
   int64 is_callback = 17;
   int64 created_at = 18;
   int64 updated_at = 19;
+  string app_id = 20;
 }
 message DictionaryReq {
   repeated string dict_key = 1;
@@ -138,7 +141,6 @@ message CreativeSizePlacement  {
   string placement_size_id=1;
   string creative_size=2;
   string creative_size_sub_type=3;
-  string is_support_multiple_creatives=4;
 }
 message CreativeSizeInfo  {
   int64 creative_size_id = 1;
@@ -152,7 +154,11 @@ message CreativeSizeInfo  {
   string is_support_multiple_creatives = 9;
   string support_price_type = 10;
 }
-message PositionResp {
+message PositionListReq {
+  string category = 1;
+  int64 account_id = 2;
+}
+message PositionListResp {
   repeated CreativeSizeInfo creative_size_info_list=1;
 }
 
@@ -160,10 +166,10 @@ message EmptyParamsReq {}
 message BaseResp {}
 
 service MarketingCenter{
-  rpc PromotionCreate(PromotionCreateReq) returns(BaseResp);
-  rpc PromotionList(PromotionListReq) returns(PromotionListResp);
-  rpc PromotionUpdate(PromotionUpdateReq) returns(BaseResp);
-  rpc CampaignInfo(CampaignInfoReq) returns(PromotionInfo);
+  rpc CampaignCreate(CampaignCreateReq) returns(BaseResp);
+  rpc CampaignList(CampaignListReq) returns(CampaignListResp);
+  rpc CampaignUpdate(CampaignUpdateReq) returns(BaseResp);
+  rpc GetCampaignInfo(CampaignInfoReq) returns(CampaignInfo);
   rpc DictQuery(DictionaryReq) returns(DictionaryResp);
   rpc Continents(EmptyParamsReq) returns(ContinentResp);
   rpc GetCountries(EmptyParamsReq) returns(CountriesResp);
@@ -171,5 +177,5 @@ service MarketingCenter{
   rpc TargetingList(TargetingListReq) returns(TargetingListResp);
   rpc GetTargetingByName(GetTargetingByNameReq) returns(Targeting);
   rpc GetTargetingByTargetingId(GetTargetingByTargetingIdReq) returns(Targeting);
-  rpc GetPosition(TargetingListReq) returns(PositionResp);
+  rpc GetPositions(PositionListReq) returns(PositionListResp);
 }

@@ -22,24 +22,24 @@ func NewMarketingCenterServer(svcCtx *svc.ServiceContext) *MarketingCenterServer
 	}
 }
 
-func (s *MarketingCenterServer) PromotionCreate(ctx context.Context, in *marketing.PromotionCreateReq) (*marketing.BaseResp, error) {
-	l := logic.NewPromotionCreateLogic(ctx, s.svcCtx)
-	return l.PromotionCreate(in)
+func (s *MarketingCenterServer) CampaignCreate(ctx context.Context, in *marketing.CampaignCreateReq) (*marketing.BaseResp, error) {
+	l := logic.NewCampaignCreateLogic(ctx, s.svcCtx)
+	return l.CampaignCreate(in)
 }
 
-func (s *MarketingCenterServer) PromotionList(ctx context.Context, in *marketing.PromotionListReq) (*marketing.PromotionListResp, error) {
-	l := logic.NewPromotionListLogic(ctx, s.svcCtx)
-	return l.PromotionList(in)
+func (s *MarketingCenterServer) CampaignList(ctx context.Context, in *marketing.CampaignListReq) (*marketing.CampaignListResp, error) {
+	l := logic.NewCampaignListLogic(ctx, s.svcCtx)
+	return l.CampaignList(in)
 }
 
-func (s *MarketingCenterServer) PromotionUpdate(ctx context.Context, in *marketing.PromotionUpdateReq) (*marketing.BaseResp, error) {
-	l := logic.NewPromotionUpdateLogic(ctx, s.svcCtx)
-	return l.PromotionUpdate(in)
+func (s *MarketingCenterServer) CampaignUpdate(ctx context.Context, in *marketing.CampaignUpdateReq) (*marketing.BaseResp, error) {
+	l := logic.NewCampaignUpdateLogic(ctx, s.svcCtx)
+	return l.CampaignUpdate(in)
 }
 
-func (s *MarketingCenterServer) CampaignInfo(ctx context.Context, in *marketing.CampaignInfoReq) (*marketing.PromotionInfo, error) {
-	l := logic.NewCampaignInfoLogic(ctx, s.svcCtx)
-	return l.CampaignInfo(in)
+func (s *MarketingCenterServer) GetCampaignInfo(ctx context.Context, in *marketing.CampaignInfoReq) (*marketing.CampaignInfo, error) {
+	l := logic.NewGetCampaignInfoLogic(ctx, s.svcCtx)
+	return l.GetCampaignInfo(in)
 }
 
 func (s *MarketingCenterServer) DictQuery(ctx context.Context, in *marketing.DictionaryReq) (*marketing.DictionaryResp, error) {
@@ -77,7 +77,7 @@ func (s *MarketingCenterServer) GetTargetingByTargetingId(ctx context.Context, i
 	return l.GetTargetingByTargetingId(in)
 }
 
-func (s *MarketingCenterServer) GetPosition(ctx context.Context, in *marketing.TargetingListReq) (*marketing.PositionResp, error) {
-	l := logic.NewGetPositionLogic(ctx, s.svcCtx)
-	return l.GetPosition(in)
+func (s *MarketingCenterServer) GetPositions(ctx context.Context, in *marketing.PositionListReq) (*marketing.PositionListResp, error) {
+	l := logic.NewGetPositionsLogic(ctx, s.svcCtx)
+	return l.GetPositions(in)
 }

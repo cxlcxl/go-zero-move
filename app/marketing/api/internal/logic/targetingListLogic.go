@@ -29,7 +29,7 @@ func NewTargetingListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Tar
 }
 
 func (l *TargetingListLogic) TargetingList(req *types.TargetingListReq) (resp *types.TargetingListResp, err error) {
-	info, err := l.svcCtx.MarketingRpcClient.CampaignInfo(l.ctx, &marketingcenter.CampaignInfoReq{CampaignId: req.CampaignId})
+	info, err := l.svcCtx.MarketingRpcClient.GetCampaignInfo(l.ctx, &marketingcenter.CampaignInfoReq{CampaignId: req.CampaignId})
 	if err != nil {
 		return nil, utils.RpcError(err, "")
 	}
