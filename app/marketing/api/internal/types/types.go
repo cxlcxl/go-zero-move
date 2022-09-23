@@ -117,7 +117,7 @@ type Campaign struct {
 	CampaignType              string  `json:"campaign_type"`                // 计划类型
 	AccountId                 int64   `json:"account_id"`                   //
 	AppId                     string  `json:"app_id"`                       // 应用 ID
-	AdvertiserId              int64   `json:"advertiser_id"`                //
+	AdvertiserId              string  `json:"advertiser_id"`                //
 	FlowResource              string  `json:"flow_resource"`                // 投放网络
 	ProductType               string  `json:"product_type"`                 // 推广产品
 	UserBalanceStatus         string  `json:"user_balance_status"`          // 账户余额状态
@@ -176,6 +176,80 @@ type CampaignInfoReq struct {
 type CampaignInfoResp struct {
 	BaseResp
 	Data Campaign `json:"data"`
+}
+
+type SyncAssetReq struct {
+	AppId string `form:"app_id"`
+}
+
+type AssetListReq struct {
+	Page      int64  `form:"page"`
+	PageSize  int64  `form:"page_size"`
+	AssetType string `form:"asset_type,optional"`
+	Width     int64  `form:"width,optional"`
+	Height    int64  `form:"height,optional"`
+	AppId     string `form:"app_id,optional"`
+}
+
+type AssetListResp struct {
+	BaseResp
+	Data AssetListData `json:"data"`
+}
+
+type AssetListData struct {
+	Total     int64             `json:"total"`
+	List      []*Asset          `json:"list"`
+	AssetType map[string]string `json:"asset_type"`
+}
+
+type Asset struct {
+	AppId             string `json:"app_id"`
+	AccountId         int64  `json:"account_id"`
+	AdvertiserId      string `json:"advertiser_id"`
+	AssetId           int64  `json:"asset_id"`
+	AssetName         string `json:"asset_name"`
+	AssetType         string `json:"asset_type"`
+	FileUrl           string `json:"file_url"`
+	Width             int64  `json:"width"`
+	Height            int64  `json:"height"`
+	VideoPlayDuration int64  `json:"video_play_duration"`
+	FileSize          int64  `json:"file_size"`
+	FileFormat        string `json:"file_format"`
+	FileHashSha256    string `json:"file_hash_sha256"`
+}
+
+type AssetDeleteReq struct {
+	AccountId    int64   `json:"account_id" validate:"required"`
+	AdvertiserId string  `json:"advertiser_id" validate:"required"`
+	AssetIds     []int64 `json:"asset_ids" validate:"required"`
+}
+
+type AssetUploadReq struct {
+	AppId     string `form:"app_id" validate:"required"`
+	AssetType string `form:"asset_type" validate:"required"`
+	FileToken string `form:"file_token" validate:"required"`
+	Duration  int64  `form:"duration" validate:"numeric"`
+	Width     int64  `form:"width" validate:"required"`
+	Height    int64  `form:"height" validate:"required"`
+}
+
+type AssetFileTokenReq struct {
+	AppId string `form:"app_id"`
+}
+
+type AssetFileTokenResp struct {
+	BaseResp
+	Data string `json:"data"`
+}
+
+type AssetDimensionResp struct {
+	BaseResp
+	Data map[string][]string `json:"data"`
+}
+
+type AssetBindReq struct {
+	AppId    string  `json:"app_id" validate:"required"`
+	AssetIds []int64 `json:"asset_ids" validate:"required"`
 }
 
 type TargetingCreateReq struct {

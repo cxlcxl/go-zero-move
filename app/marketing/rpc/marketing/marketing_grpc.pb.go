@@ -34,6 +34,10 @@ type MarketingCenterClient interface {
 	GetTargetingByName(ctx context.Context, in *GetTargetingByNameReq, opts ...grpc.CallOption) (*Targeting, error)
 	GetTargetingByTargetingId(ctx context.Context, in *GetTargetingByTargetingIdReq, opts ...grpc.CallOption) (*Targeting, error)
 	GetPositions(ctx context.Context, in *PositionListReq, opts ...grpc.CallOption) (*PositionListResp, error)
+	BatchInsertAsset(ctx context.Context, in *BatchInsertAssetReq, opts ...grpc.CallOption) (*BaseResp, error)
+	AssetList(ctx context.Context, in *AssetListReq, opts ...grpc.CallOption) (*AssetListResp, error)
+	DeleteAssets(ctx context.Context, in *AssetDeleteReq, opts ...grpc.CallOption) (*BaseResp, error)
+	BindAsset(ctx context.Context, in *AssetBindReq, opts ...grpc.CallOption) (*BaseResp, error)
 }
 
 type marketingCenterClient struct {
@@ -152,6 +156,42 @@ func (c *marketingCenterClient) GetPositions(ctx context.Context, in *PositionLi
 	return out, nil
 }
 
+func (c *marketingCenterClient) BatchInsertAsset(ctx context.Context, in *BatchInsertAssetReq, opts ...grpc.CallOption) (*BaseResp, error) {
+	out := new(BaseResp)
+	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/BatchInsertAsset", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketingCenterClient) AssetList(ctx context.Context, in *AssetListReq, opts ...grpc.CallOption) (*AssetListResp, error) {
+	out := new(AssetListResp)
+	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/AssetList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketingCenterClient) DeleteAssets(ctx context.Context, in *AssetDeleteReq, opts ...grpc.CallOption) (*BaseResp, error) {
+	out := new(BaseResp)
+	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/DeleteAssets", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketingCenterClient) BindAsset(ctx context.Context, in *AssetBindReq, opts ...grpc.CallOption) (*BaseResp, error) {
+	out := new(BaseResp)
+	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/BindAsset", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MarketingCenterServer is the server API for MarketingCenter service.
 // All implementations must embed UnimplementedMarketingCenterServer
 // for forward compatibility
@@ -168,6 +208,10 @@ type MarketingCenterServer interface {
 	GetTargetingByName(context.Context, *GetTargetingByNameReq) (*Targeting, error)
 	GetTargetingByTargetingId(context.Context, *GetTargetingByTargetingIdReq) (*Targeting, error)
 	GetPositions(context.Context, *PositionListReq) (*PositionListResp, error)
+	BatchInsertAsset(context.Context, *BatchInsertAssetReq) (*BaseResp, error)
+	AssetList(context.Context, *AssetListReq) (*AssetListResp, error)
+	DeleteAssets(context.Context, *AssetDeleteReq) (*BaseResp, error)
+	BindAsset(context.Context, *AssetBindReq) (*BaseResp, error)
 	mustEmbedUnimplementedMarketingCenterServer()
 }
 
@@ -210,6 +254,18 @@ func (UnimplementedMarketingCenterServer) GetTargetingByTargetingId(context.Cont
 }
 func (UnimplementedMarketingCenterServer) GetPositions(context.Context, *PositionListReq) (*PositionListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPositions not implemented")
+}
+func (UnimplementedMarketingCenterServer) BatchInsertAsset(context.Context, *BatchInsertAssetReq) (*BaseResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BatchInsertAsset not implemented")
+}
+func (UnimplementedMarketingCenterServer) AssetList(context.Context, *AssetListReq) (*AssetListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AssetList not implemented")
+}
+func (UnimplementedMarketingCenterServer) DeleteAssets(context.Context, *AssetDeleteReq) (*BaseResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteAssets not implemented")
+}
+func (UnimplementedMarketingCenterServer) BindAsset(context.Context, *AssetBindReq) (*BaseResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BindAsset not implemented")
 }
 func (UnimplementedMarketingCenterServer) mustEmbedUnimplementedMarketingCenterServer() {}
 
@@ -440,6 +496,78 @@ func _MarketingCenter_GetPositions_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MarketingCenter_BatchInsertAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BatchInsertAssetReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketingCenterServer).BatchInsertAsset(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/marketing.MarketingCenter/BatchInsertAsset",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketingCenterServer).BatchInsertAsset(ctx, req.(*BatchInsertAssetReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MarketingCenter_AssetList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AssetListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketingCenterServer).AssetList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/marketing.MarketingCenter/AssetList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketingCenterServer).AssetList(ctx, req.(*AssetListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MarketingCenter_DeleteAssets_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AssetDeleteReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketingCenterServer).DeleteAssets(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/marketing.MarketingCenter/DeleteAssets",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketingCenterServer).DeleteAssets(ctx, req.(*AssetDeleteReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MarketingCenter_BindAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AssetBindReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketingCenterServer).BindAsset(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/marketing.MarketingCenter/BindAsset",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketingCenterServer).BindAsset(ctx, req.(*AssetBindReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MarketingCenter_ServiceDesc is the grpc.ServiceDesc for MarketingCenter service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -494,6 +622,22 @@ var MarketingCenter_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetPositions",
 			Handler:    _MarketingCenter_GetPositions_Handler,
+		},
+		{
+			MethodName: "BatchInsertAsset",
+			Handler:    _MarketingCenter_BatchInsertAsset_Handler,
+		},
+		{
+			MethodName: "AssetList",
+			Handler:    _MarketingCenter_AssetList_Handler,
+		},
+		{
+			MethodName: "DeleteAssets",
+			Handler:    _MarketingCenter_DeleteAssets_Handler,
+		},
+		{
+			MethodName: "BindAsset",
+			Handler:    _MarketingCenter_BindAsset_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

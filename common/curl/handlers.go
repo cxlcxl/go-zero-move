@@ -23,6 +23,12 @@ func JsonHeader() HeaderHandlers {
 	}
 }
 
+func SetHeader(key, val string) HeaderHandlers {
+	return func(c *Curl) {
+		c.request.Header.Add(key, val)
+	}
+}
+
 func Authorization(token string) HeaderHandlers {
 	return func(c *Curl) {
 		c.request.Header.Add("Authorization", token)
@@ -45,6 +51,11 @@ func (c *Curl) JsonData(data interface{}) (*Curl, error) {
 
 func (c *Curl) QueryData(data map[string]string) *Curl {
 	c.data = strings.NewReader(HttpBuildQuery(data))
+	return c
+}
+
+func (c *Curl) Data(data *bytes.Buffer) *Curl {
+	c.data = data
 	return c
 }
 

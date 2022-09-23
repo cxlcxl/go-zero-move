@@ -34,7 +34,7 @@ type (
         CampaignType string `json:"campaign_type"`                             // 计划类型
         AccountId int64 `json:"account_id"`                                    //
         AppId string `json:"app_id"` // 应用 ID
-        AdvertiserId int64 `json:"advertiser_id"`                              //
+        AdvertiserId string `json:"advertiser_id"`                              //
         FlowResource string `json:"flow_resource"`                             // 投放网络
         ProductType string `json:"product_type"`                               // 推广产品
         UserBalanceStatus string `json:"user_balance_status"`                  // 账户余额状态

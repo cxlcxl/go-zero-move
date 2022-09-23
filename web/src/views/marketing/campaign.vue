@@ -7,10 +7,10 @@
       <el-tabs type="border-card" v-model="tabPanel" @tab-click="handleClick">
         <el-tab-pane label="计划列表" name="campaign" key="campaign"/>
         <el-tab-pane label="任务列表" name="adgroup" key="adgroup"/>
-        <el-tab-pane label="素材库" name="resource" key="resource"/>
+        <el-tab-pane label="素材库" name="asset" key="asset"/>
 
         <campaign-panel ref="campaign" v-show="tabPanel === 'campaign'"/>
-        <resource-panel ref="resource" v-show="tabPanel === 'resource'"/>
+        <asset-panel ref="asset" v-show="tabPanel === 'asset'"/>
         <adgroup-panel ref="adgroup" v-show="tabPanel === 'adgroup'"/>
       </el-tabs>
     </div>
@@ -20,12 +20,12 @@
 <script>
 import AppList from './pages/app-list'
 import CampaignPanel from './pages/campaign'
-import ResourcePanel from './pages/resource'
+import AssetPanel from './pages/asset'
 import AdgroupPanel from './pages/adgroup'
 
 export default {
   //name: 'CampaignList',
-  components: { AppList, CampaignPanel, ResourcePanel, AdgroupPanel },
+  components: { AppList, CampaignPanel, AssetPanel, AdgroupPanel },
   data() {
     return {
       app_id: '',

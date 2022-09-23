@@ -13,7 +13,13 @@ import (
 )
 
 type (
+	Asset                               = marketing.Asset
+	AssetBindReq                        = marketing.AssetBindReq
+	AssetDeleteReq                      = marketing.AssetDeleteReq
+	AssetListReq                        = marketing.AssetListReq
+	AssetListResp                       = marketing.AssetListResp
 	BaseResp                            = marketing.BaseResp
+	BatchInsertAssetReq                 = marketing.BatchInsertAssetReq
 	CampaignCreateReq                   = marketing.CampaignCreateReq
 	CampaignInfo                        = marketing.CampaignInfo
 	CampaignInfoReq                     = marketing.CampaignInfoReq
@@ -52,6 +58,10 @@ type (
 		GetTargetingByName(ctx context.Context, in *GetTargetingByNameReq, opts ...grpc.CallOption) (*Targeting, error)
 		GetTargetingByTargetingId(ctx context.Context, in *GetTargetingByTargetingIdReq, opts ...grpc.CallOption) (*Targeting, error)
 		GetPositions(ctx context.Context, in *PositionListReq, opts ...grpc.CallOption) (*PositionListResp, error)
+		BatchInsertAsset(ctx context.Context, in *BatchInsertAssetReq, opts ...grpc.CallOption) (*BaseResp, error)
+		AssetList(ctx context.Context, in *AssetListReq, opts ...grpc.CallOption) (*AssetListResp, error)
+		DeleteAssets(ctx context.Context, in *AssetDeleteReq, opts ...grpc.CallOption) (*BaseResp, error)
+		BindAsset(ctx context.Context, in *AssetBindReq, opts ...grpc.CallOption) (*BaseResp, error)
 	}
 
 	defaultMarketingCenter struct {
@@ -123,4 +133,24 @@ func (m *defaultMarketingCenter) GetTargetingByTargetingId(ctx context.Context, 
 func (m *defaultMarketingCenter) GetPositions(ctx context.Context, in *PositionListReq, opts ...grpc.CallOption) (*PositionListResp, error) {
 	client := marketing.NewMarketingCenterClient(m.cli.Conn())
 	return client.GetPositions(ctx, in, opts...)
+}
+
+func (m *defaultMarketingCenter) BatchInsertAsset(ctx context.Context, in *BatchInsertAssetReq, opts ...grpc.CallOption) (*BaseResp, error) {
+	client := marketing.NewMarketingCenterClient(m.cli.Conn())
+	return client.BatchInsertAsset(ctx, in, opts...)
+}
+
+func (m *defaultMarketingCenter) AssetList(ctx context.Context, in *AssetListReq, opts ...grpc.CallOption) (*AssetListResp, error) {
+	client := marketing.NewMarketingCenterClient(m.cli.Conn())
+	return client.AssetList(ctx, in, opts...)
+}
+
+func (m *defaultMarketingCenter) DeleteAssets(ctx context.Context, in *AssetDeleteReq, opts ...grpc.CallOption) (*BaseResp, error) {
+	client := marketing.NewMarketingCenterClient(m.cli.Conn())
+	return client.DeleteAssets(ctx, in, opts...)
+}
+
+func (m *defaultMarketingCenter) BindAsset(ctx context.Context, in *AssetBindReq, opts ...grpc.CallOption) (*BaseResp, error) {
+	client := marketing.NewMarketingCenterClient(m.cli.Conn())
+	return client.BindAsset(ctx, in, opts...)
 }

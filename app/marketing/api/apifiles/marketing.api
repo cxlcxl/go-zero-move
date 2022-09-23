@@ -3,6 +3,7 @@ syntax = "v1"
 import (
 	"base.api"
 	"campaign.api"
+	"asset.api"
 	"targeting.api"
 )
 
@@ -122,4 +123,32 @@ service marketing-api {
 	@doc "版位查询"
 	@handler creativeQuery
 	get /creative/query(CreativeQueryReq) returns (CreativeQueryResp)
+	
+	@doc "素材同步"
+	@handler syncAsset
+	get /asset/sync(SyncAssetReq) returns (BaseResp)
+	
+	@doc "素材列表"
+	@handler assetList
+	get /asset/list(AssetListReq) returns (AssetListResp)
+	
+	@doc "素材删除"
+	@handler assetDelete
+	post /asset/delete(AssetDeleteReq) returns (BaseResp)
+	
+	@doc "素材上传"
+	@handler assetUpload
+	post /asset/upload(AssetUploadReq) returns (BaseResp)
+	
+	@doc "素材上传文件 Token"
+	@handler assetFileToken
+	get /asset/token (AssetFileTokenReq) returns (AssetFileTokenResp)
+	
+	@doc "素材宽高尺寸限制"
+	@handler assetDimension
+	get /asset/dimension returns (AssetDimensionResp)
+	
+	@doc "素材绑定"
+	@handler assetBind
+	post /asset/bind(AssetBindReq) returns (BaseResp)
 }

@@ -36,6 +36,13 @@ type Config struct {
 			Create string
 			Update string
 		}
+		Asset struct {
+			Query        string
+			Delete       string
+			Create       string
+			Token        string
+			AssetTmpPath string
+		}
 	}
 
 	Kafka struct {

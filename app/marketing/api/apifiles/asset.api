@@ -1,0 +1,68 @@
+syntax = "v1"
+
+type (
+    SyncAssetReq {
+        AppId string `form:"app_id"`
+    }
+
+    AssetListReq {
+        Page int64 `form:"page"`
+        PageSize int64 `form:"page_size"`
+        AssetType string `form:"asset_type,optional"`
+        Width int64 `form:"width,optional"`
+        Height int64 `form:"height,optional"`
+        AppId string `form:"app_id,optional"`
+    }
+    AssetListResp {
+        BaseResp
+        Data AssetListData `json:"data"`
+    }
+    AssetListData {
+        Total int64 `json:"total"`
+        List []*Asset `json:"list"`
+        AssetType map[string]string `json:"asset_type"`
+    }
+    Asset {
+        AppId string `json:"app_id"`
+        AccountId int64 `json:"account_id"`
+        AdvertiserId string `json:"advertiser_id"`
+        AssetId int64 `json:"asset_id"`
+        AssetName string `json:"asset_name"`
+        AssetType string `json:"asset_type"`
+        FileUrl string `json:"file_url"`
+        Width int64 `json:"width"`
+        Height int64 `json:"height"`
+        VideoPlayDuration int64 `json:"video_play_duration"`
+        FileSize int64 `json:"file_size"`
+        FileFormat string `json:"file_format"`
+        FileHashSha256 string `json:"file_hash_sha256"`
+    }
+    AssetDeleteReq {
+        AccountId int64 `json:"account_id" validate:"required"`
+        AdvertiserId string `json:"advertiser_id" validate:"required"`
+        AssetIds []int64 `json:"asset_ids" validate:"required"`
+    }
+    AssetUploadReq {
+        AppId string `form:"app_id" validate:"required"`
+        AssetType string `form:"asset_type" validate:"required"`
+        FileToken string `form:"file_token" validate:"required"`
+        Duration int64 `form:"duration" validate:"numeric"`
+        Width int64 `form:"width" validate:"required"`
+        Height int64 `form:"height" validate:"required"`
+    }
+    AssetFileTokenReq {
+        AppId string `form:"app_id"`
+    }
+    AssetFileTokenResp {
+        BaseResp
+        Data string `json:"data"`
+    }
+    AssetDimensionResp {
+        BaseResp
+        Data map[string][]string `json:"data"`
+    }
+    AssetBindReq {
+        AppId string `json:"app_id" validate:"required"`
+        AssetIds []int64 `json:"asset_ids" validate:"required"`
+    }
+)

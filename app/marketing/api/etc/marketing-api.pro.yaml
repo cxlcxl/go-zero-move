@@ -36,3 +36,13 @@ MarketingApis:
     Query: "https://ads-dra.cloud.huawei.com/ads/v1/promotion/campaign/query"
     Create: "https://ads-dra.cloud.huawei.com/ads/v1/promotion/campaign/create"
     Update: "https://ads-dra.cloud.huawei.com/ads/v1/promotion/campaign/update"
+  Targeting:
+    Create: "https://ads-dra.cloud.huawei.com/ads/v1/tools/targeting_package/create"
+    Query:
+    Update:
+  Asset:
+    Query: "https://ads-dra.cloud.huawei.com/ads/v1/tools/creative_asset/query"
+    Delete: "https://ads-dra.cloud.huawei.com/ads/v1/tools/creative_asset/delete"
+    Create: "https://ads-dra.cloud.huawei.com/ads/v1/tools/creative_asset/create"
+    Token: "https://ads-dra.cloud.huawei.com/ads/v1/tools/file/token/query"
+    AssetTmpPath: "./storage/asset" # 素材上传临时地址

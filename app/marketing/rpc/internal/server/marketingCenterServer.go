@@ -81,3 +81,23 @@ func (s *MarketingCenterServer) GetPositions(ctx context.Context, in *marketing.
 	l := logic.NewGetPositionsLogic(ctx, s.svcCtx)
 	return l.GetPositions(in)
 }
+
+func (s *MarketingCenterServer) BatchInsertAsset(ctx context.Context, in *marketing.BatchInsertAssetReq) (*marketing.BaseResp, error) {
+	l := logic.NewBatchInsertAssetLogic(ctx, s.svcCtx)
+	return l.BatchInsertAsset(in)
+}
+
+func (s *MarketingCenterServer) AssetList(ctx context.Context, in *marketing.AssetListReq) (*marketing.AssetListResp, error) {
+	l := logic.NewAssetListLogic(ctx, s.svcCtx)
+	return l.AssetList(in)
+}
+
+func (s *MarketingCenterServer) DeleteAssets(ctx context.Context, in *marketing.AssetDeleteReq) (*marketing.BaseResp, error) {
+	l := logic.NewDeleteAssetsLogic(ctx, s.svcCtx)
+	return l.DeleteAssets(in)
+}
+
+func (s *MarketingCenterServer) BindAsset(ctx context.Context, in *marketing.AssetBindReq) (*marketing.BaseResp, error) {
+	l := logic.NewBindAssetLogic(ctx, s.svcCtx)
+	return l.BindAsset(in)
+}

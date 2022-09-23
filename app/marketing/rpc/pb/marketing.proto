@@ -161,6 +161,43 @@ message PositionListReq {
 message PositionListResp {
   repeated CreativeSizeInfo creative_size_info_list=1;
 }
+message Asset {
+  string app_id = 1;
+  int64 asset_id = 2;
+  string asset_name = 3;
+  string asset_type = 4;
+  string file_url = 5;
+  int64 width = 6;
+  int64 height = 7;
+  int64 video_play_duration = 8;
+  int64 file_size = 9;
+  string file_format = 10;
+  string file_hash_sha256 = 11;
+  int64 account_id = 12;
+  string advertiser_id = 13;
+}
+message BatchInsertAssetReq {
+  repeated Asset assets = 1;
+}
+message AssetListReq {
+  int64 page = 1;
+  int64 page_size = 2;
+  string asset_type = 3;
+  int64 width = 4;
+  int64 height = 5;
+  string app_id = 6;
+}
+message AssetListResp {
+  repeated Asset assets = 1;
+  int64 total = 2;
+}
+message AssetDeleteReq {
+  repeated int64 asset_ids = 1;
+}
+message AssetBindReq {
+  string app_id = 1;
+  repeated int64 asset_id = 2;
+}
 
 message EmptyParamsReq {}
 message BaseResp {}
@@ -178,4 +215,8 @@ service MarketingCenter{
   rpc GetTargetingByName(GetTargetingByNameReq) returns(Targeting);
   rpc GetTargetingByTargetingId(GetTargetingByTargetingIdReq) returns(Targeting);
   rpc GetPositions(PositionListReq) returns(PositionListResp);
+  rpc BatchInsertAsset(BatchInsertAssetReq) returns(BaseResp);
+  rpc AssetList(AssetListReq) returns(AssetListResp);
+  rpc DeleteAssets(AssetDeleteReq) returns(BaseResp);
+  rpc BindAsset(AssetBindReq) returns(BaseResp);
 }

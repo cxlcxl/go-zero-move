@@ -1,0 +1,17 @@
+CREATE TABLE `assets`
+(
+    `id`                  bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+    `app_id`              varchar(32) COLLATE utf8mb4_unicode_ci   NOT NULL DEFAULT '' COMMENT '第三方应用ID，例如华为APP ID : C10134672；可能存在GP的应用ID 32位',
+    `asset_id`            bigint(20) unsigned NOT NULL DEFAULT '0',
+    `asset_name`          varchar(50) COLLATE utf8mb4_unicode_ci   NOT NULL DEFAULT '',
+    `asset_type`          varchar(50) COLLATE utf8mb4_unicode_ci   NOT NULL DEFAULT '',
+    `file_url`            varchar(1000) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+    `width`               smallint(5) unsigned NOT NULL DEFAULT '0',
+    `height`              smallint(5) unsigned NOT NULL DEFAULT '0',
+    `video_play_duration` bigint(15) unsigned NOT NULL DEFAULT '0',
+    `file_size`           bigint(15) unsigned NOT NULL DEFAULT '0',
+    `file_format`         varchar(50) COLLATE utf8mb4_unicode_ci   NOT NULL DEFAULT '',
+    `file_hash_sha256`    varchar(65) COLLATE utf8mb4_unicode_ci   NOT NULL DEFAULT '',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `idx_asset_id` (`asset_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

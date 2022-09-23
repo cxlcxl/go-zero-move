@@ -70,6 +70,9 @@ const (
 	//PricingTypeCpa   = "PRICING_CPA"
 	//PricingTypeCpi   = "PRICING_CPI"
 	//PricingTypeTroas = "PRICING_TROAS"
+
+	AssetTypePicture = "CREATIVE_ASSET_PICTURE"
+	AssetTypeVideo   = "CREATIVE_ASSET_VIDEO"
 )
 
 var (
@@ -202,5 +205,10 @@ var (
 		//PricingTypeCpa:   "CPA",
 		//PricingTypeCpi:   "CPI",
 		//PricingTypeTroas: "TROAS",
+	}
+	// AssetType 素材类型
+	AssetType = map[string]string{
+		AssetTypePicture: "图片",
+		AssetTypeVideo:   "视频",
 	}
 )

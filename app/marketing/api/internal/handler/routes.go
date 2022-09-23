@@ -69,6 +69,41 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/creative/query",
 					Handler: creativeQueryHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/asset/sync",
+					Handler: syncAssetHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/asset/list",
+					Handler: assetListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/asset/delete",
+					Handler: assetDeleteHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/asset/upload",
+					Handler: assetUploadHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/asset/token",
+					Handler: assetFileTokenHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/asset/dimension",
+					Handler: assetDimensionHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/asset/bind",
+					Handler: assetBindHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
