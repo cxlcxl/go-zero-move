@@ -1,0 +1,66 @@
+syntax = "v1"
+
+type (
+    CreativeQueryReq {
+        Category  string `form:"category"`
+        AccountId int64  `form:"account_id"`
+    }
+    CreativeQueryResp {
+        BaseResp
+        Data []*CreativeSizeInfo `json:"data"`
+    }
+    CreativeSizeInfo {
+        CreativeSizeId              string           `json:"creative_size_id"`
+        CreativeSizeNameDsp         string           `json:"creative_size_name_dsp"`
+        CreativeSizeNameDescription string           `json:"creative_size_description"`
+        SupportProductType          string           `json:"support_product_type"`
+        IsSupportTimePeriod         string           `json:"is_support_time_period"`
+        IsSupportMultipleCreatives  string           `json:"is_support_multiple_creatives"`
+        SupportPriceType            string           `json:"support_price_type"`
+        Samples                     []*SampleInfo    `json:"samples"`
+        Placements                  []*PlacementInfo `json:"placements"`
+    }
+    CreativeSizePriceReq {
+        CreativeSizeId string `form:"creative_size_id"`
+        PriceType      string `form:"price_type"`
+    }
+    CreativeSizePriceResp {
+        BaseResp
+        Data float64 `json:"data"`
+    }
+    SampleInfo {
+        CreativeSizeSample string `json:"creative_size_ample"`
+        PreviewTitle       string `json:"preview_title"`
+    }
+    PlacementInfo {
+        PlacementSizeId     string `json:"placement_size_id"`
+        CreativeSize        string `json:"creative_size"`
+        CreativeSizeSubType string `json:"creative_size_sub_type"`
+    }
+    PositionElementReq {
+        CreativeSizeId string `form:"creative_size_id"`
+    }
+    PositionElementResp {
+        BaseResp
+        Data PositionElement `json:"data"`
+    }
+    PositionElement {
+        SubTypes []string `json:"sub_types"`
+        Elements []*Element `json:"elements"`
+    }
+    Element {
+        SubType string `json:"sub_type"`
+        List []*ElementList `json:"list"`
+    }
+    ElementList {
+        ElementId int64 `json:"element_id"`
+        ElementName string `json:"element_name"`
+        ElementTitle string `json:"element_title"`
+        ElementCaption string `json:"element_caption"`
+        MinLength int64 `json:"min_length"`
+        MaxLength int64 `json:"max_length"`
+        Width int64 `json:"width"`
+        Height int64 `json:"height"`
+        FileSizeKBLimit int64 `json:"file_size_kb_limit"`
+    }
+)

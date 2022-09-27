@@ -36,7 +36,7 @@ type (
 
 	PositionSamples struct {
 		Id                 int64  `db:"id"`
-		CreativeSizeId     int64  `db:"creative_size_id"`     // 版位ID
+		CreativeSizeId     string `db:"creative_size_id"`     // 版位ID
 		CreativeSizeSample string `db:"creative_size_sample"` // 预览图地址
 		PreviewTitle       string `db:"preview_title"`        // 预览图标题
 	}

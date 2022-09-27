@@ -5,6 +5,7 @@ import (
 	"campaign.api"
 	"asset.api"
 	"targeting.api"
+	"position.api"
 )
 
 type (
@@ -44,34 +45,6 @@ type (
 		BaseResp
 		Data map[string]string `json:"data"`
 	}
-	CreativeQueryReq {
-		Category  string `form:"category"`
-		AccountId int64  `form:"account_id"`
-	}
-	CreativeQueryResp {
-		BaseResp
-		Data []*CreativeSizeInfo `json:"data"`
-	}
-	CreativeSizeInfo {
-		CreativeSizeId              int64            `json:"creative_size_id"`
-		CreativeSizeNameDsp         string           `json:"creative_size_name_dsp"`
-		CreativeSizeNameDescription string           `json:"creative_size_description"`
-		SupportProductType          string           `json:"support_product_type"`
-		IsSupportTimePeriod         string           `json:"is_support_time_period"`
-		IsSupportMultipleCreatives  string           `json:"is_support_multiple_creatives"`
-		SupportPriceType            string           `json:"support_price_type"`
-		Samples                     []*SampleInfo    `json:"samples"`
-		Placements                  []*PlacementInfo `json:"placements"`
-	}
-	SampleInfo {
-		CreativeSizeSample string `json:"creative_size_ample"`
-		PreviewTitle       string `json:"preview_title"`
-	}
-	PlacementInfo {
-		PlacementSizeId     string `json:"placement_size_id"`
-		CreativeSize        string `json:"creative_size"`
-		CreativeSizeSubType string `json:"creative_size_sub_type"`
-	}
 )
 
 @server(
@@ -95,6 +68,13 @@ service marketing-api {
 	@doc "计划列表"
 	@handler campaignList
 	get /campaign/list (CampaignListReq) returns (CampaignListResp)
+	
+	@doc "转化跟踪查询"
+	@handler trackingList
+	get /tracking/list (TrackingListReq) returns (TrackingListResp)
+	@doc "转化跟踪拉取"
+	@handler trackingRefresh
+	get /tracking/refresh (TrackingListReq) returns (TrackingListResp)
 	
 	@doc "字典查询"
 	@handler dictionaryQuery
@@ -123,6 +103,12 @@ service marketing-api {
 	@doc "版位查询"
 	@handler creativeQuery
 	get /creative/query(CreativeQueryReq) returns (CreativeQueryResp)
+	@doc "版位低价查询"
+	@handler creativePrice
+	get /creative/price(CreativeSizePriceReq) returns (CreativeSizePriceResp)
+	@doc "版位元素"
+	@handler positionElement
+	get /creative/position-element(PositionElementReq) returns (PositionElementResp)
 	
 	@doc "素材同步"
 	@handler syncAsset

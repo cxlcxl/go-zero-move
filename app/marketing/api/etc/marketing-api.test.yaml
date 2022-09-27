@@ -36,6 +36,8 @@ MarketingApis:
     Query: "https://ads-dra.cloud.huawei.com/ads/v1/promotion/campaign/query"
     Create: "https://ads-dra.cloud.huawei.com/ads/v1/promotion/campaign/create"
     Update: "https://ads-dra.cloud.huawei.com/ads/v1/promotion/campaign/update"
+    CreativeSizePrice: "https://ads-dra.cloud.huawei.com/ads/v1/tools/position_price/query"
+    PositionDetail: "https://ads-dra.cloud.huawei.com/ads/v1/tools/position_detail/query"
   Targeting:
     Create: "https://ads-dra.cloud.huawei.com/ads/v1/tools/targeting_package/create"
     Query:
@@ -46,3 +48,5 @@ MarketingApis:
     Create: "https://ads-dra.cloud.huawei.com/ads/v1/tools/creative_asset/create"
     Token: "https://ads-dra.cloud.huawei.com/ads/v1/tools/file/token/query"
     AssetTmpPath: "./storage/asset" # 素材上传临时地址
+  Tracking:
+    Query: "https://ads-dra.cloud.huawei.com/ads/v1/tools/effect_tracking/query"

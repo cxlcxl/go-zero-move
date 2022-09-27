@@ -45,39 +45,6 @@ type AdsMapResourceResp struct {
 	Data map[string]string `json:"data"`
 }
 
-type CreativeQueryReq struct {
-	Category  string `form:"category"`
-	AccountId int64  `form:"account_id"`
-}
-
-type CreativeQueryResp struct {
-	BaseResp
-	Data []*CreativeSizeInfo `json:"data"`
-}
-
-type CreativeSizeInfo struct {
-	CreativeSizeId              int64            `json:"creative_size_id"`
-	CreativeSizeNameDsp         string           `json:"creative_size_name_dsp"`
-	CreativeSizeNameDescription string           `json:"creative_size_description"`
-	SupportProductType          string           `json:"support_product_type"`
-	IsSupportTimePeriod         string           `json:"is_support_time_period"`
-	IsSupportMultipleCreatives  string           `json:"is_support_multiple_creatives"`
-	SupportPriceType            string           `json:"support_price_type"`
-	Samples                     []*SampleInfo    `json:"samples"`
-	Placements                  []*PlacementInfo `json:"placements"`
-}
-
-type SampleInfo struct {
-	CreativeSizeSample string `json:"creative_size_ample"`
-	PreviewTitle       string `json:"preview_title"`
-}
-
-type PlacementInfo struct {
-	PlacementSizeId     string `json:"placement_size_id"`
-	CreativeSize        string `json:"creative_size"`
-	CreativeSizeSubType string `json:"creative_size_sub_type"`
-}
-
 type BaseResp struct {
 	Code int64  `json:"code"`
 	Msg  string `json:"msg"`
@@ -302,4 +269,97 @@ type TargetingListReq struct {
 type TargetingListResp struct {
 	BaseResp
 	Data []*TargetingListItem `json:"data"`
+}
+
+type TrackingListReq struct {
+	AppId string `form:"app_id"`
+}
+
+type TrackingListResp struct {
+	BaseResp
+	Data []*TrackingItem `json:"data"`
+}
+
+type TrackingItem struct {
+	EffectName string `json:"effect_name"`
+	EffectType string `json:"effect_type"`
+	TrackingId int64  `json:"tracking_id"`
+}
+
+type CreativeQueryReq struct {
+	Category  string `form:"category"`
+	AccountId int64  `form:"account_id"`
+}
+
+type CreativeQueryResp struct {
+	BaseResp
+	Data []*CreativeSizeInfo `json:"data"`
+}
+
+type CreativeSizeInfo struct {
+	CreativeSizeId              string           `json:"creative_size_id"`
+	CreativeSizeNameDsp         string           `json:"creative_size_name_dsp"`
+	CreativeSizeNameDescription string           `json:"creative_size_description"`
+	SupportProductType          string           `json:"support_product_type"`
+	IsSupportTimePeriod         string           `json:"is_support_time_period"`
+	IsSupportMultipleCreatives  string           `json:"is_support_multiple_creatives"`
+	SupportPriceType            string           `json:"support_price_type"`
+	Samples                     []*SampleInfo    `json:"samples"`
+	Placements                  []*PlacementInfo `json:"placements"`
+}
+
+type CreativeSizePriceReq struct {
+	CreativeSizeId string `form:"creative_size_id"`
+	PriceType      string `form:"price_type"`
+}
+
+type CreativeSizePriceResp struct {
+	BaseResp
+	Data float64 `json:"data"`
+}
+
+type SampleInfo struct {
+	CreativeSizeSample string `json:"creative_size_ample"`
+	PreviewTitle       string `json:"preview_title"`
+}
+
+type PlacementInfo struct {
+	PlacementSizeId     string `json:"placement_size_id"`
+	CreativeSize        string `json:"creative_size"`
+	CreativeSizeSubType string `json:"creative_size_sub_type"`
+}
+
+type PositionElementReq struct {
+	CreativeSizeId string `form:"creative_size_id"`
+}
+
+type PositionElementResp struct {
+	BaseResp
+	Data PositionElement `json:"data"`
+}
+
+type PositionElement struct {
+	SubTypes []*CreativeSizeSubType `json:"sub_types"`
+	Elements []*Element             `json:"elements"`
+}
+
+type CreativeSizeSubType struct {
+	SubType string `json:"sub_type"`
+}
+
+type Element struct {
+	SubType string         `json:"sub_type"`
+	List    []*ElementList `json:"list"`
+}
+
+type ElementList struct {
+	ElementId       int64  `json:"element_id"`
+	ElementName     string `json:"element_name"`
+	ElementTitle    string `json:"element_title"`
+	ElementCaption  string `json:"element_caption"`
+	MinLength       int64  `json:"min_length"`
+	MaxLength       int64  `json:"max_length"`
+	Width           int64  `json:"width"`
+	Height          int64  `json:"height"`
+	FileSizeKBLimit int64  `json:"file_size_kb_limit"`
 }

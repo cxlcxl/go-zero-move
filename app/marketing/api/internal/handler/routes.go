@@ -36,6 +36,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodGet,
+					Path:    "/tracking/list",
+					Handler: trackingListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/tracking/refresh",
+					Handler: trackingRefreshHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
 					Path:    "/dictionary/query",
 					Handler: dictionaryQueryHandler(serverCtx),
 				},
@@ -68,6 +78,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/creative/query",
 					Handler: creativeQueryHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/creative/price",
+					Handler: creativePriceHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/creative/position-element",
+					Handler: positionElementHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodGet,

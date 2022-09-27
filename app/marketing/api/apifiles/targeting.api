@@ -48,4 +48,17 @@ type (
         BaseResp
         Data []*TargetingListItem `json:"data"`
     }
+    // 转化跟踪查询
+    TrackingListReq {
+        AppId string `form:"app_id"`
+    }
+    TrackingListResp {
+        BaseResp
+        Data []*TrackingItem `json:"data"`
+    }
+    TrackingItem {
+        EffectName string `json:"effect_name"`
+        EffectType string  `json:"effect_type"`
+        TrackingId int64 `json:"tracking_id"`
+    }
 )

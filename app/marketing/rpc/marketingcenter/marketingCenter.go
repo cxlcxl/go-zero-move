@@ -20,6 +20,7 @@ type (
 	AssetListResp                       = marketing.AssetListResp
 	BaseResp                            = marketing.BaseResp
 	BatchInsertAssetReq                 = marketing.BatchInsertAssetReq
+	BatchInsertTrackingReq              = marketing.BatchInsertTrackingReq
 	CampaignCreateReq                   = marketing.CampaignCreateReq
 	CampaignInfo                        = marketing.CampaignInfo
 	CampaignInfoReq                     = marketing.CampaignInfoReq
@@ -31,6 +32,8 @@ type (
 	CountriesResp                       = marketing.CountriesResp
 	CountriesResp_OverseasRegionCountry = marketing.CountriesResp_OverseasRegionCountry
 	CreativeSizeInfo                    = marketing.CreativeSizeInfo
+	CreativeSizeInfoReq                 = marketing.CreativeSizeInfoReq
+	CreativeSizeInfoResp                = marketing.CreativeSizeInfoResp
 	CreativeSizePlacement               = marketing.CreativeSizePlacement
 	CreativeSizeSample                  = marketing.CreativeSizeSample
 	DictionaryReq                       = marketing.DictionaryReq
@@ -44,6 +47,10 @@ type (
 	Targeting                           = marketing.Targeting
 	TargetingListReq                    = marketing.TargetingListReq
 	TargetingListResp                   = marketing.TargetingListResp
+	Tracking                            = marketing.Tracking
+	TrackingListReq                     = marketing.TrackingListReq
+	TrackingListResp                    = marketing.TrackingListResp
+	TrackingListResp_Tracking           = marketing.TrackingListResp_Tracking
 
 	MarketingCenter interface {
 		CampaignCreate(ctx context.Context, in *CampaignCreateReq, opts ...grpc.CallOption) (*BaseResp, error)
@@ -58,10 +65,13 @@ type (
 		GetTargetingByName(ctx context.Context, in *GetTargetingByNameReq, opts ...grpc.CallOption) (*Targeting, error)
 		GetTargetingByTargetingId(ctx context.Context, in *GetTargetingByTargetingIdReq, opts ...grpc.CallOption) (*Targeting, error)
 		GetPositions(ctx context.Context, in *PositionListReq, opts ...grpc.CallOption) (*PositionListResp, error)
+		GetPositionInfo(ctx context.Context, in *CreativeSizeInfoReq, opts ...grpc.CallOption) (*CreativeSizeInfoResp, error)
 		BatchInsertAsset(ctx context.Context, in *BatchInsertAssetReq, opts ...grpc.CallOption) (*BaseResp, error)
 		AssetList(ctx context.Context, in *AssetListReq, opts ...grpc.CallOption) (*AssetListResp, error)
 		DeleteAssets(ctx context.Context, in *AssetDeleteReq, opts ...grpc.CallOption) (*BaseResp, error)
 		BindAsset(ctx context.Context, in *AssetBindReq, opts ...grpc.CallOption) (*BaseResp, error)
+		TrackingList(ctx context.Context, in *TrackingListReq, opts ...grpc.CallOption) (*TrackingListResp, error)
+		BatchInsertTracking(ctx context.Context, in *BatchInsertTrackingReq, opts ...grpc.CallOption) (*BaseResp, error)
 	}
 
 	defaultMarketingCenter struct {
@@ -135,6 +145,11 @@ func (m *defaultMarketingCenter) GetPositions(ctx context.Context, in *PositionL
 	return client.GetPositions(ctx, in, opts...)
 }
 
+func (m *defaultMarketingCenter) GetPositionInfo(ctx context.Context, in *CreativeSizeInfoReq, opts ...grpc.CallOption) (*CreativeSizeInfoResp, error) {
+	client := marketing.NewMarketingCenterClient(m.cli.Conn())
+	return client.GetPositionInfo(ctx, in, opts...)
+}
+
 func (m *defaultMarketingCenter) BatchInsertAsset(ctx context.Context, in *BatchInsertAssetReq, opts ...grpc.CallOption) (*BaseResp, error) {
 	client := marketing.NewMarketingCenterClient(m.cli.Conn())
 	return client.BatchInsertAsset(ctx, in, opts...)
@@ -153,4 +168,14 @@ func (m *defaultMarketingCenter) DeleteAssets(ctx context.Context, in *AssetDele
 func (m *defaultMarketingCenter) BindAsset(ctx context.Context, in *AssetBindReq, opts ...grpc.CallOption) (*BaseResp, error) {
 	client := marketing.NewMarketingCenterClient(m.cli.Conn())
 	return client.BindAsset(ctx, in, opts...)
+}
+
+func (m *defaultMarketingCenter) TrackingList(ctx context.Context, in *TrackingListReq, opts ...grpc.CallOption) (*TrackingListResp, error) {
+	client := marketing.NewMarketingCenterClient(m.cli.Conn())
+	return client.TrackingList(ctx, in, opts...)
+}
+
+func (m *defaultMarketingCenter) BatchInsertTracking(ctx context.Context, in *BatchInsertTrackingReq, opts ...grpc.CallOption) (*BaseResp, error) {
+	client := marketing.NewMarketingCenterClient(m.cli.Conn())
+	return client.BatchInsertTracking(ctx, in, opts...)
 }

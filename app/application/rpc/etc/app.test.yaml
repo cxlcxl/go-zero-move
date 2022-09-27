@@ -1,4 +1,4 @@
-Name: app.client
+Name: app.rpc
 ListenOn: 0.0.0.0:28003
 
 Database:

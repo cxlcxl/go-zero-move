@@ -138,12 +138,12 @@ message CreativeSizeSample  {
   string preview_title = 2;
 }
 message CreativeSizePlacement  {
-  string placement_size_id=1;
-  string creative_size=2;
-  string creative_size_sub_type=3;
+  string placement_size_id = 1;
+  string creative_size = 2;
+  string creative_size_sub_type = 3;
 }
 message CreativeSizeInfo  {
-  int64 creative_size_id = 1;
+  string creative_size_id = 1;
   string creative_size_name_dsp = 2;
   string creative_size_description = 3;
   repeated CreativeSizeSample creative_size_sample_list = 4;
@@ -159,7 +159,7 @@ message PositionListReq {
   int64 account_id = 2;
 }
 message PositionListResp {
-  repeated CreativeSizeInfo creative_size_info_list=1;
+  repeated CreativeSizeInfo creative_size_info_list = 1;
 }
 message Asset {
   string app_id = 1;
@@ -198,6 +198,42 @@ message AssetBindReq {
   string app_id = 1;
   repeated int64 asset_id = 2;
 }
+message TrackingListReq {
+  string app_id = 1;
+}
+message TrackingListResp {
+  message Tracking {
+    string app_id = 1;
+    int64 account_id = 2;
+    string advertiser_id = 3;
+    int64 tracking_id = 4;
+    string effect_type = 5;
+    string effect_name = 6;
+  }
+  repeated Tracking trackings = 1;
+}
+message Tracking {
+  string app_id = 1;
+  int64 account_id = 2;
+  string advertiser_id = 3;
+  string effect_type = 4;
+  string effect_name = 5;
+  int64 tracking_id = 6;
+  string click_tracking_url = 7;
+  string imp_tracking_url = 8;
+}
+message BatchInsertTrackingReq {
+  repeated Tracking trackings = 1;
+  repeated int64 disabled_tracking_ids = 2;
+}
+message CreativeSizeInfoReq {
+  string creative_size_id = 1;
+}
+message CreativeSizeInfoResp {
+  CreativeSizeInfo creative_size_info = 1;
+  int64 account_id = 2;
+  string advertiser_id = 3;
+}
 
 message EmptyParamsReq {}
 message BaseResp {}
@@ -215,8 +251,11 @@ service MarketingCenter{
   rpc GetTargetingByName(GetTargetingByNameReq) returns(Targeting);
   rpc GetTargetingByTargetingId(GetTargetingByTargetingIdReq) returns(Targeting);
   rpc GetPositions(PositionListReq) returns(PositionListResp);
+  rpc GetPositionInfo(CreativeSizeInfoReq) returns(CreativeSizeInfoResp);
   rpc BatchInsertAsset(BatchInsertAssetReq) returns(BaseResp);
   rpc AssetList(AssetListReq) returns(AssetListResp);
   rpc DeleteAssets(AssetDeleteReq) returns(BaseResp);
   rpc BindAsset(AssetBindReq) returns(BaseResp);
+  rpc TrackingList(TrackingListReq) returns(TrackingListResp);
+  rpc BatchInsertTracking(BatchInsertTrackingReq) returns(BaseResp);
 }

@@ -28,7 +28,7 @@ func (l *GetPositionsLogic) GetPositions(in *marketing.PositionListReq) (*market
 		return nil, err
 	}
 	var (
-		creativeSizeIds  []int64
+		creativeSizeIds  []string
 		creativeSizeList []*marketing.CreativeSizeInfo
 	)
 	for _, position := range positions {
@@ -52,14 +52,14 @@ func (l *GetPositionsLogic) GetPositions(in *marketing.PositionListReq) (*market
 	if err != nil {
 		return nil, err
 	}
-	sampleTmp := make(map[int64][]*marketing.CreativeSizeSample)
+	sampleTmp := make(map[string][]*marketing.CreativeSizeSample)
 	for _, sample := range samples {
 		sampleTmp[sample.CreativeSizeId] = append(sampleTmp[sample.CreativeSizeId], &marketing.CreativeSizeSample{
 			CreativeSizeSample: sample.CreativeSizeSample,
 			PreviewTitle:       sample.PreviewTitle,
 		})
 	}
-	placementTmp := make(map[int64][]*marketing.CreativeSizePlacement)
+	placementTmp := make(map[string][]*marketing.CreativeSizePlacement)
 	for _, placement := range placements {
 		placementTmp[placement.CreativeSizeId] = append(placementTmp[placement.CreativeSizeId], &marketing.CreativeSizePlacement{
 			PlacementSizeId:     placement.PlacementSizeId,

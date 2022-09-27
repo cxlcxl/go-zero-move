@@ -15,7 +15,7 @@ type (
 	// and implement the added methods in customPositionPlacementsModel.
 	PositionPlacementsModel interface {
 		positionPlacementsModel
-		PlacementList(ctx context.Context, creativeSizeIds []int64) (placements []*PositionPlacements, err error)
+		PlacementList(ctx context.Context, creativeSizeIds []string) (placements []*PositionPlacements, err error)
 	}
 
 	customPositionPlacementsModel struct {
@@ -30,7 +30,7 @@ func NewPositionPlacementsModel(conn sqlx.SqlConn) PositionPlacementsModel {
 	}
 }
 
-func (m *defaultPositionPlacementsModel) PlacementList(ctx context.Context, creativeSizeIds []int64) (placements []*PositionPlacements, err error) {
+func (m *defaultPositionPlacementsModel) PlacementList(ctx context.Context, creativeSizeIds []string) (placements []*PositionPlacements, err error) {
 	in, args, _ := utils.WhereIn(creativeSizeIds)
 	sql := fmt.Sprintf("select %s from %s where creative_size_id in %s", positionPlacementsRows, m.table, in)
 	err = m.conn.QueryRowsCtx(ctx, &placements, sql, args...)

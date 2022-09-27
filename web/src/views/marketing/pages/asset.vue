@@ -20,7 +20,11 @@
       <div class="upload-resource" @click="uploadResource"><i class="el-icon-upload"/></div>
     </el-card>
     <el-card shadow="hover" class="resource" v-for="item in assets.list" v-if="assets.total > 0">
-      <p class="asset-title"><i class="text-primary">{{item.width}}*{{item.height}}</i> / {{item.asset_name}}</p>
+      <p class="asset-title">
+        <i class="el-icon-check text-success" v-if="item.app_id !== ''"/>&nbsp;
+        <i class="text-primary">{{item.width}}*{{item.height}}</i>
+        <span class="asset-name">{{item.asset_name}}</span>
+      </p>
       <img class="preview__file" :src="item.file_url" v-if="item.asset_type === 'CREATIVE_ASSET_PICTURE'"/>
       <video class="preview__file" :type="item.file_format" :src="item.file_url" v-else/>
       <div class="view" @click="showFile(item)">
@@ -240,6 +244,11 @@ export default {
       overflow: hidden;
       padding: 0 5px;
       word-break: break-all;
+
+      .asset-name {
+        display: inline-block;
+        margin-left: 5px;
+      }
     }
 
     .view {

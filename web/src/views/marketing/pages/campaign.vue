@@ -151,6 +151,10 @@ export default {
       this.fetchData()
     },
     add() {
+      if (this.search.app_id === '') {
+        this.$message.error("请先选择应用")
+        return
+      }
       this.$refs.create.initCreate()
     },
     editRow() {

@@ -66,13 +66,19 @@ const (
 	PricingTypeCpm  = "PRICING_CPM"
 	PricingTypeCpc  = "PRICING_CPC"
 	PricingTypeOCpc = "PRICING_OCPC"
+	PricingTypeCpi  = "PRICING_CPI"
 	//PricingTypeCpv   = "PRICING_CPCV"
 	//PricingTypeCpa   = "PRICING_CPA"
-	//PricingTypeCpi   = "PRICING_CPI"
 	//PricingTypeTroas = "PRICING_TROAS"
 
 	AssetTypePicture = "CREATIVE_ASSET_PICTURE"
 	AssetTypeVideo   = "CREATIVE_ASSET_VIDEO"
+
+	OCpcStrategyStandard = "OCPC_STRATEGY_STANDARD"
+	OCpcStrategyQuantity = "OCPC_STRATEGY_MAXIMIZE_QUANTITY"
+	OCpcStrategyCost     = "OCPC_STRATEGY_MINIMIZE_COST"
+
+	TrackingStatusActive = "TRACKING_STATUS_ACTIVE"
 )
 
 var (
@@ -203,12 +209,18 @@ var (
 		PricingTypeOCpc: "oCPC",
 		//PricingTypeCpv:   "CPCV",
 		//PricingTypeCpa:   "CPA",
-		//PricingTypeCpi:   "CPI",
+		PricingTypeCpi: "CPI",
 		//PricingTypeTroas: "TROAS",
 	}
 	// AssetType 素材类型
 	AssetType = map[string]string{
 		AssetTypePicture: "图片",
 		AssetTypeVideo:   "视频",
+	}
+	// OCpcStrategy 投放策略
+	OCpcStrategy = map[string]string{
+		OCpcStrategyStandard: "稳定拿量",
+		OCpcStrategyQuantity: "优先跑量",
+		OCpcStrategyCost:     "优先低成本",
 	}
 )

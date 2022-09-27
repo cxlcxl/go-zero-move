@@ -34,51 +34,51 @@
 
             <el-form-item label="版位" prop="creative_size_id"
                           :prop="'adgroups.' + idx + '.creative_size_id'" :rules="{required: true, message: '请选择版位'}">
-              <el-radio-group v-model="__adgroup.category" @change="getCreativeList($event, __adgroup.tab_name)">
+              <el-radio-group v-model="__adgroup.category" @change="getPositionList($event, __adgroup.tab_name)">
                 <el-radio-button v-for="(c_label, c_k) in resources.creative_category" :label="c_k">{{ c_label }}</el-radio-button>
               </el-radio-group>
-              <el-row :gutter="15" v-loading="loadings.creativeLoading" v-show="creativeList[__adgroup.tab_name].length > 0">
-                <el-col :span="17">
-                  <div class="creative-container">
-                    <div v-for="creative in creativeList[__adgroup.tab_name]"
-                         :class="{'creative-list': true, 'creative-active': creative.creative_size_id === __adgroup.creative_size_id}"
-                         @click="handleSelectCreative(creative.creative_size_id, creative.samples, creative.support_price_type)">
-                      <span class="creative-name">{{creative.creative_size_name_dsp}}</span>
-                      <span class="creative-desc">{{creative.creative_size_description}}</span>
-                    </div>
-                  </div>
-                </el-col>
-                <el-col :span="7" style="background: #99a9bf;">
-                  <div class="creative-banner" v-show="creativeSamples[__adgroup.tab_name].length > 0">
-                    <el-carousel height="305px">
-                      <el-carousel-item v-for="(sample, sampleIdx) in creativeSamples[__adgroup.tab_name]" :key="sampleIdx">
-                        <div class="banner-panel">
-                          <p>{{sample.preview_title}}</p>
-                          <img :src="sample.creative_size_ample"/>
-                        </div>
-                      </el-carousel-item>
-                    </el-carousel>
-                  </div>
-                </el-col>
-              </el-row>
+
+                <adgroup-creative-size :creative-size-list="positionList[__adgroup.tab_name]" :ref="'creativeSize' + __adgroup.tab_name"
+                                       :creative-size-id="Number(__adgroup.creative_size_id)" v-show="__adgroup.category !== ''"
+                                       @handle-change="handleSelectPosition"/>
             </el-form-item>
 
             <el-form-item label="投放日期"
                           :prop="'adgroups.' + idx + '.adgroup_begin_date'" :rules="{required: true, message: '请选择投放开始日期'}">
-              <el-date-picker v-model="__adgroup.adgroup_begin_date" type="date" placeholder="选择开始日期"/> -
-              <el-date-picker v-model="__adgroup.adgroup_end_date" type="date" placeholder="结束日期可不选"/>
+              <el-date-picker v-model="__adgroup.adgroup_begin_date" type="date" placeholder="选择开始日期" value-format="yyyy-MM-dd"/> -
+              <el-date-picker v-model="__adgroup.adgroup_end_date" type="date" placeholder="结束日期可不选" value-format="yyyy-MM-dd"/>
             </el-form-item>
 
-            <el-form-item label="出价" prop="price">
+            <el-form-item label="出价" :prop="'adgroups.' + idx + '.price'" :rules="{required: true, message: '请填写出价金额'}">
               <div v-if="Number(__adgroup.creative_size_id) === 0" style="color: #909399;">未选择版位与产品信息</div>
-              <div v-else>
-                <el-radio-group v-model="__adgroup.price_type">
+              <div v-else v-loading="loadings.priceLoading">
+                <el-radio-group v-model="__adgroup.price_type" @change="handleChangePriceType($event, __adgroup.creative_size_id, idx)">
                   <el-radio-button :label="key" v-for="(label,key) in resources.pricing"
                                    v-if="pricing[__adgroup.tab_name].includes(label)">{{ label }}</el-radio-button>
                 </el-radio-group>
-                <p style="margin: 5px 0 0 0;">
-                  <el-input-number class="w180" v-model="__adgroup.price"/>
-                </p>
+                <div style="margin: 5px 0 0 0;" v-show="__adgroup.price_type !== ''">
+                  <div v-if="__adgroup.price_type !== 'PRICING_OCPC'">
+                    <el-input-number class="w180" v-model="__adgroup.price" :min="minPrice" :precision="2" :controls="false"/>
+                    <span class="text-error" style="margin-left: 10px; font-size: 12px;">请填写不低于 {{minPrice}} 的金额</span>
+                  </div>
+                  <div v-else class="price-ocpc">
+                    <p class="ocpc-item">
+                      <span class="ocpc-item-label">转化名称</span>
+                      <el-select v-model="__adgroup.tracking_id" placeholder="请选择">
+                        <el-option v-for="track in trackings" :key="track.tracking_id" :label="track.effect_name" :value="track.tracking_id"/>
+                      </el-select>
+                      <el-button icon="el-icon-refresh" style="margin-left: 5px;" plain @click="refreshTracking"/>
+                    </p>
+                    <p class="ocpc-item">
+                      <span class="ocpc-item-label">期望转化成本</span>
+                      <el-input-number v-model="__adgroup.conversion_cost" class="w130" :min="0.01" :max="10" :precision="2" :controls="false"/>
+                    </p>
+                    <p class="ocpc-item">
+                      <span class="ocpc-item-label">学习期点击出价</span>
+                      <el-input-number v-model="__adgroup.price" class="w130" :min="0.01" :max="10" :precision="2" :controls="false"/>
+                    </p>
+                  </div>
+                </div>
               </div>
             </el-form-item>
 
@@ -88,6 +88,8 @@
             </el-form-item>
 
             <el-divider />
+
+            <creative-select :ref="'creativeSelect'+__adgroup.tab_name"/>
           </el-tab-pane>
         </el-tabs>
 
@@ -106,23 +108,27 @@
 <script>
 import TargetingCreate from './targeting-create'
 import {targetingList, creativeList} from '@a/marketing'
-import {creativeCategory, pricing} from '@a/marketing-resource'
+import {creativeCategory, pricing, trackingList, trackingRefresh, creativeSizePrice} from '@a/marketing-resource'
 import {campaignInfo} from '@a/campaign'
+import AdgroupCreativeSize from './adgroup-creative-size'
+import CreativeSelect from './creative-select'
 
 export default {
   // name: 'AdgroupCreate',
-  components: {TargetingCreate},
+  components: {TargetingCreate, AdgroupCreativeSize, CreativeSelect},
   data() {
     return {
       loadings: {
         pageLoading: false,
         remoteAppLoading: false,
-        creativeLoading: false,
+        positionLoading: false,
+        priceLoading: false,
       },
+      minPrice: 0,
       targetings: [],
+      trackings: [],
       campaign: {app: {}},
-      creativeList: {adgroup0: []},
-      creativeSamples: {adgroup0: []},
+      positionList: {adgroup0: []},
       pricing: {adgroup0: []},
       editableTabsValue: 'adgroup0',
       adgroupForm: {
@@ -139,6 +145,8 @@ export default {
             adgroup_end_date: '',
             price_type: '',
             price: 0,
+            conversion_cost: 0,
+            tracking_id: 0,
           }
         ]
       },
@@ -167,7 +175,7 @@ export default {
         })
       })
     },
-    getCreativeCategory() {
+    getPositionCategory() {
       return new Promise((resolve, reject) => {
         creativeCategory().then(res => {
           this.resources.creative_category = res.data
@@ -187,6 +195,7 @@ export default {
           } else {
             this.$set(this.adgroupForm, 'product_id', this.campaign.app.product_id)
           }
+          this.getTrackingList(this.campaign.app_id)
           resolve()
         }).catch(() => {
           this.$message.error('计划信息读取失败')
@@ -205,14 +214,21 @@ export default {
         })
       })
     },
-    getCreativeList(category, tabName) {
-      this.loadings.creativeLoading = true
-      creativeList({category, account_id: this.campaign.account_id}).then(res => {
-        this.creativeList[tabName] = res.data
-        this.loadings.creativeLoading = false
+    getTrackingList(app_id) {
+      trackingList({app_id}).then(res => {
+        this.trackings = res.data
       }).catch(() => {
-        this.creativeList[tabName] = []
-        this.loadings.creativeLoading = false
+        this.$message.error('转化跟踪列表读取失败')
+      })
+    },
+    getPositionList(category, tabName) {
+      this.loadings.positionLoading = true
+      creativeList({category, account_id: this.campaign.account_id}).then(res => {
+        this.positionList[tabName] = res.data
+        this.loadings.positionLoading = false
+      }).catch(() => {
+        this.positionList[tabName] = []
+        this.loadings.positionLoading = false
       })
     },
     getResources() {
@@ -222,7 +238,7 @@ export default {
 
         Promise.all([
           this.getPricing(),
-          this.getCreativeCategory(),
+          this.getPositionCategory(),
           this.getCampaignInfo(),
           this.getTargetingList(),
         ]).then(() => {
@@ -257,38 +273,39 @@ export default {
       this.targetings.push(targeting)
       this.$set(this.adgroupForm.adgroups[adgroupIdx], 'targeting_package_id', targeting.targeting_id)
     },
-    handleSelectCreative(creativeSizeId, samples, supportPriceType) {
-      this.$set(this.creativeSamples, this.editableTabsValue, (Array.isArray(samples) ? samples : []))
-      this.$set(this.pricing, this.editableTabsValue, supportPriceType.split(","))
-      this.adgroupForm.adgroups.forEach((tab, index) => {
+    handleSelectPosition(creativeSizeId, supportPriceType) {
+      this.$set(this.pricing, this.editableTabsValue, supportPriceType)
+      this.adgroupForm.adgroups.forEach((tab, idx) => {
         if (tab.tab_name === this.editableTabsValue) {
-          this.$set(this.adgroupForm.adgroups[index], 'creative_size_id', creativeSizeId)
+          this.$set(this.adgroupForm.adgroups[idx], 'creative_size_id', creativeSizeId)
+          // 出价联动
+          this.$set(this.adgroupForm.adgroups[idx], 'price_type', '')
+          this.$set(this.adgroupForm.adgroups[idx], 'price', 0)
         }
       })
     },
     addTab(targetName) {
       let adgroupName = 'adgroup' + this.tabIndex
       this.adgroupForm.adgroups.push({
-        tab_name: adgroupName,
-        adgroup_name: '任务 ' + this.tabIndex,
-        category: '',
-        targeting_package_id: '',
-        creative_size_id: '',
-        adgroup_begin_date: '',
-        adgroup_end_date: '',
-        price_type: '',
-        price: 0,
+        tab_name: adgroupName, adgroup_name: '任务 ' + this.tabIndex, category: '', targeting_package_id: '',
+        creative_size_id: '', adgroup_begin_date: '', adgroup_end_date: '', price_type: '', price: 0,
+        conversion_cost: 0, tracking_id: 0,
       })
       this.editableTabsValue = adgroupName
+
+      this.setTabInfo(adgroupName, '')
       this.tabIndex++
     },
     copyTab(targetName, idx) {
+      // 本身任务数据
       let adgroupName = 'adgroup' + this.tabIndex
       let copyAdgroup = Object.assign({}, this.adgroupForm.adgroups[idx])
       copyAdgroup.tab_name = adgroupName
       copyAdgroup.adgroup_name = '任务 ' + this.tabIndex
       this.adgroupForm.adgroups.push(copyAdgroup)
       this.editableTabsValue = adgroupName
+
+      this.setTabInfo(adgroupName, targetName)
       this.tabIndex++
     },
     removeTab(targetName) {
@@ -315,12 +332,41 @@ export default {
         }
         this.editableTabsValue = activeName;
         this.adgroupForm.adgroups = tabs.filter(tab => tab.tab_name !== targetName);
+
+        this.setTabInfo(targetName, '')
       }).catch(() => {})
+    },
+    setTabInfo(forSetTab, resourceTab) {
+      // 版位信息
+      this.positionList[forSetTab] = resourceTab === '' ? [] : this.positionList[resourceTab]
+      // 出价
+      this.pricing[forSetTab] = resourceTab === '' ? [] : this.pricing[resourceTab]
+    },
+    handleChangePriceType(v, creative_size_id, idx) {
+      this.loadings.priceLoading = true
+      this.minPrice = 0
+      this.$set(this.adgroupForm.adgroups[idx], 'price', 0)
+      creativeSizePrice({creative_size_id, price_type: v}).then(res => {
+        this.minPrice = res.data
+        this.loadings.priceLoading = false
+      }).catch(() => {
+        this.loadings.priceLoading = false
+      })
+    },
+    refreshTracking() {
+      this.loadings.priceLoading = true
+      trackingRefresh({app_id: this.campaign.app_id}).then(res => {
+        this.trackings = res.data
+        this.loadings.priceLoading = false
+      }).catch(() => {
+        this.$message.error('转化跟踪拉取失败')
+        this.loadings.priceLoading = false
+      })
     },
     confirmAdgroup() {
       this.$refs.adgroupForm.validate(v => {
         if (v) {
-
+          console.log(this.adgroupForm)
         } else {
           return false
         }
@@ -331,5 +377,21 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "../styles/adgroup-create.scss";
+.price-ocpc {
+  background: #f6f6f6;
+  padding: 10px;
+
+  .ocpc-item {
+    height: 35px;
+    line-height: 35px;
+    font-size: 12px;
+
+    .ocpc-item-label {
+      display: inline-block;
+      width: 130px;
+      text-align: right;
+      padding-right: 10px;
+    }
+  }
+}
 </style>

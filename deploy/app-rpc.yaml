@@ -19,7 +19,7 @@ spec:
       serviceAccountName: business
       containers:
       - name: app-rpc
-        image: silentcxl/app-rpc:v1.0.2
+        image: silentcxl/app-rpc:v1.0.1
         lifecycle:
           preStop:
             exec:

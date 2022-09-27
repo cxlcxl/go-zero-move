@@ -195,6 +195,11 @@ func WhereIn(s interface{}) (w string, args []interface{}, err error) {
 			query = append(query, "?")
 			args = append(args, s.([]int64)[i])
 		}
+	case []uint64:
+		for i := range s.([]uint64) {
+			query = append(query, "?")
+			args = append(args, s.([]uint64)[i])
+		}
 	default:
 		return "", nil, errors.New("不支持的类型")
 	}

@@ -23,8 +23,8 @@
       <el-form-item label="选择素材" prop="asset_type">
         <el-upload :action="uploadUrl" :headers="headers" multiple :limit="10" ref="assetUpload"
                    :on-exceed="overLimit" name="file"
-                   :auto-upload="false"
-                   :data="assetForm" :on-change="handleChange"
+                   :auto-upload="false" :file-list="fileList"
+                   :data="assetForm" :on-change="handleChange" :on-remove="handleChange"
                    :accept="accepts[assetForm.asset_type]"
                    :before-upload="prepareUpload"
                    :on-error="uploadErr"
@@ -73,6 +73,7 @@ export default {
         CREATIVE_ASSET_PICTURE: [],
         CREATIVE_ASSET_VIDEO: []
       },
+      fileList: [],
       assetNumbers: {
         total: 0,
         success: 0,
@@ -108,6 +109,7 @@ export default {
               let dimension = `${this.width}*${this.height}`
               if (!_this.assetDimensions.CREATIVE_ASSET_PICTURE.includes(dimension)) {
                 _this.$notify.error({ title: '素材上传提示', message: `${file.name} 尺寸不对，请重新上传`, duration: 10000 })
+                _this.loading = false
                 return reject()
               }
               _this.$set(_this.assetForm, 'width', this.width)
@@ -122,6 +124,7 @@ export default {
               let dimension = `${videoObj.videoWidth}*${videoObj.videoHeight}`
               if (!_this.assetDimensions.CREATIVE_ASSET_VIDEO.includes(dimension)) {
                 _this.$notify.error({ title: '素材上传提示', message: `${file.name} 尺寸不对，请重新上传`, duration: 10000 })
+                _this.loading = false
                 return reject()
               }
               _this.$set(_this.assetForm, 'width', this.width)
@@ -135,6 +138,7 @@ export default {
           _this.$set(_this.assetForm, 'file_token', res.data)
           resolve()
         }).catch(() => {
+          _this.loading = false
           reject()
         })
       })
@@ -143,6 +147,10 @@ export default {
       this.assetNumbers.total = list.length
     },
     upload() {
+      if (this.assetNumbers.total === 0) {
+        this.$message.error("请先选择素材")
+        return
+      }
       this.loading = true
       this.$refs.assetUpload.submit()
     },

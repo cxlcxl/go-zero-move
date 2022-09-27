@@ -82,6 +82,11 @@ func (s *MarketingCenterServer) GetPositions(ctx context.Context, in *marketing.
 	return l.GetPositions(in)
 }
 
+func (s *MarketingCenterServer) GetPositionInfo(ctx context.Context, in *marketing.CreativeSizeInfoReq) (*marketing.CreativeSizeInfoResp, error) {
+	l := logic.NewGetPositionInfoLogic(ctx, s.svcCtx)
+	return l.GetPositionInfo(in)
+}
+
 func (s *MarketingCenterServer) BatchInsertAsset(ctx context.Context, in *marketing.BatchInsertAssetReq) (*marketing.BaseResp, error) {
 	l := logic.NewBatchInsertAssetLogic(ctx, s.svcCtx)
 	return l.BatchInsertAsset(in)
@@ -100,4 +105,14 @@ func (s *MarketingCenterServer) DeleteAssets(ctx context.Context, in *marketing.
 func (s *MarketingCenterServer) BindAsset(ctx context.Context, in *marketing.AssetBindReq) (*marketing.BaseResp, error) {
 	l := logic.NewBindAssetLogic(ctx, s.svcCtx)
 	return l.BindAsset(in)
+}
+
+func (s *MarketingCenterServer) TrackingList(ctx context.Context, in *marketing.TrackingListReq) (*marketing.TrackingListResp, error) {
+	l := logic.NewTrackingListLogic(ctx, s.svcCtx)
+	return l.TrackingList(in)
+}
+
+func (s *MarketingCenterServer) BatchInsertTracking(ctx context.Context, in *marketing.BatchInsertTrackingReq) (*marketing.BaseResp, error) {
+	l := logic.NewBatchInsertTrackingLogic(ctx, s.svcCtx)
+	return l.BatchInsertTracking(in)
 }

@@ -18,7 +18,7 @@ type (
 
 	PositionPlacements struct {
 		Id                         int64  `db:"id"`
-		CreativeSizeId             int64  `db:"creative_size_id"`              // 版位ID
+		CreativeSizeId             string `db:"creative_size_id"`              // 版位ID
 		PlacementSizeId            string `db:"placement_size_id"`             // 规格ID
 		CreativeSize               string `db:"creative_size"`                 // 尺寸
 		CreativeSizeSubType        string `db:"creative_size_sub_type"`        // 版位子形式

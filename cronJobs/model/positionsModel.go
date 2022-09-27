@@ -29,7 +29,7 @@ func NewPositionsModel(conn sqlx.SqlConn) PositionsModel {
 }
 
 func (m *defaultPositionsModel) BatchInsert(ctx context.Context, positions []*Positions, samples []*PositionSamples, placements []*PositionPlacements) (err error) {
-	creativeSizeIds := make([]int64, 0)
+	creativeSizeIds := make([]string, 0)
 	for _, position := range positions {
 		creativeSizeIds = append(creativeSizeIds, position.CreativeSizeId)
 	}
@@ -75,7 +75,7 @@ func (m *defaultPositionsModel) BatchInsert(ctx context.Context, positions []*Po
 }
 
 // where in 条件组合
-func whereIn(s []int64) (w string, args []interface{}) {
+func whereIn(s []string) (w string, args []interface{}) {
 	query := make([]string, 0)
 	for i := range s {
 		query = append(query, "?")

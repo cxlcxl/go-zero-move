@@ -10,6 +10,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/zeromicro/go-zero/core/logx"
+	"strconv"
 	"time"
 )
 
@@ -80,12 +81,13 @@ func formatPosition(src []*statements.CreativeSizeInfo, accountId int64, adverti
 		positionSamples    = make([]*model.PositionSamples, 0)
 		positionPlacements = make([]*model.PositionPlacements, 0)
 	)
+
 	for i, info := range src {
 		positions[i] = &model.Positions{
 			AccountId:                  accountId,
 			AdvertiserId:               advertiserId,
 			Category:                   category,
-			CreativeSizeId:             info.CreativeSizeId,
+			CreativeSizeId:             strconv.Itoa(info.CreativeSizeId),
 			CreativeSizeNameDsp:        info.CreativeSizeBaseInfo.CreativeSizeNameDsp,
 			CreativeSizeDescription:    info.CreativeSizeBaseInfo.CreativeSizeDescription,
 			SupportProductType:         info.CreativeSizeOperationInfo.SupportProductType,
@@ -97,14 +99,14 @@ func formatPosition(src []*statements.CreativeSizeInfo, accountId int64, adverti
 		}
 		for _, sample := range info.CreativeSizeBaseInfo.CreativeSizeSampleList {
 			positionSamples = append(positionSamples, &model.PositionSamples{
-				CreativeSizeId:     info.CreativeSizeId,
+				CreativeSizeId:     strconv.Itoa(info.CreativeSizeId),
 				CreativeSizeSample: sample.CreativeSizeSample,
 				PreviewTitle:       sample.PreviewTitle,
 			})
 		}
 		for _, placement := range info.CreativeSizeBaseInfo.CreativeSizePlacementList {
 			positionPlacements = append(positionPlacements, &model.PositionPlacements{
-				CreativeSizeId:             info.CreativeSizeId,
+				CreativeSizeId:             strconv.Itoa(info.CreativeSizeId),
 				PlacementSizeId:            placement.PlacementSizeId,
 				CreativeSize:               placement.CreativeSize,
 				CreativeSizeSubType:        placement.CreativeSizeSubType,

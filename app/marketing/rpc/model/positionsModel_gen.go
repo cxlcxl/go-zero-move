@@ -26,7 +26,7 @@ type (
 	positionsModel interface {
 		Insert(ctx context.Context, data *Positions) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*Positions, error)
-		FindOneByCreativeSizeId(ctx context.Context, creativeSizeId int64) (*Positions, error)
+		FindOneByCreativeSizeId(ctx context.Context, creativeSizeId string) (*Positions, error)
 		Update(ctx context.Context, newData *Positions) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -40,7 +40,7 @@ type (
 		Id                         int64     `db:"id"`
 		AccountId                  int64     `db:"account_id"`
 		AdvertiserId               string    `db:"advertiser_id"`             // 广告主账户ID
-		CreativeSizeId             int64     `db:"creative_size_id"`          // 版位ID
+		CreativeSizeId             string    `db:"creative_size_id"`          // 版位ID
 		CreativeSizeNameDsp        string    `db:"creative_size_name_dsp"`    // 版位名称
 		CreativeSizeDescription    string    `db:"creative_size_description"` // 版位描述
 		Category                   string    `db:"category"`                  // 版位所属分类
@@ -80,7 +80,7 @@ func (m *defaultPositionsModel) FindOne(ctx context.Context, id int64) (*Positio
 	}
 }
 
-func (m *defaultPositionsModel) FindOneByCreativeSizeId(ctx context.Context, creativeSizeId int64) (*Positions, error) {
+func (m *defaultPositionsModel) FindOneByCreativeSizeId(ctx context.Context, creativeSizeId string) (*Positions, error) {
 	var resp Positions
 	query := fmt.Sprintf("select %s from %s where `creative_size_id` = ? limit 1", positionsRows, m.table)
 	err := m.conn.QueryRowCtx(ctx, &resp, query, creativeSizeId)

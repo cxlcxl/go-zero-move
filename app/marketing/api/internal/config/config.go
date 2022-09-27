@@ -27,9 +27,11 @@ type Config struct {
 			Refresh string
 		}
 		Campaign struct {
-			Query  string
-			Create string
-			Update string
+			Query             string
+			Create            string
+			Update            string
+			CreativeSizePrice string
+			PositionDetail    string
 		}
 		Targeting struct {
 			Query  string
@@ -42,6 +44,9 @@ type Config struct {
 			Create       string
 			Token        string
 			AssetTmpPath string
+		}
+		Tracking struct {
+			Query string
 		}
 	}
 

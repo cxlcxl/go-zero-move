@@ -26,7 +26,7 @@ type (
 		Id                         int64     `db:"id"`
 		AccountId                  int64     `db:"account_id"`
 		AdvertiserId               string    `db:"advertiser_id"`                 // 广告主账户ID
-		CreativeSizeId             int64     `db:"creative_size_id"`              // 版位ID
+		CreativeSizeId             string    `db:"creative_size_id"`              // 版位ID
 		CreativeSizeNameDsp        string    `db:"creative_size_name_dsp"`        // 版位名称
 		CreativeSizeDescription    string    `db:"creative_size_description"`     // 版位描述
 		Category                   string    `db:"category"`                      //

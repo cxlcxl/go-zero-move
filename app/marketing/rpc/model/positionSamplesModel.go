@@ -15,7 +15,7 @@ type (
 	// and implement the added methods in customPositionSamplesModel.
 	PositionSamplesModel interface {
 		positionSamplesModel
-		SampleList(ctx context.Context, creativeSizeIds []int64) (positions []*PositionSamples, err error)
+		SampleList(ctx context.Context, creativeSizeIds []string) (positions []*PositionSamples, err error)
 	}
 
 	customPositionSamplesModel struct {
@@ -30,7 +30,7 @@ func NewPositionSamplesModel(conn sqlx.SqlConn) PositionSamplesModel {
 	}
 }
 
-func (m *defaultPositionSamplesModel) SampleList(ctx context.Context, creativeSizeIds []int64) (samples []*PositionSamples, err error) {
+func (m *defaultPositionSamplesModel) SampleList(ctx context.Context, creativeSizeIds []string) (samples []*PositionSamples, err error) {
 	in, args, _ := utils.WhereIn(creativeSizeIds)
 	sql := fmt.Sprintf("select %s from %s where creative_size_id in %s", positionSamplesRows, m.table, in)
 	err = m.conn.QueryRowsCtx(ctx, &samples, sql, args...)

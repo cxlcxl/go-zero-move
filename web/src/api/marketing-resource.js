@@ -14,6 +14,30 @@ export function pricing() {
   });
 }
 
+export function creativeSizePrice(params) {
+  return request({
+    url: "/marketing/creative/price",
+    method: "get",
+    params
+  });
+}
+
+export function trackingList(params) {
+  return request({
+    url: "/marketing/tracking/list",
+    method: "get",
+    params
+  });
+}
+
+export function trackingRefresh(params) {
+  return request({
+    url: "/marketing/tracking/refresh",
+    method: "get",
+    params
+  });
+}
+
 // export const assetUpload = 'https://ads-dra.cloud.huawei.com/ads/v1/tools/creative_asset/create'
 export const assetUpload = process.env.VUE_APP_MARKETING_API + "/marketing/asset/upload"
 

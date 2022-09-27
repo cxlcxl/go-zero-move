@@ -79,6 +79,7 @@
       initCreate() {
         this.visible = true
         this.$set(this.campaignForm, 'app_id', this.AppId)
+        console.log(this.AppId)
       },
       cancel() {
         this.$refs.campaignForm.resetFields()

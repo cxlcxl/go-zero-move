@@ -16,7 +16,7 @@ type PositionResponse struct {
 }
 
 type CreativeSizeInfo struct {
-	CreativeSizeId       int64 `json:"creative_size_id"`
+	CreativeSizeId       int `json:"creative_size_id"`
 	CreativeSizeBaseInfo struct {
 		CreativeSizeNameDsp       string                   `json:"creative_size_name_dsp"`
 		CreativeSizeDescription   string                   `json:"creative_size_description"`
