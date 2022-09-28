@@ -44,6 +44,8 @@ type (
 	GetTargetingByTargetingIdReq        = marketing.GetTargetingByTargetingIdReq
 	PositionListReq                     = marketing.PositionListReq
 	PositionListResp                    = marketing.PositionListResp
+	PositionPriceReq                    = marketing.PositionPriceReq
+	PositionPriceResp                   = marketing.PositionPriceResp
 	Targeting                           = marketing.Targeting
 	TargetingListReq                    = marketing.TargetingListReq
 	TargetingListResp                   = marketing.TargetingListResp
@@ -64,14 +66,15 @@ type (
 		TargetingList(ctx context.Context, in *TargetingListReq, opts ...grpc.CallOption) (*TargetingListResp, error)
 		GetTargetingByName(ctx context.Context, in *GetTargetingByNameReq, opts ...grpc.CallOption) (*Targeting, error)
 		GetTargetingByTargetingId(ctx context.Context, in *GetTargetingByTargetingIdReq, opts ...grpc.CallOption) (*Targeting, error)
-		GetPositions(ctx context.Context, in *PositionListReq, opts ...grpc.CallOption) (*PositionListResp, error)
-		GetPositionInfo(ctx context.Context, in *CreativeSizeInfoReq, opts ...grpc.CallOption) (*CreativeSizeInfoResp, error)
 		BatchInsertAsset(ctx context.Context, in *BatchInsertAssetReq, opts ...grpc.CallOption) (*BaseResp, error)
 		AssetList(ctx context.Context, in *AssetListReq, opts ...grpc.CallOption) (*AssetListResp, error)
 		DeleteAssets(ctx context.Context, in *AssetDeleteReq, opts ...grpc.CallOption) (*BaseResp, error)
 		BindAsset(ctx context.Context, in *AssetBindReq, opts ...grpc.CallOption) (*BaseResp, error)
 		TrackingList(ctx context.Context, in *TrackingListReq, opts ...grpc.CallOption) (*TrackingListResp, error)
 		BatchInsertTracking(ctx context.Context, in *BatchInsertTrackingReq, opts ...grpc.CallOption) (*BaseResp, error)
+		GetPositions(ctx context.Context, in *PositionListReq, opts ...grpc.CallOption) (*PositionListResp, error)
+		GetPositionInfo(ctx context.Context, in *CreativeSizeInfoReq, opts ...grpc.CallOption) (*CreativeSizeInfoResp, error)
+		GetPositionPrice(ctx context.Context, in *PositionPriceReq, opts ...grpc.CallOption) (*PositionPriceResp, error)
 	}
 
 	defaultMarketingCenter struct {
@@ -140,16 +143,6 @@ func (m *defaultMarketingCenter) GetTargetingByTargetingId(ctx context.Context, 
 	return client.GetTargetingByTargetingId(ctx, in, opts...)
 }
 
-func (m *defaultMarketingCenter) GetPositions(ctx context.Context, in *PositionListReq, opts ...grpc.CallOption) (*PositionListResp, error) {
-	client := marketing.NewMarketingCenterClient(m.cli.Conn())
-	return client.GetPositions(ctx, in, opts...)
-}
-
-func (m *defaultMarketingCenter) GetPositionInfo(ctx context.Context, in *CreativeSizeInfoReq, opts ...grpc.CallOption) (*CreativeSizeInfoResp, error) {
-	client := marketing.NewMarketingCenterClient(m.cli.Conn())
-	return client.GetPositionInfo(ctx, in, opts...)
-}
-
 func (m *defaultMarketingCenter) BatchInsertAsset(ctx context.Context, in *BatchInsertAssetReq, opts ...grpc.CallOption) (*BaseResp, error) {
 	client := marketing.NewMarketingCenterClient(m.cli.Conn())
 	return client.BatchInsertAsset(ctx, in, opts...)
@@ -178,4 +171,19 @@ func (m *defaultMarketingCenter) TrackingList(ctx context.Context, in *TrackingL
 func (m *defaultMarketingCenter) BatchInsertTracking(ctx context.Context, in *BatchInsertTrackingReq, opts ...grpc.CallOption) (*BaseResp, error) {
 	client := marketing.NewMarketingCenterClient(m.cli.Conn())
 	return client.BatchInsertTracking(ctx, in, opts...)
+}
+
+func (m *defaultMarketingCenter) GetPositions(ctx context.Context, in *PositionListReq, opts ...grpc.CallOption) (*PositionListResp, error) {
+	client := marketing.NewMarketingCenterClient(m.cli.Conn())
+	return client.GetPositions(ctx, in, opts...)
+}
+
+func (m *defaultMarketingCenter) GetPositionInfo(ctx context.Context, in *CreativeSizeInfoReq, opts ...grpc.CallOption) (*CreativeSizeInfoResp, error) {
+	client := marketing.NewMarketingCenterClient(m.cli.Conn())
+	return client.GetPositionInfo(ctx, in, opts...)
+}
+
+func (m *defaultMarketingCenter) GetPositionPrice(ctx context.Context, in *PositionPriceReq, opts ...grpc.CallOption) (*PositionPriceResp, error) {
+	client := marketing.NewMarketingCenterClient(m.cli.Conn())
+	return client.GetPositionPrice(ctx, in, opts...)
 }

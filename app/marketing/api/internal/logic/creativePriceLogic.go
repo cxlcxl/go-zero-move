@@ -1,19 +1,12 @@
 package logic
 
 import (
-	"business/app/account/rpc/accountcenter"
-	"business/app/marketing/api/internal/statements"
+	"business/app/marketing/api/internal/svc"
+	"business/app/marketing/api/internal/types"
 	"business/app/marketing/rpc/marketingcenter"
-	"business/common/curl"
 	"business/common/utils"
 	"business/common/vars"
 	"context"
-	"errors"
-	"fmt"
-	"time"
-
-	"business/app/marketing/api/internal/svc"
-	"business/app/marketing/api/internal/types"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -33,34 +26,18 @@ func NewCreativePriceLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cre
 }
 
 func (l *CreativePriceLogic) CreativePrice(req *types.CreativeSizePriceReq) (resp *types.CreativeSizePriceResp, err error) {
-	info, err := l.svcCtx.MarketingRpcClient.GetPositionInfo(l.ctx, &marketingcenter.CreativeSizeInfoReq{CreativeSizeId: req.CreativeSizeId})
-	if err != nil {
-		return nil, utils.RpcError(err, "请求错误")
-	}
-	c, err := curl.New(l.svcCtx.Config.MarketingApis.Campaign.CreativeSizePrice).Get().JsonData(statements.CreativeSizePriceRequest{
-		AdvertiserId: info.AdvertiserId,
-		Filtering:    statements.CreativeSizePriceFilter{CreativeSizeId: req.CreativeSizeId, PriceType: req.PriceType},
+	price, err := l.svcCtx.MarketingRpcClient.GetPositionPrice(l.ctx, &marketingcenter.PositionPriceReq{
+		CreativeSizeId: req.CreativeSizeId,
+		PriceType:      req.PriceType,
 	})
 	if err != nil {
-		return nil, err
-	}
-	token, err := l.svcCtx.AccountRpcClient.GetToken(l.ctx, &accountcenter.GetTokenReq{AccountId: info.AccountId})
-	if err != nil {
-		return nil, utils.RpcError(err, "Token 信息获取失败")
-	}
-	if time.Unix(token.ExpiredAt, 0).Before(time.Now()) {
-		return nil, errors.New("Token 已过期，请先到账户列表页刷新 Token ")
-	}
-	t := fmt.Sprintf("%s %s", token.TokenType, token.AccessToken)
-	var response statements.CreativeSizePriceResponse
-	if err = c.Request(&response, curl.Authorization(t)); err != nil {
-		return nil, errors.New("华为接口拉取错误：" + response.Message)
+		return nil, utils.RpcError(err, "未查询到底价信息，请联系管理员是否有拉取到")
 	}
 	return &types.CreativeSizePriceResp{
 		BaseResp: types.BaseResp{
 			Code: vars.ResponseCodeOk,
 			Msg:  vars.ResponseMsg[vars.ResponseCodeOk],
 		},
-		Data: response.Data.FloorPrice,
+		Data: price.Price,
 	}, nil
 }

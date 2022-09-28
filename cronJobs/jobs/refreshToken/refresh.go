@@ -35,3 +35,7 @@ func RefreshToken() {
 	fmt.Println()
 	fmt.Println()
 }
+
+func RefreshTokenManual(_ string, _ int64) {
+	RefreshToken()
+}

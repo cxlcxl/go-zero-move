@@ -18,6 +18,7 @@ type ServiceContext struct {
 	PlacementModel model.PositionPlacementsModel
 	AssetModel     model.AssetsModel
 	TrackModel     model.TrackingsModel
+	PriceModel     model.PositionBasePricesModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -34,5 +35,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		PlacementModel: model.NewPositionPlacementsModel(DBConn),
 		AssetModel:     model.NewAssetsModel(DBConn),
 		TrackModel:     model.NewTrackingsModel(DBConn),
+		PriceModel:     model.NewPositionBasePricesModel(DBConn),
 	}
 }

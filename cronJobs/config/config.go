@@ -27,9 +27,11 @@ type Config struct {
 		} `yaml:"Promotion"`
 
 		Tools struct {
-			Dictionary string `yaml:"Dictionary"`
-			Targeting  string `yaml:"Targeting"`
-			Position   string `yaml:"Position"`
+			Dictionary      string `yaml:"Dictionary"`
+			Targeting       string `yaml:"Targeting"`
+			Position        string `yaml:"Position"`
+			PositionPrice   string `yaml:"PositionPrice"`
+			PositionElement string `yaml:"PositionElement"`
 		} `yaml:"Tools"`
 	} `yaml:"MarketingApis"`
 

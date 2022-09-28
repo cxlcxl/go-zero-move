@@ -77,16 +77,6 @@ func (s *MarketingCenterServer) GetTargetingByTargetingId(ctx context.Context, i
 	return l.GetTargetingByTargetingId(in)
 }
 
-func (s *MarketingCenterServer) GetPositions(ctx context.Context, in *marketing.PositionListReq) (*marketing.PositionListResp, error) {
-	l := logic.NewGetPositionsLogic(ctx, s.svcCtx)
-	return l.GetPositions(in)
-}
-
-func (s *MarketingCenterServer) GetPositionInfo(ctx context.Context, in *marketing.CreativeSizeInfoReq) (*marketing.CreativeSizeInfoResp, error) {
-	l := logic.NewGetPositionInfoLogic(ctx, s.svcCtx)
-	return l.GetPositionInfo(in)
-}
-
 func (s *MarketingCenterServer) BatchInsertAsset(ctx context.Context, in *marketing.BatchInsertAssetReq) (*marketing.BaseResp, error) {
 	l := logic.NewBatchInsertAssetLogic(ctx, s.svcCtx)
 	return l.BatchInsertAsset(in)
@@ -115,4 +105,19 @@ func (s *MarketingCenterServer) TrackingList(ctx context.Context, in *marketing.
 func (s *MarketingCenterServer) BatchInsertTracking(ctx context.Context, in *marketing.BatchInsertTrackingReq) (*marketing.BaseResp, error) {
 	l := logic.NewBatchInsertTrackingLogic(ctx, s.svcCtx)
 	return l.BatchInsertTracking(in)
+}
+
+func (s *MarketingCenterServer) GetPositions(ctx context.Context, in *marketing.PositionListReq) (*marketing.PositionListResp, error) {
+	l := logic.NewGetPositionsLogic(ctx, s.svcCtx)
+	return l.GetPositions(in)
+}
+
+func (s *MarketingCenterServer) GetPositionInfo(ctx context.Context, in *marketing.CreativeSizeInfoReq) (*marketing.CreativeSizeInfoResp, error) {
+	l := logic.NewGetPositionInfoLogic(ctx, s.svcCtx)
+	return l.GetPositionInfo(in)
+}
+
+func (s *MarketingCenterServer) GetPositionPrice(ctx context.Context, in *marketing.PositionPriceReq) (*marketing.PositionPriceResp, error) {
+	l := logic.NewGetPositionPriceLogic(ctx, s.svcCtx)
+	return l.GetPositionPrice(in)
 }

@@ -20,3 +20,5 @@ MarketingApis:
     Dictionary: "https://ads-dra.cloud.huawei.com/ads/v1/tools/dictionary/query"
     Targeting: "https://ads-dra.cloud.huawei.com/ads/v1/tools/targeting_package/query"
     Position: "https://ads-dra.cloud.huawei.com/ads/v1/tools/position/query"
+    PositionPrice: "https://ads-dra.cloud.huawei.com/ads/v1/tools/position_price/query"
+    PositionElement: "https://ads-dra.cloud.huawei.com/ads/v1/tools/position_detail/query"

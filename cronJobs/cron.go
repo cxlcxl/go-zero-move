@@ -16,6 +16,18 @@ import (
 // Schedule 任务调度
 type Schedule struct{}
 
+var (
+	moduleName string
+	day        string
+	pauseRule  int
+)
+
+func init() {
+	flag.IntVar(&pauseRule, "pause", 0, "* 调度停止规则：0 只调度一天；99 一直调度到当天，[1-98] 调度到当天之前的天数；default：0")
+	flag.StringVar(&moduleName, "module", "", "* 调度的模块；default：''")
+	flag.StringVar(&day, "date", time.Now().Format("2006-01-02"), "要调度的日期")
+}
+
 func main() {
 	flag.Parse()
 
@@ -25,7 +37,18 @@ func main() {
 		return
 	}
 	vars.SvcCtx = svc.NewServiceContext(c)
-	(Schedule{}).TaskScheduling()
+
+	if len(moduleName) > 0 {
+		job, ok := scripts.ManualScheduleJobs[moduleName]
+		if !ok {
+			log.Fatal("调度模块不存在：", moduleName)
+			return
+		}
+		fmt.Println(fmt.Sprintf("手动调度参数，模块：%s，日期：%s，规则：%d", moduleName, day, pauseRule))
+		job(day, int64(pauseRule))
+	} else {
+		(Schedule{}).TaskScheduling()
+	}
 }
 
 func (s Schedule) TaskScheduling() {

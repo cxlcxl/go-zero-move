@@ -234,6 +234,13 @@ message CreativeSizeInfoResp {
   int64 account_id = 2;
   string advertiser_id = 3;
 }
+message PositionPriceReq{
+  string creative_size_id = 1;
+  string price_type = 2;
+}
+message PositionPriceResp{
+  double price = 1;
+}
 
 message EmptyParamsReq {}
 message BaseResp {}
@@ -243,6 +250,7 @@ service MarketingCenter{
   rpc CampaignList(CampaignListReq) returns(CampaignListResp);
   rpc CampaignUpdate(CampaignUpdateReq) returns(BaseResp);
   rpc GetCampaignInfo(CampaignInfoReq) returns(CampaignInfo);
+
   rpc DictQuery(DictionaryReq) returns(DictionaryResp);
   rpc Continents(EmptyParamsReq) returns(ContinentResp);
   rpc GetCountries(EmptyParamsReq) returns(CountriesResp);
@@ -250,12 +258,16 @@ service MarketingCenter{
   rpc TargetingList(TargetingListReq) returns(TargetingListResp);
   rpc GetTargetingByName(GetTargetingByNameReq) returns(Targeting);
   rpc GetTargetingByTargetingId(GetTargetingByTargetingIdReq) returns(Targeting);
-  rpc GetPositions(PositionListReq) returns(PositionListResp);
-  rpc GetPositionInfo(CreativeSizeInfoReq) returns(CreativeSizeInfoResp);
+
   rpc BatchInsertAsset(BatchInsertAssetReq) returns(BaseResp);
   rpc AssetList(AssetListReq) returns(AssetListResp);
   rpc DeleteAssets(AssetDeleteReq) returns(BaseResp);
   rpc BindAsset(AssetBindReq) returns(BaseResp);
+
   rpc TrackingList(TrackingListReq) returns(TrackingListResp);
   rpc BatchInsertTracking(BatchInsertTrackingReq) returns(BaseResp);
+
+  rpc GetPositions(PositionListReq) returns(PositionListResp);
+  rpc GetPositionInfo(CreativeSizeInfoReq) returns(CreativeSizeInfoResp);
+  rpc GetPositionPrice(PositionPriceReq) returns(PositionPriceResp);
 }

@@ -36,19 +36,3 @@ type Tracking struct {
 	EffectType       string `json:"effect_type"`
 	TrackingId       int64  `json:"tracking_id"`
 }
-type CreativeSizePriceRequest struct {
-	AdvertiserId string                  `json:"advertiser_id"`
-	Filtering    CreativeSizePriceFilter `json:"filtering"`
-}
-type CreativeSizePriceFilter struct {
-	CreativeSizeId string `json:"creative_size_id"`
-	PriceType      string `json:"price_type"`
-}
-
-type CreativeSizePriceResponse struct {
-	BaseAdsResp
-	Data CreativeSizePrice `json:"data"`
-}
-type CreativeSizePrice struct {
-	FloorPrice float64 `json:"floor_price"`
-}

@@ -33,14 +33,15 @@ type MarketingCenterClient interface {
 	TargetingList(ctx context.Context, in *TargetingListReq, opts ...grpc.CallOption) (*TargetingListResp, error)
 	GetTargetingByName(ctx context.Context, in *GetTargetingByNameReq, opts ...grpc.CallOption) (*Targeting, error)
 	GetTargetingByTargetingId(ctx context.Context, in *GetTargetingByTargetingIdReq, opts ...grpc.CallOption) (*Targeting, error)
-	GetPositions(ctx context.Context, in *PositionListReq, opts ...grpc.CallOption) (*PositionListResp, error)
-	GetPositionInfo(ctx context.Context, in *CreativeSizeInfoReq, opts ...grpc.CallOption) (*CreativeSizeInfoResp, error)
 	BatchInsertAsset(ctx context.Context, in *BatchInsertAssetReq, opts ...grpc.CallOption) (*BaseResp, error)
 	AssetList(ctx context.Context, in *AssetListReq, opts ...grpc.CallOption) (*AssetListResp, error)
 	DeleteAssets(ctx context.Context, in *AssetDeleteReq, opts ...grpc.CallOption) (*BaseResp, error)
 	BindAsset(ctx context.Context, in *AssetBindReq, opts ...grpc.CallOption) (*BaseResp, error)
 	TrackingList(ctx context.Context, in *TrackingListReq, opts ...grpc.CallOption) (*TrackingListResp, error)
 	BatchInsertTracking(ctx context.Context, in *BatchInsertTrackingReq, opts ...grpc.CallOption) (*BaseResp, error)
+	GetPositions(ctx context.Context, in *PositionListReq, opts ...grpc.CallOption) (*PositionListResp, error)
+	GetPositionInfo(ctx context.Context, in *CreativeSizeInfoReq, opts ...grpc.CallOption) (*CreativeSizeInfoResp, error)
+	GetPositionPrice(ctx context.Context, in *PositionPriceReq, opts ...grpc.CallOption) (*PositionPriceResp, error)
 }
 
 type marketingCenterClient struct {
@@ -150,24 +151,6 @@ func (c *marketingCenterClient) GetTargetingByTargetingId(ctx context.Context, i
 	return out, nil
 }
 
-func (c *marketingCenterClient) GetPositions(ctx context.Context, in *PositionListReq, opts ...grpc.CallOption) (*PositionListResp, error) {
-	out := new(PositionListResp)
-	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/GetPositions", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *marketingCenterClient) GetPositionInfo(ctx context.Context, in *CreativeSizeInfoReq, opts ...grpc.CallOption) (*CreativeSizeInfoResp, error) {
-	out := new(CreativeSizeInfoResp)
-	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/GetPositionInfo", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *marketingCenterClient) BatchInsertAsset(ctx context.Context, in *BatchInsertAssetReq, opts ...grpc.CallOption) (*BaseResp, error) {
 	out := new(BaseResp)
 	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/BatchInsertAsset", in, out, opts...)
@@ -222,6 +205,33 @@ func (c *marketingCenterClient) BatchInsertTracking(ctx context.Context, in *Bat
 	return out, nil
 }
 
+func (c *marketingCenterClient) GetPositions(ctx context.Context, in *PositionListReq, opts ...grpc.CallOption) (*PositionListResp, error) {
+	out := new(PositionListResp)
+	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/GetPositions", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketingCenterClient) GetPositionInfo(ctx context.Context, in *CreativeSizeInfoReq, opts ...grpc.CallOption) (*CreativeSizeInfoResp, error) {
+	out := new(CreativeSizeInfoResp)
+	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/GetPositionInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketingCenterClient) GetPositionPrice(ctx context.Context, in *PositionPriceReq, opts ...grpc.CallOption) (*PositionPriceResp, error) {
+	out := new(PositionPriceResp)
+	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/GetPositionPrice", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MarketingCenterServer is the server API for MarketingCenter service.
 // All implementations must embed UnimplementedMarketingCenterServer
 // for forward compatibility
@@ -237,14 +247,15 @@ type MarketingCenterServer interface {
 	TargetingList(context.Context, *TargetingListReq) (*TargetingListResp, error)
 	GetTargetingByName(context.Context, *GetTargetingByNameReq) (*Targeting, error)
 	GetTargetingByTargetingId(context.Context, *GetTargetingByTargetingIdReq) (*Targeting, error)
-	GetPositions(context.Context, *PositionListReq) (*PositionListResp, error)
-	GetPositionInfo(context.Context, *CreativeSizeInfoReq) (*CreativeSizeInfoResp, error)
 	BatchInsertAsset(context.Context, *BatchInsertAssetReq) (*BaseResp, error)
 	AssetList(context.Context, *AssetListReq) (*AssetListResp, error)
 	DeleteAssets(context.Context, *AssetDeleteReq) (*BaseResp, error)
 	BindAsset(context.Context, *AssetBindReq) (*BaseResp, error)
 	TrackingList(context.Context, *TrackingListReq) (*TrackingListResp, error)
 	BatchInsertTracking(context.Context, *BatchInsertTrackingReq) (*BaseResp, error)
+	GetPositions(context.Context, *PositionListReq) (*PositionListResp, error)
+	GetPositionInfo(context.Context, *CreativeSizeInfoReq) (*CreativeSizeInfoResp, error)
+	GetPositionPrice(context.Context, *PositionPriceReq) (*PositionPriceResp, error)
 	mustEmbedUnimplementedMarketingCenterServer()
 }
 
@@ -285,12 +296,6 @@ func (UnimplementedMarketingCenterServer) GetTargetingByName(context.Context, *G
 func (UnimplementedMarketingCenterServer) GetTargetingByTargetingId(context.Context, *GetTargetingByTargetingIdReq) (*Targeting, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTargetingByTargetingId not implemented")
 }
-func (UnimplementedMarketingCenterServer) GetPositions(context.Context, *PositionListReq) (*PositionListResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetPositions not implemented")
-}
-func (UnimplementedMarketingCenterServer) GetPositionInfo(context.Context, *CreativeSizeInfoReq) (*CreativeSizeInfoResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetPositionInfo not implemented")
-}
 func (UnimplementedMarketingCenterServer) BatchInsertAsset(context.Context, *BatchInsertAssetReq) (*BaseResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BatchInsertAsset not implemented")
 }
@@ -308,6 +313,15 @@ func (UnimplementedMarketingCenterServer) TrackingList(context.Context, *Trackin
 }
 func (UnimplementedMarketingCenterServer) BatchInsertTracking(context.Context, *BatchInsertTrackingReq) (*BaseResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BatchInsertTracking not implemented")
+}
+func (UnimplementedMarketingCenterServer) GetPositions(context.Context, *PositionListReq) (*PositionListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPositions not implemented")
+}
+func (UnimplementedMarketingCenterServer) GetPositionInfo(context.Context, *CreativeSizeInfoReq) (*CreativeSizeInfoResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPositionInfo not implemented")
+}
+func (UnimplementedMarketingCenterServer) GetPositionPrice(context.Context, *PositionPriceReq) (*PositionPriceResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPositionPrice not implemented")
 }
 func (UnimplementedMarketingCenterServer) mustEmbedUnimplementedMarketingCenterServer() {}
 
@@ -520,42 +534,6 @@ func _MarketingCenter_GetTargetingByTargetingId_Handler(srv interface{}, ctx con
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MarketingCenter_GetPositions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PositionListReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MarketingCenterServer).GetPositions(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/marketing.MarketingCenter/GetPositions",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MarketingCenterServer).GetPositions(ctx, req.(*PositionListReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MarketingCenter_GetPositionInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreativeSizeInfoReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MarketingCenterServer).GetPositionInfo(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/marketing.MarketingCenter/GetPositionInfo",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MarketingCenterServer).GetPositionInfo(ctx, req.(*CreativeSizeInfoReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _MarketingCenter_BatchInsertAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(BatchInsertAssetReq)
 	if err := dec(in); err != nil {
@@ -664,6 +642,60 @@ func _MarketingCenter_BatchInsertTracking_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MarketingCenter_GetPositions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PositionListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketingCenterServer).GetPositions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/marketing.MarketingCenter/GetPositions",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketingCenterServer).GetPositions(ctx, req.(*PositionListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MarketingCenter_GetPositionInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreativeSizeInfoReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketingCenterServer).GetPositionInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/marketing.MarketingCenter/GetPositionInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketingCenterServer).GetPositionInfo(ctx, req.(*CreativeSizeInfoReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MarketingCenter_GetPositionPrice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PositionPriceReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketingCenterServer).GetPositionPrice(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/marketing.MarketingCenter/GetPositionPrice",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketingCenterServer).GetPositionPrice(ctx, req.(*PositionPriceReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MarketingCenter_ServiceDesc is the grpc.ServiceDesc for MarketingCenter service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -716,14 +748,6 @@ var MarketingCenter_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _MarketingCenter_GetTargetingByTargetingId_Handler,
 		},
 		{
-			MethodName: "GetPositions",
-			Handler:    _MarketingCenter_GetPositions_Handler,
-		},
-		{
-			MethodName: "GetPositionInfo",
-			Handler:    _MarketingCenter_GetPositionInfo_Handler,
-		},
-		{
 			MethodName: "BatchInsertAsset",
 			Handler:    _MarketingCenter_BatchInsertAsset_Handler,
 		},
@@ -746,6 +770,18 @@ var MarketingCenter_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "BatchInsertTracking",
 			Handler:    _MarketingCenter_BatchInsertTracking_Handler,
+		},
+		{
+			MethodName: "GetPositions",
+			Handler:    _MarketingCenter_GetPositions_Handler,
+		},
+		{
+			MethodName: "GetPositionInfo",
+			Handler:    _MarketingCenter_GetPositionInfo_Handler,
+		},
+		{
+			MethodName: "GetPositionPrice",
+			Handler:    _MarketingCenter_GetPositionPrice_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

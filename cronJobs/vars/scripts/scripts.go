@@ -11,14 +11,23 @@ import (
 )
 
 type Job func()
+type ManualJob func(day string, pauseRule int64)
 
 var (
 	ScheduleJobs = map[string]Job{
-		vars.ApiModuleCountry:      country.Country,
-		vars.ApiModuleCampaign:     campaign.Campaign,
-		vars.ApiModuleDictionary:   dictionary.Dictionary,
-		vars.ApiModuleRefreshToken: refreshToken.RefreshToken,
-		vars.ApiModuleTargeting:    targeting.Targeting,
-		vars.ApiModulePosition:     position.Position,
+		vars.ApiModuleCountry:         country.Country,
+		vars.ApiModuleCampaign:        campaign.Campaign,
+		vars.ApiModuleDictionary:      dictionary.Dictionary,
+		vars.ApiModuleRefreshToken:    refreshToken.RefreshToken,
+		vars.ApiModuleTargeting:       targeting.Targeting,
+		vars.ApiModulePosition:        position.Position,
+		vars.ApiModulePositionPrice:   position.Price,
+		vars.ApiModulePositionElement: position.Element,
+	}
+
+	ManualScheduleJobs = map[string]ManualJob{
+		vars.ApiModuleRefreshToken:    refreshToken.RefreshTokenManual,
+		vars.ApiModulePositionPrice:   position.PriceManual,
+		vars.ApiModulePositionElement: position.ElementManual,
 	}
 )

@@ -207,9 +207,9 @@ var (
 		PricingTypeCpm:  "CPM",
 		PricingTypeCpc:  "CPC",
 		PricingTypeOCpc: "oCPC",
+		PricingTypeCpi:  "CPI",
 		//PricingTypeCpv:   "CPCV",
 		//PricingTypeCpa:   "CPA",
-		PricingTypeCpi: "CPI",
 		//PricingTypeTroas: "TROAS",
 	}
 	// AssetType 素材类型

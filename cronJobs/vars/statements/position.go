@@ -44,3 +44,67 @@ type CreativeSizePlacement struct {
 	CreativeSizeSubType        string `json:"creative_size_sub_type"`
 	IsSupportMultipleCreatives string `json:"is_support_multiple_creatives"`
 }
+
+type PositionElementRequest struct {
+	AdvertiserId string                `json:"advertiser_id"`
+	Filtering    PositionElementFilter `json:"filtering"`
+}
+type PositionElementFilter struct {
+	CreativeSizeId string `json:"creative_size_id"`
+}
+
+type PositionElementResponse struct {
+	BaseResponse
+	Data PositionElement `json:"data"`
+}
+
+type PositionElement struct {
+	CreativeSizeId  int                `json:"creative_size_id"`
+	ElementInfoList []*ElementInfoList `json:"placement_size_elementinfolist"`
+}
+
+type ElementInfoList struct {
+	Subtype         string         `json:"creative_size_subtype"`
+	ElementInfoList []*ElementInfo `json:"creative_element_info_list"`
+}
+
+type ElementInfo struct {
+	ElementId       int               `json:"creative_size_element_id"`
+	ElementName     string            `json:"creative_size_element_name"`
+	ElementTitle    string            `json:"creative_size_element_title"`
+	ElementCaption  string            `json:"creative_size_element_caption"`
+	Width           int64             `json:"width"`
+	Height          int64             `json:"height"`
+	MinWidth        int64             `json:"min_width"`
+	MinHeight       int64             `json:"min_height"`
+	MinLength       int64             `json:"min_length"`
+	MaxLength       int64             `json:"max_length"`
+	FileSizeKbLimit int64             `json:"file_size_kb_limit"`
+	GifSizeKbLimit  int64             `json:"gif_size_kb_limit"`
+	FileFormat      string            `json:"file_format"`
+	Pattern         string            `json:"pattern"`
+	Duration        []ElementDuration `json:"duration"`
+	MinOccurs       string            `json:"min_occurs"`
+	MaxOccurs       string            `json:"max_occurs"`
+}
+type ElementDuration struct {
+	Min int64 `json:"min"`
+	Max int64 `json:"max"`
+}
+
+type CreativeSizePriceRequest struct {
+	AdvertiserId string                  `json:"advertiser_id"`
+	Filtering    CreativeSizePriceFilter `json:"filtering"`
+}
+type CreativeSizePriceFilter struct {
+	CreativeSizeId string `json:"creative_size_id"`
+	PriceType      string `json:"price_type"`
+}
+
+type CreativeSizePriceResponse struct {
+	BaseResponse
+	Data CreativeSizePrice `json:"data"`
+}
+type CreativeSizePrice struct {
+	FloorPrice float64 `json:"floor_price"`
+}

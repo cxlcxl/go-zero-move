@@ -16,6 +16,8 @@ type ServiceContext struct {
 	DictModel          model.TargetingDictionariesModel
 	TargetingModel     model.TargetingsModel
 	PositionModel      model.PositionsModel
+	PriceModel         model.PositionBasePricesModel
+	ElementModel       model.PositionElementsModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -30,5 +32,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		AppModel:           model.NewAppsModel(conn),
 		TargetingModel:     model.NewTargetingsModel(conn),
 		PositionModel:      model.NewPositionsModel(conn),
+		PriceModel:         model.NewPositionBasePricesModel(conn),
+		ElementModel:       model.NewPositionElementsModel(conn),
 	}
 }
