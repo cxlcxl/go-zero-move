@@ -9,16 +9,16 @@ import (
 	"github.com/zeromicro/go-zero/rest/httpx"
 )
 
-func creativePriceHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func positionQueryHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.CreativeSizePriceReq
+		var req types.PositionQueryReq
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.Error(w, err)
 			return
 		}
 
-		l := logic.NewCreativePriceLogic(r.Context(), svcCtx)
-		resp, err := l.CreativePrice(&req)
+		l := logic.NewPositionQueryLogic(r.Context(), svcCtx)
+		resp, err := l.PositionQuery(&req)
 		if err != nil {
 			httpx.Error(w, err)
 		} else {

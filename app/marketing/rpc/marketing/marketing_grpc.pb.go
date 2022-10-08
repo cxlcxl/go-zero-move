@@ -26,6 +26,7 @@ type MarketingCenterClient interface {
 	CampaignList(ctx context.Context, in *CampaignListReq, opts ...grpc.CallOption) (*CampaignListResp, error)
 	CampaignUpdate(ctx context.Context, in *CampaignUpdateReq, opts ...grpc.CallOption) (*BaseResp, error)
 	GetCampaignInfo(ctx context.Context, in *CampaignInfoReq, opts ...grpc.CallOption) (*CampaignInfo, error)
+	CampaignBindApp(ctx context.Context, in *CampaignBindAppReq, opts ...grpc.CallOption) (*BaseResp, error)
 	DictQuery(ctx context.Context, in *DictionaryReq, opts ...grpc.CallOption) (*DictionaryResp, error)
 	Continents(ctx context.Context, in *EmptyParamsReq, opts ...grpc.CallOption) (*ContinentResp, error)
 	GetCountries(ctx context.Context, in *EmptyParamsReq, opts ...grpc.CallOption) (*CountriesResp, error)
@@ -42,6 +43,8 @@ type MarketingCenterClient interface {
 	GetPositions(ctx context.Context, in *PositionListReq, opts ...grpc.CallOption) (*PositionListResp, error)
 	GetPositionInfo(ctx context.Context, in *CreativeSizeInfoReq, opts ...grpc.CallOption) (*CreativeSizeInfoResp, error)
 	GetPositionPrice(ctx context.Context, in *PositionPriceReq, opts ...grpc.CallOption) (*PositionPriceResp, error)
+	GetPositionPlacement(ctx context.Context, in *PositionPlacementReq, opts ...grpc.CallOption) (*PositionPlacementResp, error)
+	GetPositionElement(ctx context.Context, in *PositionElementReq, opts ...grpc.CallOption) (*PositionElementResp, error)
 }
 
 type marketingCenterClient struct {
@@ -82,6 +85,15 @@ func (c *marketingCenterClient) CampaignUpdate(ctx context.Context, in *Campaign
 func (c *marketingCenterClient) GetCampaignInfo(ctx context.Context, in *CampaignInfoReq, opts ...grpc.CallOption) (*CampaignInfo, error) {
 	out := new(CampaignInfo)
 	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/GetCampaignInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketingCenterClient) CampaignBindApp(ctx context.Context, in *CampaignBindAppReq, opts ...grpc.CallOption) (*BaseResp, error) {
+	out := new(BaseResp)
+	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/CampaignBindApp", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -232,6 +244,24 @@ func (c *marketingCenterClient) GetPositionPrice(ctx context.Context, in *Positi
 	return out, nil
 }
 
+func (c *marketingCenterClient) GetPositionPlacement(ctx context.Context, in *PositionPlacementReq, opts ...grpc.CallOption) (*PositionPlacementResp, error) {
+	out := new(PositionPlacementResp)
+	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/GetPositionPlacement", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketingCenterClient) GetPositionElement(ctx context.Context, in *PositionElementReq, opts ...grpc.CallOption) (*PositionElementResp, error) {
+	out := new(PositionElementResp)
+	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/GetPositionElement", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MarketingCenterServer is the server API for MarketingCenter service.
 // All implementations must embed UnimplementedMarketingCenterServer
 // for forward compatibility
@@ -240,6 +270,7 @@ type MarketingCenterServer interface {
 	CampaignList(context.Context, *CampaignListReq) (*CampaignListResp, error)
 	CampaignUpdate(context.Context, *CampaignUpdateReq) (*BaseResp, error)
 	GetCampaignInfo(context.Context, *CampaignInfoReq) (*CampaignInfo, error)
+	CampaignBindApp(context.Context, *CampaignBindAppReq) (*BaseResp, error)
 	DictQuery(context.Context, *DictionaryReq) (*DictionaryResp, error)
 	Continents(context.Context, *EmptyParamsReq) (*ContinentResp, error)
 	GetCountries(context.Context, *EmptyParamsReq) (*CountriesResp, error)
@@ -256,6 +287,8 @@ type MarketingCenterServer interface {
 	GetPositions(context.Context, *PositionListReq) (*PositionListResp, error)
 	GetPositionInfo(context.Context, *CreativeSizeInfoReq) (*CreativeSizeInfoResp, error)
 	GetPositionPrice(context.Context, *PositionPriceReq) (*PositionPriceResp, error)
+	GetPositionPlacement(context.Context, *PositionPlacementReq) (*PositionPlacementResp, error)
+	GetPositionElement(context.Context, *PositionElementReq) (*PositionElementResp, error)
 	mustEmbedUnimplementedMarketingCenterServer()
 }
 
@@ -274,6 +307,9 @@ func (UnimplementedMarketingCenterServer) CampaignUpdate(context.Context, *Campa
 }
 func (UnimplementedMarketingCenterServer) GetCampaignInfo(context.Context, *CampaignInfoReq) (*CampaignInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCampaignInfo not implemented")
+}
+func (UnimplementedMarketingCenterServer) CampaignBindApp(context.Context, *CampaignBindAppReq) (*BaseResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CampaignBindApp not implemented")
 }
 func (UnimplementedMarketingCenterServer) DictQuery(context.Context, *DictionaryReq) (*DictionaryResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DictQuery not implemented")
@@ -322,6 +358,12 @@ func (UnimplementedMarketingCenterServer) GetPositionInfo(context.Context, *Crea
 }
 func (UnimplementedMarketingCenterServer) GetPositionPrice(context.Context, *PositionPriceReq) (*PositionPriceResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPositionPrice not implemented")
+}
+func (UnimplementedMarketingCenterServer) GetPositionPlacement(context.Context, *PositionPlacementReq) (*PositionPlacementResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPositionPlacement not implemented")
+}
+func (UnimplementedMarketingCenterServer) GetPositionElement(context.Context, *PositionElementReq) (*PositionElementResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPositionElement not implemented")
 }
 func (UnimplementedMarketingCenterServer) mustEmbedUnimplementedMarketingCenterServer() {}
 
@@ -404,6 +446,24 @@ func _MarketingCenter_GetCampaignInfo_Handler(srv interface{}, ctx context.Conte
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MarketingCenterServer).GetCampaignInfo(ctx, req.(*CampaignInfoReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MarketingCenter_CampaignBindApp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CampaignBindAppReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketingCenterServer).CampaignBindApp(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/marketing.MarketingCenter/CampaignBindApp",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketingCenterServer).CampaignBindApp(ctx, req.(*CampaignBindAppReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -696,6 +756,42 @@ func _MarketingCenter_GetPositionPrice_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MarketingCenter_GetPositionPlacement_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PositionPlacementReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketingCenterServer).GetPositionPlacement(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/marketing.MarketingCenter/GetPositionPlacement",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketingCenterServer).GetPositionPlacement(ctx, req.(*PositionPlacementReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MarketingCenter_GetPositionElement_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PositionElementReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketingCenterServer).GetPositionElement(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/marketing.MarketingCenter/GetPositionElement",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketingCenterServer).GetPositionElement(ctx, req.(*PositionElementReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MarketingCenter_ServiceDesc is the grpc.ServiceDesc for MarketingCenter service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -718,6 +814,10 @@ var MarketingCenter_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetCampaignInfo",
 			Handler:    _MarketingCenter_GetCampaignInfo_Handler,
+		},
+		{
+			MethodName: "CampaignBindApp",
+			Handler:    _MarketingCenter_CampaignBindApp_Handler,
 		},
 		{
 			MethodName: "DictQuery",
@@ -782,6 +882,14 @@ var MarketingCenter_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetPositionPrice",
 			Handler:    _MarketingCenter_GetPositionPrice_Handler,
+		},
+		{
+			MethodName: "GetPositionPlacement",
+			Handler:    _MarketingCenter_GetPositionPlacement_Handler,
+		},
+		{
+			MethodName: "GetPositionElement",
+			Handler:    _MarketingCenter_GetPositionElement_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

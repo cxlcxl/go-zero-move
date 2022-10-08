@@ -223,4 +223,32 @@ var (
 		OCpcStrategyQuantity: "优先跑量",
 		OCpcStrategyCost:     "优先低成本",
 	}
+	// PositionSubType 版位子形式
+	PositionSubType = map[string]string{
+		"SPLASH_PICTURE":            "开屏图片",
+		"SPLASH_VIDEO":              "开屏视频",
+		"NATIVE_BIG_PICTURE":        "信息流大图",
+		"FEED_SMALL_PICTURE":        "信息流小图",
+		"FEED_MULTI_PICTURE":        "信息流组图",
+		"FEED_VIDEO":                "信息流视频",
+		"FEED_PURE_PICTURE":         "信息流纯图",
+		"FEED_SHORT_TEXT":           "短链",
+		"FOCUS_PICTURE":             "焦点图",
+		"ROLL_VIDEO":                "视频贴片-视频",
+		"REWARD_VIDEO_APP":          "激励视频-应用",
+		"REWARD_VIDEO_NOT_APP":      "激励视频-非应用",
+		"APP_ICON":                  "应用图标",
+		"BANNER":                    "横幅",
+		"INTERSTITIAL_PICTURE":      "插屏图片",
+		"INTERSTITIAL_VIDEO":        "插屏视频",
+		"NATIVE_MULTI_SIZE_FOCUS":   "视频焦点图",
+		"EXPRESS_SPLASH_IMAGE":      "极速开屏图片",
+		"EXPRESS_SPLASH_VIDEO":      "极速开屏视频",
+		"SHOP_WINDOW":               "橱窗",
+		"SERVICE_CARD":              "服务卡片",
+		"BIG_SCREEN_VIDEO_ROLL":     "大屏视频贴片",
+		"BIG_SCREEN_POWER":          "大屏开机-视频",
+		"APP_ICON_DIRECT_SERVICE":   "应用图标-服务直达",
+		"SMART_SCREEN_SPLASH_VIDEO": "大屏开屏-视频",
+	}
 )

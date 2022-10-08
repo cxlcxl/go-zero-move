@@ -157,6 +157,7 @@ message CreativeSizeInfo  {
 message PositionListReq {
   string category = 1;
   int64 account_id = 2;
+  string product_type = 3;
 }
 message PositionListResp {
   repeated CreativeSizeInfo creative_size_info_list = 1;
@@ -241,6 +242,48 @@ message PositionPriceReq{
 message PositionPriceResp{
   double price = 1;
 }
+message CampaignBindAppReq{
+  repeated string campaign_id = 1;
+  string app_id = 2;
+}
+message PositionPlacementReq{
+  string creative_size_id = 1;
+}
+message PositionPlacementResp{
+  message Placement {
+    string creative_size = 1;
+    string sub_type = 2;
+  }
+  repeated Placement placements = 1;
+}
+message PositionElementReq {
+  string creative_size_id = 1;
+  string sub_type = 2;
+  uint64 width = 3;
+  uint64 height = 4;
+}
+message PositionElementResp {
+  message Element {
+    string element_id = 1;
+    string element_name = 2;
+    string element_title = 3;
+    string element_caption = 4;
+    int64  min_length = 5;
+    int64  max_length = 6;
+    int64  width = 7;
+    int64  height = 8;
+    int64  file_size_kb_limit = 9;
+    int64  min_width = 10;
+    int64  min_height = 11;
+    int64  gif_size_kb_limit = 12;
+    string file_format = 13;
+    string pattern = 14;
+    string duration = 15;
+    string min_occurs = 16;
+    string max_occurs = 17;
+  }
+  repeated Element elements = 1;
+}
 
 message EmptyParamsReq {}
 message BaseResp {}
@@ -250,6 +293,7 @@ service MarketingCenter{
   rpc CampaignList(CampaignListReq) returns(CampaignListResp);
   rpc CampaignUpdate(CampaignUpdateReq) returns(BaseResp);
   rpc GetCampaignInfo(CampaignInfoReq) returns(CampaignInfo);
+  rpc CampaignBindApp(CampaignBindAppReq) returns(BaseResp);
 
   rpc DictQuery(DictionaryReq) returns(DictionaryResp);
   rpc Continents(EmptyParamsReq) returns(ContinentResp);
@@ -270,4 +314,6 @@ service MarketingCenter{
   rpc GetPositions(PositionListReq) returns(PositionListResp);
   rpc GetPositionInfo(CreativeSizeInfoReq) returns(CreativeSizeInfoResp);
   rpc GetPositionPrice(PositionPriceReq) returns(PositionPriceResp);
+  rpc GetPositionPlacement(PositionPlacementReq) returns(PositionPlacementResp);
+  rpc GetPositionElement(PositionElementReq) returns(PositionElementResp);
 }

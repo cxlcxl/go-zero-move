@@ -185,9 +185,10 @@ type CampaignList struct {
 }
 
 type CampaignRequest struct {
-	Page      int64             `json:"page"`
-	PageSize  int64             `json:"page_size"`
-	Filtering CampaignFiltering `json:"filtering"`
+	AdvertiserId string            `json:"advertiser_id"`
+	Page         int64             `json:"page"`
+	PageSize     int64             `json:"page_size"`
+	Filtering    CampaignFiltering `json:"filtering"`
 }
 
 type CampaignFiltering struct {
@@ -224,5 +225,7 @@ type CampaignInfo struct {
 	CampaignDailyBudgetStatus string `json:"campaign_daily_budget_status"`
 	ShowStatus                string `json:"show_status"`
 	CampaignId                string `json:"campaign_id"`
-	TodayDailyBudget          int    `json:"today_daily_budget"`
+	TodayDailyBudget          int64  `json:"today_daily_budget"`
+	TomorrowDailyBudget       int64  `json:"tomorrow_daily_budget"`
+	MarketingGoal             string `json:"marketing_goal"`
 }

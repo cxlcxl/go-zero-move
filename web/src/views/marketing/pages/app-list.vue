@@ -8,8 +8,8 @@
       <el-input-number size="mini" :min="1" v-model="pages.page" :max="maxPage" @change="changePage"/>
     </div>
     <div :class="{'app-card': true, 'app-active': AppId === ''}" @click="handleAppChange('')">
-      <img :src="allPng"/>
-      <p class="app-name">全部应用</p>
+      <img :src="noDistributeApp"/>
+      <p class="app-name">未关联应用</p>
     </div>
     <div :class="{'app-card': true, 'app-active': AppId === app.app_id}"
          @click="handleAppChange(app.app_id)" v-for="app in appList.list">
@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import allPng from '@/assets/images/all.png'
+import noDistributeApp from '@/assets/images/no-app.png'
 import imageUnknown from '@/assets/images/image-unknown.png'
 import { campaignAppList } from '@/api/app'
 
@@ -33,7 +33,7 @@ export default {
   },
   data() {
     return {
-      allPng,
+      noDistributeApp,
       imageUnknown,
       loading: false,
       appList: {
@@ -82,7 +82,7 @@ export default {
 .app-box {
   text-align: center;
   width: 120px;
-  height: 550px;
+  height: 580px;
   overflow-y: scroll;
   padding: 5px 10px 5px 13px;
 
@@ -104,8 +104,8 @@ export default {
   }
 
   .app-card {
-    width: 64px;
-    padding: 0 !important;
+    width: 74px;
+    padding: 3px 0 !important;
     border: 2px solid transparent;
     border-radius: 5px;
     text-align: center;
@@ -115,7 +115,7 @@ export default {
     img {
       width: 60px;
       height: 60px;
-      margin: 0;
+      margin: 0 auto;
       padding: 0;
       display: block;
       border-radius: 13px;
@@ -123,7 +123,7 @@ export default {
 
     p {
       margin: 3px 0 0 0;
-      padding: 0;
+      padding: 0 3px;
       line-height: 18px;
       color: #606266;
       font-size: 12px;

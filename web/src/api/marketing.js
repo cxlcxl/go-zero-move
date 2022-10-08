@@ -30,10 +30,3 @@ export function dictionaryQuery(params) {
     params
   });
 }
-
-export function creativeList(params) {
-  return request({
-    url: "/marketing/creative/query",
-    method: "get", params
-  });
-}

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/Masterminds/squirrel"
 	"github.com/zeromicro/go-zero/core/stores/cache"
+	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
@@ -62,6 +63,9 @@ func (m *defaultUsersModel) UserList(ctx context.Context, username, email string
 	}
 	sql, args, err := query.Offset(offset).Limit(limit).ToSql()
 	err = m.QueryRowsNoCacheCtx(ctx, &users, sql, args...)
+	if len(users) == 0 {
+		return nil, 0, sqlc.ErrNotFound
+	}
 	return
 }
 

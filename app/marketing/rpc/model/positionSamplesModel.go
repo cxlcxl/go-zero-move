@@ -34,12 +34,8 @@ func (m *defaultPositionSamplesModel) SampleList(ctx context.Context, creativeSi
 	in, args, _ := utils.WhereIn(creativeSizeIds)
 	sql := fmt.Sprintf("select %s from %s where creative_size_id in %s", positionSamplesRows, m.table, in)
 	err = m.conn.QueryRowsCtx(ctx, &samples, sql, args...)
-	switch err {
-	case nil:
-		return samples, nil
-	case sqlc.ErrNotFound:
-		return nil, ErrNotFound
-	default:
-		return nil, err
+	if len(samples) == 0 {
+		return nil, sqlc.ErrNotFound
 	}
+	return
 }

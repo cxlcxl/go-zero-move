@@ -9,16 +9,16 @@ import (
 	"github.com/zeromicro/go-zero/rest/httpx"
 )
 
-func creativeQueryHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func positionPlacementHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.CreativeQueryReq
+		var req types.PositionPlacementReq
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.Error(w, err)
 			return
 		}
 
-		l := logic.NewCreativeQueryLogic(r.Context(), svcCtx)
-		resp, err := l.CreativeQuery(&req)
+		l := logic.NewPositionPlacementLogic(r.Context(), svcCtx)
+		resp, err := l.PositionPlacement(&req)
 		if err != nil {
 			httpx.Error(w, err)
 		} else {

@@ -30,6 +30,7 @@ func (l *GetTokenLogic) GetToken(in *account.GetTokenReq) (*account.TokenInfo, e
 	}
 	return &account.TokenInfo{
 		AccountId:    token.AccountId,
+		AdvertiserId: token.AdvertiserId,
 		AccessToken:  token.AccessToken,
 		RefreshToken: token.RefreshToken,
 		ExpiredAt:    token.ExpiredAt.Unix(),

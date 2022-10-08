@@ -36,6 +36,7 @@ func (l *SetTokenLogic) SetToken(in *account.TokenInfo) (*account.BaseResp, erro
 		err = l.svcCtx.TokenModel.Update(l.ctx, &model.Tokens{
 			Id:           token.Id,
 			AccountId:    in.AccountId,
+			AdvertiserId: token.AdvertiserId,
 			AccessToken:  in.AccessToken,
 			RefreshToken: in.RefreshToken,
 			ExpiredAt:    time.Unix(expire, 0),
@@ -43,8 +44,13 @@ func (l *SetTokenLogic) SetToken(in *account.TokenInfo) (*account.BaseResp, erro
 			TokenType:    in.TokenType,
 		})
 	} else {
+		act, err := l.svcCtx.AccountModel.FindOne(l.ctx, in.AccountId)
+		if err != nil {
+			return nil, err
+		}
 		_, err = l.svcCtx.TokenModel.Insert(l.ctx, &model.Tokens{
 			AccountId:    in.AccountId,
+			AdvertiserId: act.AdvertiserId,
 			AccessToken:  in.AccessToken,
 			RefreshToken: in.RefreshToken,
 			ExpiredAt:    time.Unix(expire, 0),

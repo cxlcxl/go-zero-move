@@ -14,7 +14,7 @@ type (
 	// and implement the added methods in customPositionsModel.
 	PositionsModel interface {
 		positionsModel
-		PositionList(ctx context.Context, category string, accountId int64) ([]*Positions, error)
+		PositionList(ctx context.Context, category, productType string, accountId int64) ([]*Positions, error)
 	}
 
 	customPositionsModel struct {
@@ -29,15 +29,11 @@ func NewPositionsModel(conn sqlx.SqlConn) PositionsModel {
 	}
 }
 
-func (m *defaultPositionsModel) PositionList(ctx context.Context, category string, accountId int64) (positions []*Positions, err error) {
-	sql := fmt.Sprintf("select %s from %s where category = ? and account_id = ?", positionsRows, m.table)
-	err = m.conn.QueryRowsCtx(ctx, &positions, sql, category, accountId)
-	switch err {
-	case nil:
-		return positions, nil
-	case sqlc.ErrNotFound:
-		return nil, ErrNotFound
-	default:
-		return nil, err
+func (m *defaultPositionsModel) PositionList(ctx context.Context, category, productType string, accountId int64) (positions []*Positions, err error) {
+	sql := fmt.Sprintf("select %s from %s where category = ? and account_id = ? and FIND_IN_SET(?, support_product_type)", positionsRows, m.table)
+	err = m.conn.QueryRowsCtx(ctx, &positions, sql, category, accountId, productType)
+	if len(positions) == 0 {
+		return nil, sqlc.ErrNotFound
 	}
+	return
 }

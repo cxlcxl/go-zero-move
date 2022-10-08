@@ -1,6 +1,7 @@
 package model
 
 import (
+	"business/common/utils"
 	"context"
 	"errors"
 	"github.com/Masterminds/squirrel"
@@ -17,6 +18,7 @@ type (
 		Trans(ctx context.Context, fn func(context context.Context, session sqlx.Session) error) error
 		CampaignList(ctx context.Context, appId, campaignId, campaignName, campaignType string, offset, limit uint64) ([]*Campaigns, int64, error)
 		UpdateByCampaignId(ctx context.Context, campaignId string, values map[string]interface{}) error
+		BindApp(ctx context.Context, campaignIds []string, appId string) error
 	}
 
 	customCampaignsModel struct {
@@ -43,10 +45,7 @@ func (m *defaultCampaignsModel) CampaignList(ctx context.Context, appId, campaig
 	if total == 0 || err != nil {
 		return
 	}
-	query := squirrel.Select(campaignsRows).From(m.table)
-	if len(appId) > 0 {
-		query = query.Where("app_id = ?", appId)
-	}
+	query := squirrel.Select(campaignsRows).From(m.table).Where("app_id = ?", appId)
 	if len(campaignId) > 0 {
 		query = query.Where("campaign_id like ?", "%"+campaignId+"%")
 	}
@@ -62,10 +61,7 @@ func (m *defaultCampaignsModel) CampaignList(ctx context.Context, appId, campaig
 }
 
 func (m *defaultCampaignsModel) campaignListCount(ctx context.Context, appId, campaignId, campaignName, campaignType string) (total int64, err error) {
-	query := squirrel.Select("COUNT(id) as ct").From(m.table)
-	if len(appId) > 0 {
-		query = query.Where("app_id = ?", appId)
-	}
+	query := squirrel.Select("COUNT(id) as ct").From(m.table).Where("app_id = ?", appId)
 	if len(campaignId) > 0 {
 		query = query.Where("campaign_id like ?", "%"+campaignId+"%")
 	}
@@ -94,6 +90,19 @@ func (m *defaultCampaignsModel) UpdateByCampaignId(ctx context.Context, campaign
 		query = query.Set(k, v)
 	}
 	sql, args, err := query.ToSql()
+	if err != nil {
+		return err
+	}
+	_, err = m.conn.ExecCtx(ctx, sql, args...)
+	return err
+}
+
+func (m *defaultCampaignsModel) BindApp(ctx context.Context, campaignIds []string, appId string) (err error) {
+	if len(campaignIds) == 0 || appId == "" {
+		return errors.New("value can not be empty")
+	}
+	in, wheres, _ := utils.WhereIn(campaignIds)
+	sql, args, err := squirrel.Update(m.table).Where("campaign_id in "+in, wheres...).Set("app_id", appId).ToSql()
 	if err != nil {
 		return err
 	}

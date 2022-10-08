@@ -2,7 +2,6 @@ package logic
 
 import (
 	"business/app/marketing/rpc/marketingcenter"
-	"business/common/vars"
 	"context"
 
 	"business/app/marketing/api/internal/svc"
@@ -34,8 +33,5 @@ func (l *AssetBindLogic) AssetBind(req *types.AssetBindReq) (resp *types.BaseRes
 		return nil, err
 	}
 
-	return &types.BaseResp{
-		Code: vars.ResponseCodeOk,
-		Msg:  vars.ResponseMsg[vars.ResponseCodeOk],
-	}, nil
+	return successFul(), nil
 }

@@ -56,18 +56,18 @@ service marketing-api {
 	@doc "计划所需资源"
 	@handler campaignResources
 	get /campaign/resources returns(CampaignResources)
-	
 	@doc "创建计划"
 	@handler campaignCreate
 	post /campaign/create (CampaignCreateReq) returns (CampaignCreateResp)
-	
 	@doc "计划详情"
 	@handler campaignInfo
 	get /campaign/info (CampaignInfoReq) returns (CampaignInfoResp)
-	
 	@doc "计划列表"
 	@handler campaignList
 	get /campaign/list (CampaignListReq) returns (CampaignListResp)
+	@doc "计划绑定应用"
+	@handler campaignBindApp
+	post /campaign/bind-app (CampaignBindAppReq) returns (BaseResp)
 	
 	@doc "转化跟踪查询"
 	@handler trackingList
@@ -92,48 +92,44 @@ service marketing-api {
 	@handler targetingCreate
 	post /targeting/create (TargetingCreateReq) returns (TargetingCreateResp)
 	
-	@doc "版位类别"
-	@handler creativeCategory
-	get /resource/creative-category returns (AdsMapResourceResp)
-	
 	@doc "付费方式"
 	@handler Pricing
 	get /resource/pricing returns (AdsMapResourceResp)
 	
+	@doc "版位类别"
+	@handler positionCategory
+	get /position/category returns (AdsMapResourceResp)
 	@doc "版位查询"
-	@handler creativeQuery
-	get /creative/query(CreativeQueryReq) returns (CreativeQueryResp)
+	@handler positionQuery
+	get /position/query(PositionQueryReq) returns (PositionQueryResp)
 	@doc "版位低价查询"
-	@handler creativePrice
-	get /creative/price(CreativeSizePriceReq) returns (CreativeSizePriceResp)
+	@handler positionPrice
+	get /position/price(PositionPriceReq) returns (PositionPriceResp)
 	@doc "版位元素"
 	@handler positionElement
-	get /creative/position-element(PositionElementReq) returns (PositionElementResp)
+	post /position/element(PositionElementReq) returns (PositionElementResp)
+	@doc "版位创意格式"
+	@handler positionPlacement
+	get /position/placement (PositionPlacementReq) returns (PositionPlacementResp)
 	
 	@doc "素材同步"
 	@handler syncAsset
 	get /asset/sync(SyncAssetReq) returns (BaseResp)
-	
 	@doc "素材列表"
 	@handler assetList
 	get /asset/list(AssetListReq) returns (AssetListResp)
-	
 	@doc "素材删除"
 	@handler assetDelete
 	post /asset/delete(AssetDeleteReq) returns (BaseResp)
-	
 	@doc "素材上传"
 	@handler assetUpload
 	post /asset/upload(AssetUploadReq) returns (BaseResp)
-	
 	@doc "素材上传文件 Token"
 	@handler assetFileToken
 	get /asset/token (AssetFileTokenReq) returns (AssetFileTokenResp)
-	
 	@doc "素材宽高尺寸限制"
 	@handler assetDimension
 	get /asset/dimension returns (AssetDimensionResp)
-	
 	@doc "素材绑定"
 	@handler assetBind
 	post /asset/bind(AssetBindReq) returns (BaseResp)

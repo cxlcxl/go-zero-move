@@ -1,7 +1,8 @@
 package validators
 
 const (
-	passwordRule = "^[a-zA-z]+[a-zA-Z0-9@.&!#?,%$]{5,17}$"
+	passwordRule     = `^[a-zA-z]+[a-zA-Z0-9@.&!#?,%$]{5,17}$`
+	creativeSizeRule = `^(\d{2,4})([*]{1})(\d{2,4})$`
 	// 配置代码
 	configKeyRule = `^[a-zA-Z]+[a-zA-Z0-9_]{0,49}$`
 	// 邮箱正则

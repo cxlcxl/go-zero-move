@@ -10,6 +10,7 @@ var vs = map[string]func(l validator.FieldLevel) bool{
 	"password":      password,
 	"campaign_type": campaignType,
 	"product_type":  productType,
+	"creativeSize":  creativeSize,
 }
 
 // 检查密码
@@ -38,4 +39,14 @@ func productType(l validator.FieldLevel) bool {
 		return false
 	}
 	return true
+}
+
+//
+func creativeSize(l validator.FieldLevel) bool {
+	v := l.Field().String()
+	ok, err := regexp.MatchString(creativeSizeRule, v)
+	if err != nil {
+		return false
+	}
+	return ok
 }

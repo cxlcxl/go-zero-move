@@ -59,11 +59,7 @@ func (m *defaultAssetsModel) AssetList(ctx context.Context, appId, assetType str
 	if total == 0 || err != nil {
 		return
 	}
-	query := squirrel.Select(assetsRows).From(m.table)
-
-	if len(appId) > 0 {
-		query = query.Where("app_id = ?", appId)
-	}
+	query := squirrel.Select(assetsRows).From(m.table).Where("app_id = ?", appId)
 	if len(assetType) > 0 {
 		query = query.Where("asset_type = ?", assetType)
 	}
@@ -79,10 +75,7 @@ func (m *defaultAssetsModel) AssetList(ctx context.Context, appId, assetType str
 }
 
 func (m *defaultAssetsModel) assetListCount(ctx context.Context, appId, assetType string, w, h int64) (total int64, err error) {
-	query := squirrel.Select("COUNT(id) as ct").From(m.table)
-	if len(appId) > 0 {
-		query = query.Where("app_id = ?", appId)
-	}
+	query := squirrel.Select("COUNT(id) as ct").From(m.table).Where("app_id = ?", appId)
 	if len(assetType) > 0 {
 		query = query.Where("asset_type = ?", assetType)
 	}

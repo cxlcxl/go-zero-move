@@ -10,21 +10,21 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type CreativeCategoryLogic struct {
+type PositionCategoryLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewCreativeCategoryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreativeCategoryLogic {
-	return &CreativeCategoryLogic{
+func NewPositionCategoryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PositionCategoryLogic {
+	return &PositionCategoryLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *CreativeCategoryLogic) CreativeCategory() (resp *types.AdsMapResourceResp, err error) {
+func (l *PositionCategoryLogic) PositionCategory() (resp *types.AdsMapResourceResp, err error) {
 	return &types.AdsMapResourceResp{
 		BaseResp: types.BaseResp{
 			Code: vars.ResponseCodeOk,

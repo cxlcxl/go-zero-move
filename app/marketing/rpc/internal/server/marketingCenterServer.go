@@ -42,6 +42,11 @@ func (s *MarketingCenterServer) GetCampaignInfo(ctx context.Context, in *marketi
 	return l.GetCampaignInfo(in)
 }
 
+func (s *MarketingCenterServer) CampaignBindApp(ctx context.Context, in *marketing.CampaignBindAppReq) (*marketing.BaseResp, error) {
+	l := logic.NewCampaignBindAppLogic(ctx, s.svcCtx)
+	return l.CampaignBindApp(in)
+}
+
 func (s *MarketingCenterServer) DictQuery(ctx context.Context, in *marketing.DictionaryReq) (*marketing.DictionaryResp, error) {
 	l := logic.NewDictQueryLogic(ctx, s.svcCtx)
 	return l.DictQuery(in)
@@ -120,4 +125,14 @@ func (s *MarketingCenterServer) GetPositionInfo(ctx context.Context, in *marketi
 func (s *MarketingCenterServer) GetPositionPrice(ctx context.Context, in *marketing.PositionPriceReq) (*marketing.PositionPriceResp, error) {
 	l := logic.NewGetPositionPriceLogic(ctx, s.svcCtx)
 	return l.GetPositionPrice(in)
+}
+
+func (s *MarketingCenterServer) GetPositionPlacement(ctx context.Context, in *marketing.PositionPlacementReq) (*marketing.PositionPlacementResp, error) {
+	l := logic.NewGetPositionPlacementLogic(ctx, s.svcCtx)
+	return l.GetPositionPlacement(in)
+}
+
+func (s *MarketingCenterServer) GetPositionElement(ctx context.Context, in *marketing.PositionElementReq) (*marketing.PositionElementResp, error) {
+	l := logic.NewGetPositionElementLogic(ctx, s.svcCtx)
+	return l.GetPositionElement(in)
 }

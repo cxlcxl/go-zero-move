@@ -8,10 +8,10 @@ import (
 	"github.com/zeromicro/go-zero/rest/httpx"
 )
 
-func creativeCategoryHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func positionCategoryHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		l := logic.NewCreativeCategoryLogic(r.Context(), svcCtx)
-		resp, err := l.CreativeCategory()
+		l := logic.NewPositionCategoryLogic(r.Context(), svcCtx)
+		resp, err := l.PositionCategory()
 		if err != nil {
 			httpx.Error(w, err)
 		} else {

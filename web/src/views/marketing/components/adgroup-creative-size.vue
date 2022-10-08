@@ -26,6 +26,8 @@
 </template>
 
 <script>
+import { positionPlacement } from '@/api/marketing-position'
+
 export default {
   props: {
     CreativeSizeList: {
@@ -33,7 +35,7 @@ export default {
       required: true
     },
     CreativeSizeId: {
-      type: Number,
+      type: String,
       required: true
     }
   },
@@ -41,7 +43,7 @@ export default {
     return {
       creativeLoading: false,
       creative_samples: [],
-      creative_size_id: 0
+      creative_size_id: ''
     }
   },
   mounted() {
@@ -60,12 +62,19 @@ export default {
       }
     },
     handleChangeCreative(creative) {
-      console.log("所选择的版位：",creative)
       this.creative_size_id = creative.creative_size_id
+      if (this.CreativeSizeId === creative.creative_size_id) {
+        return
+      }
       // 版位缩略图轮播
       this.creative_samples = Array.isArray(creative.samples) ? creative.samples : []
-      // 回调
-      this.$emit('handle-change', this.creative_size_id, creative.support_price_type.split(","))
+      // 创意格式获取
+      positionPlacement({creative_size_id: creative.creative_size_id}).then(res => {
+        // 回调
+        this.$emit('handle-change', this.creative_size_id, creative.support_price_type.split(","), res.data)
+      }).catch(() => {
+        this.$emit('handle-change', this.creative_size_id, creative.support_price_type.split(","), {})
+      })
     }
   }
 }

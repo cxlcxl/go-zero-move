@@ -29,7 +29,7 @@ func Position() {
 	fmt.Println()
 }
 
-func PriceManual(_ string, _ int64) {
+func PriceManual(_ time.Time, _ int64) {
 	Price()
 }
 func Price() {
@@ -52,7 +52,7 @@ func Price() {
 	fmt.Println()
 }
 
-func ElementManual(_ string, _ int64) {
+func ElementManual(_ time.Time, _ int64) {
 	Element()
 }
 

@@ -10,7 +10,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"github.com/shopspring/decimal"
-	"github.com/zeromicro/go-zero/core/stores/sqlx"
+	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"io/ioutil"
 	"math/rand"
 	"mime/multipart"
@@ -135,7 +135,7 @@ func RpcError(err error, emptyErrMsg string) error {
 
 // IsErrNotFound 拆出 RPC 返回的错误
 func IsErrNotFound(err error) bool {
-	return strings.Contains(err.Error(), sqlx.ErrNotFound.Error())
+	return strings.Contains(err.Error(), sqlc.ErrNotFound.Error())
 }
 
 // Pagination 分页信息

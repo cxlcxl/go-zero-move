@@ -30,3 +30,11 @@ export function campaignInfo(campaign_id) {
     params: {campaign_id}
   });
 }
+
+export function campaignBindApp(data) {
+  return request({
+    url: "/marketing/campaign/bind-app",
+    method: "post",
+    data
+  });
+}

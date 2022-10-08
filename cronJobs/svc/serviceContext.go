@@ -18,6 +18,7 @@ type ServiceContext struct {
 	PositionModel      model.PositionsModel
 	PriceModel         model.PositionBasePricesModel
 	ElementModel       model.PositionElementsModel
+	CampaignModel      model.CampaignsModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -34,5 +35,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		PositionModel:      model.NewPositionsModel(conn),
 		PriceModel:         model.NewPositionBasePricesModel(conn),
 		ElementModel:       model.NewPositionElementsModel(conn),
+		CampaignModel:      model.NewCampaignsModel(conn),
 	}
 }

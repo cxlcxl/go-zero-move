@@ -6,7 +6,6 @@ import (
 	"business/app/marketing/rpc/marketingcenter"
 	"business/common/curl"
 	"business/common/utils"
-	"business/common/vars"
 	"context"
 	"errors"
 	"fmt"
@@ -73,8 +72,5 @@ func (l *AssetDeleteLogic) AssetDelete(req *types.AssetDeleteReq) (resp *types.B
 	if _, err = l.svcCtx.MarketingRpcClient.DeleteAssets(l.ctx, &marketingcenter.AssetDeleteReq{AssetIds: removeAssetIds}); err != nil {
 		return nil, utils.RpcError(err, "")
 	}
-	return &types.BaseResp{
-		Code: vars.ResponseCodeOk,
-		Msg:  vars.ResponseMsg[vars.ResponseCodeOk],
-	}, nil
+	return successFul(), nil
 }

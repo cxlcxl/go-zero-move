@@ -31,8 +31,7 @@ func NewRolesModel(conn sqlx.SqlConn, c cache.CacheConf) RolesModel {
 	}
 }
 
-func (m *defaultRolesModel) RoleList(ctx context.Context, roleName string, state int64, ids []int64) ([]*Roles, error) {
-	var roles []*Roles
+func (m *defaultRolesModel) RoleList(ctx context.Context, roleName string, state int64, ids []int64) (roles []*Roles, err error) {
 	sb := squirrel.Select(rolesRows).From(m.table)
 	if state >= 0 {
 		sb = sb.Where("state = ?", state)
@@ -49,14 +48,10 @@ func (m *defaultRolesModel) RoleList(ctx context.Context, roleName string, state
 		return nil, err
 	}
 	err = m.QueryRowsNoCacheCtx(ctx, &roles, query, args...)
-	switch err {
-	case nil:
-		return roles, nil
-	case sqlc.ErrNotFound:
-		return nil, ErrNotFound
-	default:
-		return nil, err
+	if len(roles) == 0 {
+		return nil, sqlc.ErrNotFound
 	}
+	return
 }
 
 func whereIntIn(ids []int64) (w string, args []interface{}) {

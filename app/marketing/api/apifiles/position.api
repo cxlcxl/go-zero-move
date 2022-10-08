@@ -1,15 +1,16 @@
 syntax = "v1"
 
 type (
-    CreativeQueryReq {
+    PositionQueryReq {
         Category  string `form:"category"`
         AccountId int64  `form:"account_id"`
+        ProductType string `form:"product_type"`
     }
-    CreativeQueryResp {
+    PositionQueryResp {
         BaseResp
-        Data []*CreativeSizeInfo `json:"data"`
+        Data []*PositionInfo `json:"data"`
     }
-    CreativeSizeInfo {
+    PositionInfo {
         CreativeSizeId              string           `json:"creative_size_id"`
         CreativeSizeNameDsp         string           `json:"creative_size_name_dsp"`
         CreativeSizeNameDescription string           `json:"creative_size_description"`
@@ -20,11 +21,11 @@ type (
         Samples                     []*SampleInfo    `json:"samples"`
         Placements                  []*PlacementInfo `json:"placements"`
     }
-    CreativeSizePriceReq {
+    PositionPriceReq {
         CreativeSizeId string `form:"creative_size_id"`
         PriceType      string `form:"price_type"`
     }
-    CreativeSizePriceResp {
+    PositionPriceResp {
         BaseResp
         Data float64 `json:"data"`
     }
@@ -37,23 +38,28 @@ type (
         CreativeSize        string `json:"creative_size"`
         CreativeSizeSubType string `json:"creative_size_sub_type"`
     }
-    PositionElementReq {
+    PositionPlacementReq {
         CreativeSizeId string `form:"creative_size_id"`
     }
+    PositionPlacementResp {
+        *BaseResp
+        Data PlacementResp `json:"data"`
+    }
+    PlacementResp {
+        Placements map[string][]string `json:"placements"`
+        SubTypes map[string]string `json:"sub_types"`
+    }
+    PositionElementReq {
+        CreativeSizeId string `json:"creative_size_id" validate:"required"`
+        CreativeSize string `json:"creative_size" validate:"required,creativeSize"`
+        SubType string `json:"sub_type" validate:"required"`
+    }
     PositionElementResp {
-        BaseResp
-        Data PositionElement `json:"data"`
+        *BaseResp
+        Data []*ElementItem `json:"data"`
     }
-    PositionElement {
-        SubTypes []string `json:"sub_types"`
-        Elements []*Element `json:"elements"`
-    }
-    Element {
-        SubType string `json:"sub_type"`
-        List []*ElementList `json:"list"`
-    }
-    ElementList {
-        ElementId int64 `json:"element_id"`
+    ElementItem {
+        ElementId string `json:"element_id"`
         ElementName string `json:"element_name"`
         ElementTitle string `json:"element_title"`
         ElementCaption string `json:"element_caption"`
@@ -62,5 +68,13 @@ type (
         Width int64 `json:"width"`
         Height int64 `json:"height"`
         FileSizeKBLimit int64 `json:"file_size_kb_limit"`
+        MinWidth int64 `json:"min_width"`
+        MinHeight int64 `json:"min_height"`
+        GifSizeKbLimit int64 `json:"gif_size_kb_limit"`
+        FileFormat string `json:"file_format"`
+        Pattern string `json:"pattern"`
+        Duration string `json:"duration"`
+        MinOccurs string `json:"min_occurs"`
+        MaxOccurs string `json:"max_occurs"`
     }
 )

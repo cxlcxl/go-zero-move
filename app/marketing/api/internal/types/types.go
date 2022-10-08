@@ -145,6 +145,11 @@ type CampaignInfoResp struct {
 	Data Campaign `json:"data"`
 }
 
+type CampaignBindAppReq struct {
+	CampaignIds []string `json:"campaign_ids"`
+	AppId       string   `json:"app_id"`
+}
+
 type SyncAssetReq struct {
 	AppId string `form:"app_id"`
 }
@@ -286,17 +291,18 @@ type TrackingItem struct {
 	TrackingId int64  `json:"tracking_id"`
 }
 
-type CreativeQueryReq struct {
-	Category  string `form:"category"`
-	AccountId int64  `form:"account_id"`
+type PositionQueryReq struct {
+	Category    string `form:"category"`
+	AccountId   int64  `form:"account_id"`
+	ProductType string `form:"product_type"`
 }
 
-type CreativeQueryResp struct {
+type PositionQueryResp struct {
 	BaseResp
-	Data []*CreativeSizeInfo `json:"data"`
+	Data []*PositionInfo `json:"data"`
 }
 
-type CreativeSizeInfo struct {
+type PositionInfo struct {
 	CreativeSizeId              string           `json:"creative_size_id"`
 	CreativeSizeNameDsp         string           `json:"creative_size_name_dsp"`
 	CreativeSizeNameDescription string           `json:"creative_size_description"`
@@ -308,12 +314,12 @@ type CreativeSizeInfo struct {
 	Placements                  []*PlacementInfo `json:"placements"`
 }
 
-type CreativeSizePriceReq struct {
+type PositionPriceReq struct {
 	CreativeSizeId string `form:"creative_size_id"`
 	PriceType      string `form:"price_type"`
 }
 
-type CreativeSizePriceResp struct {
+type PositionPriceResp struct {
 	BaseResp
 	Data float64 `json:"data"`
 }
@@ -329,31 +335,33 @@ type PlacementInfo struct {
 	CreativeSizeSubType string `json:"creative_size_sub_type"`
 }
 
-type PositionElementReq struct {
+type PositionPlacementReq struct {
 	CreativeSizeId string `form:"creative_size_id"`
 }
 
+type PositionPlacementResp struct {
+	*BaseResp
+	Data PlacementResp `json:"data"`
+}
+
+type PlacementResp struct {
+	Placements map[string][]string `json:"placements"`
+	SubTypes   map[string]string   `json:"sub_types"`
+}
+
+type PositionElementReq struct {
+	CreativeSizeId string `json:"creative_size_id" validate:"required"`
+	CreativeSize   string `json:"creative_size" validate:"required,creativeSize"`
+	SubType        string `json:"sub_type" validate:"required"`
+}
+
 type PositionElementResp struct {
-	BaseResp
-	Data PositionElement `json:"data"`
+	*BaseResp
+	Data []*ElementItem `json:"data"`
 }
 
-type PositionElement struct {
-	SubTypes []*CreativeSizeSubType `json:"sub_types"`
-	Elements []*Element             `json:"elements"`
-}
-
-type CreativeSizeSubType struct {
-	SubType string `json:"sub_type"`
-}
-
-type Element struct {
-	SubType string         `json:"sub_type"`
-	List    []*ElementList `json:"list"`
-}
-
-type ElementList struct {
-	ElementId       int64  `json:"element_id"`
+type ElementItem struct {
+	ElementId       string `json:"element_id"`
 	ElementName     string `json:"element_name"`
 	ElementTitle    string `json:"element_title"`
 	ElementCaption  string `json:"element_caption"`
@@ -362,4 +370,12 @@ type ElementList struct {
 	Width           int64  `json:"width"`
 	Height          int64  `json:"height"`
 	FileSizeKBLimit int64  `json:"file_size_kb_limit"`
+	MinWidth        int64  `json:"min_width"`
+	MinHeight       int64  `json:"min_height"`
+	GifSizeKbLimit  int64  `json:"gif_size_kb_limit"`
+	FileFormat      string `json:"file_format"`
+	Pattern         string `json:"pattern"`
+	Duration        string `json:"duration"`
+	MinOccurs       string `json:"min_occurs"`
+	MaxOccurs       string `json:"max_occurs"`
 }

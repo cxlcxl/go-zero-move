@@ -2,16 +2,12 @@ package logic
 
 import (
 	"business/common/curl"
-	"business/common/kfk"
 	"business/cronJobs/jobs"
+	"business/cronJobs/model"
 	"business/cronJobs/svc"
 	"business/cronJobs/vars/statements"
 	"context"
-	"errors"
 	"fmt"
-	"github.com/Shopify/sarama"
-	"log"
-	"sync"
 	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -19,13 +15,13 @@ import (
 
 type CampaignQueryLogic struct {
 	logx.Logger
-	ctx           context.Context
-	svcCtx        *svc.ServiceContext
-	tokenChan     chan *jobs.QueryParam
-	wg            sync.WaitGroup
-	statDay       string
-	kafkaProducer sarama.SyncProducer
-	pageSize      int64
+	ctx       context.Context
+	svcCtx    *svc.ServiceContext
+	tokenChan chan *jobs.QueryParam
+	statDay   string
+	pageSize  int64
+	campaigns []*model.Campaigns
+	worker    int
 }
 
 func NewCampaignQueryLogic(ctx context.Context, svcCtx *svc.ServiceContext, day string) *CampaignQueryLogic {
@@ -34,33 +30,34 @@ func NewCampaignQueryLogic(ctx context.Context, svcCtx *svc.ServiceContext, day 
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		tokenChan: make(chan *jobs.QueryParam),
-		wg:        sync.WaitGroup{},
+		campaigns: make([]*model.Campaigns, 0),
 		statDay:   day,
 		pageSize:  50,
+		worker:    0,
 	}
 }
 
 func (l *CampaignQueryLogic) CampaignQuery() (err error) {
-	l.kafkaProducer, err = kfk.NewProducer(l.svcCtx.Config.Kafka.Host)
 	if err != nil {
 		return err
 	}
-	defer l.kafkaProducer.Close()
 	go jobs.GetTokens(l.ctx, l.svcCtx, l.tokenChan)
 
 	for token := range l.tokenChan {
-		l.wg.Add(1)
-		go l.query(token, 1)
+		l.query(token, 1)
 	}
-	l.wg.Wait()
+
+	if len(l.campaigns) > 0 {
+		err = l.svcCtx.CampaignModel.BatchInsert(l.ctx, l.campaigns)
+	}
 	return
 }
 
-func (l *CampaignQueryLogic) query(param *jobs.QueryParam, page int64) (err error) {
-	defer l.wg.Done()
+func (l *CampaignQueryLogic) query(param *jobs.QueryParam, page int64) {
 	data := statements.CampaignRequest{
-		Page:     page,
-		PageSize: l.pageSize,
+		AdvertiserId: param.AdvertiserId,
+		Page:         page,
+		PageSize:     l.pageSize,
 		Filtering: statements.CampaignFiltering{
 			UpdatedBeginTime: l.statDay + " 00:00:00",
 			UpdatedEndTime:   l.statDay + " 23:59:59",
@@ -69,28 +66,42 @@ func (l *CampaignQueryLogic) query(param *jobs.QueryParam, page int64) (err erro
 	var response statements.CampaignResponse
 	c, err := curl.New(l.svcCtx.Config.MarketingApis.Promotion.Campaign).Get().JsonData(data)
 	if err != nil {
-		return err
-	}
-	if err = c.Request(&response, curl.Authorization(param.AccessToken)); err != nil {
-		return err
-	}
-	if response.Code != "200" {
-		return errors.New(response.Message)
-	}
-	if len(response.Data.Data) == 0 {
-		log.Println("查无数据")
+		fmt.Println("参数生成失败", err)
 		return
 	}
-	if err = jobs.SetDataToKafka(l.kafkaProducer, response.Data.Data, l.svcCtx.Config.Kafka.Topics.Campaign); err != nil {
-		log.Println("数据写入 kafka 失败：", err)
-	} else {
-		logMsg := fmt.Sprintf("写入 Topic: %s, 数量: %d 条, 页码: %d, 所属账户: %d",
-			l.svcCtx.Config.Kafka.Topics.Campaign,
-			response.Data.Total,
-			page,
-			param.AccountId,
-		)
-		log.Println(logMsg)
+	if err = c.Request(&response, curl.Authorization(param.AccessToken)); err != nil {
+		fmt.Println("接口请求失败", err)
+		return
+	}
+	if response.Code != "200" {
+		fmt.Println("接口请求失败", response.Code, response.Message)
+		return
+	}
+	if len(response.Data.Data) == 0 {
+		return
+	}
+	now := time.Now()
+	for _, datum := range response.Data.Data {
+		l.campaigns = append(l.campaigns, &model.Campaigns{
+			CampaignId:                datum.CampaignId,
+			AppId:                     "",
+			CampaignName:              datum.CampaignName,
+			AccountId:                 param.AccountId,
+			AdvertiserId:              param.AdvertiserId,
+			OptStatus:                 datum.CampaignStatus,
+			CampaignDailyBudgetStatus: datum.CampaignDailyBudgetStatus,
+			ProductType:               datum.ProductType,
+			ShowStatus:                datum.ShowStatus,
+			UserBalanceStatus:         datum.UserBalanceStatus,
+			FlowResource:              datum.FlowResource,
+			SyncFlowResource:          datum.SyncFlowResourceSearchAd,
+			CampaignType:              datum.CampaignType,
+			TodayDailyBudget:          datum.TodayDailyBudget,
+			TomorrowDailyBudget:       datum.TomorrowDailyBudget,
+			MarketingGoal:             datum.MarketingGoal,
+			CreatedAt:                 now,
+			UpdatedAt:                 now,
+		})
 	}
 
 	if page > 1 {
@@ -101,15 +112,13 @@ func (l *CampaignQueryLogic) query(param *jobs.QueryParam, page int64) (err erro
 	if sumPages > 1 {
 		var i int64 = 2
 		for ; i <= sumPages; i++ {
-			if err = l.query(param, i); err != nil {
-				fmt.Println("第 ", i, " 页数据拉取出错", err)
-			}
+			l.query(param, i)
 
 			time.Sleep(time.Millisecond * 500)
 		}
 	}
 
-	return nil
+	return
 }
 
 func ceil(num, pageSize int64) int64 {

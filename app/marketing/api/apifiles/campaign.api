@@ -87,4 +87,8 @@ type (
         BaseResp
         Data Campaign `json:"data"`
     }
+    CampaignBindAppReq {
+        CampaignIds []string `json:"campaign_ids"`
+        AppId string  `json:"app_id"`
+    }
 )

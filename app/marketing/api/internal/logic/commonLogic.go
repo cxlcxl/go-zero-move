@@ -1,7 +1,9 @@
 package logic
 
 import (
+	"business/app/marketing/api/internal/types"
 	"business/common/utils"
+	"business/common/vars"
 	"strconv"
 	"time"
 )
@@ -17,4 +19,11 @@ func generateBatchCode(salt string) string {
 		rs = []string{time.Now().Format("060102150405"), strconv.FormatInt(time.Now().UnixNano(), 10)[10:]}
 	}
 	return utils.BufferConcat(rs)
+}
+
+func successFul() (resp *types.BaseResp) {
+	return &types.BaseResp{
+		Code: vars.ResponseCodeOk,
+		Msg:  vars.ResponseMsg[vars.ResponseCodeOk],
+	}
 }

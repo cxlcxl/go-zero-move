@@ -44,6 +44,7 @@ type (
 		TotalNum    int64     `db:"total_num"`    // 总数
 		JobSchedule string    `db:"job_schedule"` // cron 调度
 		PauseRule   int64     `db:"pause_rule"`   // 调度截止规则：0 调度到当天；-1 停止调度此任务；> 0 为当前日期减{pause_rule}天
+		Version     int64     `db:"version"`      // 版本：每次有规则或调度修改 +1
 	}
 )
 
@@ -89,14 +90,14 @@ func (m *defaultJobsModel) FindOneByApiModule(ctx context.Context, apiModule str
 }
 
 func (m *defaultJobsModel) Insert(ctx context.Context, data *Jobs) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?)", m.table, jobsRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.StatDay, data.ApiModule, data.TotalPage, data.TotalNum, data.JobSchedule, data.PauseRule)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?)", m.table, jobsRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.StatDay, data.ApiModule, data.TotalPage, data.TotalNum, data.JobSchedule, data.PauseRule, data.Version)
 	return ret, err
 }
 
 func (m *defaultJobsModel) Update(ctx context.Context, newData *Jobs) error {
 	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, jobsRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, newData.StatDay, newData.ApiModule, newData.TotalPage, newData.TotalNum, newData.JobSchedule, newData.PauseRule, newData.Id)
+	_, err := m.conn.ExecCtx(ctx, query, newData.StatDay, newData.ApiModule, newData.TotalPage, newData.TotalNum, newData.JobSchedule, newData.PauseRule, newData.Version, newData.Id)
 	return err
 }
 

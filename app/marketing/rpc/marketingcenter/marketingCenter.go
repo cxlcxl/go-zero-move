@@ -21,6 +21,7 @@ type (
 	BaseResp                            = marketing.BaseResp
 	BatchInsertAssetReq                 = marketing.BatchInsertAssetReq
 	BatchInsertTrackingReq              = marketing.BatchInsertTrackingReq
+	CampaignBindAppReq                  = marketing.CampaignBindAppReq
 	CampaignCreateReq                   = marketing.CampaignCreateReq
 	CampaignInfo                        = marketing.CampaignInfo
 	CampaignInfoReq                     = marketing.CampaignInfoReq
@@ -42,8 +43,14 @@ type (
 	EmptyParamsReq                      = marketing.EmptyParamsReq
 	GetTargetingByNameReq               = marketing.GetTargetingByNameReq
 	GetTargetingByTargetingIdReq        = marketing.GetTargetingByTargetingIdReq
+	PositionElementReq                  = marketing.PositionElementReq
+	PositionElementResp                 = marketing.PositionElementResp
+	PositionElementResp_Element         = marketing.PositionElementResp_Element
 	PositionListReq                     = marketing.PositionListReq
 	PositionListResp                    = marketing.PositionListResp
+	PositionPlacementReq                = marketing.PositionPlacementReq
+	PositionPlacementResp               = marketing.PositionPlacementResp
+	PositionPlacementResp_Placement     = marketing.PositionPlacementResp_Placement
 	PositionPriceReq                    = marketing.PositionPriceReq
 	PositionPriceResp                   = marketing.PositionPriceResp
 	Targeting                           = marketing.Targeting
@@ -59,6 +66,7 @@ type (
 		CampaignList(ctx context.Context, in *CampaignListReq, opts ...grpc.CallOption) (*CampaignListResp, error)
 		CampaignUpdate(ctx context.Context, in *CampaignUpdateReq, opts ...grpc.CallOption) (*BaseResp, error)
 		GetCampaignInfo(ctx context.Context, in *CampaignInfoReq, opts ...grpc.CallOption) (*CampaignInfo, error)
+		CampaignBindApp(ctx context.Context, in *CampaignBindAppReq, opts ...grpc.CallOption) (*BaseResp, error)
 		DictQuery(ctx context.Context, in *DictionaryReq, opts ...grpc.CallOption) (*DictionaryResp, error)
 		Continents(ctx context.Context, in *EmptyParamsReq, opts ...grpc.CallOption) (*ContinentResp, error)
 		GetCountries(ctx context.Context, in *EmptyParamsReq, opts ...grpc.CallOption) (*CountriesResp, error)
@@ -75,6 +83,8 @@ type (
 		GetPositions(ctx context.Context, in *PositionListReq, opts ...grpc.CallOption) (*PositionListResp, error)
 		GetPositionInfo(ctx context.Context, in *CreativeSizeInfoReq, opts ...grpc.CallOption) (*CreativeSizeInfoResp, error)
 		GetPositionPrice(ctx context.Context, in *PositionPriceReq, opts ...grpc.CallOption) (*PositionPriceResp, error)
+		GetPositionPlacement(ctx context.Context, in *PositionPlacementReq, opts ...grpc.CallOption) (*PositionPlacementResp, error)
+		GetPositionElement(ctx context.Context, in *PositionElementReq, opts ...grpc.CallOption) (*PositionElementResp, error)
 	}
 
 	defaultMarketingCenter struct {
@@ -106,6 +116,11 @@ func (m *defaultMarketingCenter) CampaignUpdate(ctx context.Context, in *Campaig
 func (m *defaultMarketingCenter) GetCampaignInfo(ctx context.Context, in *CampaignInfoReq, opts ...grpc.CallOption) (*CampaignInfo, error) {
 	client := marketing.NewMarketingCenterClient(m.cli.Conn())
 	return client.GetCampaignInfo(ctx, in, opts...)
+}
+
+func (m *defaultMarketingCenter) CampaignBindApp(ctx context.Context, in *CampaignBindAppReq, opts ...grpc.CallOption) (*BaseResp, error) {
+	client := marketing.NewMarketingCenterClient(m.cli.Conn())
+	return client.CampaignBindApp(ctx, in, opts...)
 }
 
 func (m *defaultMarketingCenter) DictQuery(ctx context.Context, in *DictionaryReq, opts ...grpc.CallOption) (*DictionaryResp, error) {
@@ -186,4 +201,14 @@ func (m *defaultMarketingCenter) GetPositionInfo(ctx context.Context, in *Creati
 func (m *defaultMarketingCenter) GetPositionPrice(ctx context.Context, in *PositionPriceReq, opts ...grpc.CallOption) (*PositionPriceResp, error) {
 	client := marketing.NewMarketingCenterClient(m.cli.Conn())
 	return client.GetPositionPrice(ctx, in, opts...)
+}
+
+func (m *defaultMarketingCenter) GetPositionPlacement(ctx context.Context, in *PositionPlacementReq, opts ...grpc.CallOption) (*PositionPlacementResp, error) {
+	client := marketing.NewMarketingCenterClient(m.cli.Conn())
+	return client.GetPositionPlacement(ctx, in, opts...)
+}
+
+func (m *defaultMarketingCenter) GetPositionElement(ctx context.Context, in *PositionElementReq, opts ...grpc.CallOption) (*PositionElementResp, error) {
+	client := marketing.NewMarketingCenterClient(m.cli.Conn())
+	return client.GetPositionElement(ctx, in, opts...)
 }

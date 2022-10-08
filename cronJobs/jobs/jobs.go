@@ -24,8 +24,9 @@ type AccessToken struct {
 }
 
 type QueryParam struct {
-	AccountId   int64
-	AccessToken string
+	AccountId    int64
+	AccessToken  string
+	AdvertiserId string
 }
 
 type QueueData interface {
@@ -61,13 +62,15 @@ func GetTokens(ctx context.Context, svcCtx *svc.ServiceContext, tokenChan chan *
 				continue
 			}
 			tokenChan <- &QueryParam{
-				AccountId:   tokens.AccountId,
-				AccessToken: fmt.Sprintf("%s %s", tokens.TokenType, at),
+				AccountId:    tokens.AccountId,
+				AdvertiserId: tokens.AdvertiserId,
+				AccessToken:  fmt.Sprintf("%s %s", tokens.TokenType, at),
 			}
 		} else {
 			tokenChan <- &QueryParam{
-				AccountId:   tokens.AccountId,
-				AccessToken: fmt.Sprintf("%s %s", tokens.TokenType, tokens.AccessToken),
+				AccountId:    tokens.AccountId,
+				AdvertiserId: tokens.AdvertiserId,
+				AccessToken:  fmt.Sprintf("%s %s", tokens.TokenType, tokens.AccessToken),
 			}
 		}
 	}
@@ -114,6 +117,7 @@ func Refresh(ctx context.Context, svcCtx *svc.ServiceContext, token *model.Token
 	_ = svcCtx.TokenModel.Update(ctx, &model.Tokens{
 		Id:           token.Id,
 		AccountId:    token.AccountId,
+		AdvertiserId: token.AdvertiserId,
 		AccessToken:  at.AccessToken,
 		RefreshToken: token.RefreshToken,
 		ExpiredAt:    time.Unix(time.Now().Unix()+at.ExpiresIn-20, 0),

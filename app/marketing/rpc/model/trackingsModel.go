@@ -4,6 +4,7 @@ import (
 	"business/common/utils"
 	"context"
 	"fmt"
+	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"strings"
 )
@@ -35,6 +36,9 @@ func (m *defaultTrackingsModel) TrackingList(ctx context.Context, appId string) 
 	sqlString := "select id,account_id,advertiser_id,app_id,tracking_id,effect_type,effect_name,'' as click_tracking_url,'' as imp_tracking_url from %s where app_id = ?"
 	sql := fmt.Sprintf(sqlString, m.table)
 	err = m.conn.QueryRowsCtx(ctx, &trackings, sql, appId)
+	if len(trackings) == 0 {
+		return nil, sqlc.ErrNotFound
+	}
 	return
 }
 

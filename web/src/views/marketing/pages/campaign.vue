@@ -13,27 +13,32 @@
         </el-form-item>
       </el-form>
     </el-col>
-    <el-col :span="24" v-show="search.app_id !== ''">
+    <el-col :span="24" v-if="search.app_id !== '' && !openSetting">
       <el-button type="primary" icon="el-icon-plus" size="mini" @click="add">创建计划</el-button>
     </el-col>
+    <el-col :span="24" v-else>
+      <el-button icon="el-icon-setting" size="mini" @click="openSetting = true" plain v-if="!openSetting">批量关联应用</el-button>
+      <el-button icon="el-icon-setting" size="mini" plain v-if="openSetting" @click="confirmRelation">提交关联</el-button>
+    </el-col>
     <el-col :span="24" style="margin-top: 10px;">
-      <el-table v-loading="campaignLoading" :data="campaign.campaigns" highlight-current-row stripe border size="mini">
+      <el-table v-loading="campaignLoading" :data="campaign.campaigns" highlight-current-row stripe border size="mini" ref="table">
+        <el-table-column width="50" type="selection" fixed="left" align="center" v-if="openSetting === true"/>
         <el-table-column label="计划 ID" width="90" align="center" fixed="left">
           <template slot-scope="scope">
             <span :class="{'text-success': scope.row.is_callback === 1}">{{ scope.row.campaign_id }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="campaign_name" label="计划名称" min-width="160" show-overflow-tooltip fixed="left"/>
+        <el-table-column prop="campaign_name" label="计划名称" min-width="260" show-overflow-tooltip fixed="left"/>
         <el-table-column label="计划类型" width="90" align="center">
           <template slot-scope="scope">{{ resources.campaign_type[scope.row.campaign_type] }}</template>
         </el-table-column>
-        <el-table-column label="计划状态" width="140">
+        <el-table-column label="计划状态" width="100" show-overflow-tooltip>
           <template slot-scope="scope">{{ resources.show_status[scope.row.show_status] }}</template>
         </el-table-column>
         <el-table-column label="操作状态" width="90" align="center">
           <template slot-scope="scope">{{ resources.opt_status[scope.row.opt_status] }}</template>
         </el-table-column>
-        <el-table-column label="日预算状态" width="130">
+        <el-table-column label="日预算状态" width="110" show-overflow-tooltip>
           <template slot-scope="scope">{{ resources.campaign_daily[scope.row.campaign_daily_budget_status] }}
           </template>
         </el-table-column>
@@ -49,9 +54,6 @@
           <template slot-scope="scope">{{ resources.flow_resource[scope.row.flow_resource] }}</template>
         </el-table-column>
         <el-table-column prop="sync_flow_resource_searchad" label="同步网络" width="100"/>
-        <el-table-column prop="created_at" label="添加时间" width="140" align="center">
-          <template slot-scope="scope">{{ scope.row.created_at|timeFormat }}</template>
-        </el-table-column>
         <el-table-column align="center" label="操作" fixed="right" width="120">
           <template slot-scope="scope">
             <el-button-group class="table-operate">
@@ -73,7 +75,7 @@
 </template>
 
 <script>
-import { campaignList, campaignResources } from '@/api/campaign'
+import { campaignBindApp, campaignList, campaignResources } from '@/api/campaign'
 import Page from '@c/Page'
 import CreateCampaign from '../components/add-campaign'
 import { parseTime } from '@/utils'
@@ -83,6 +85,7 @@ export default {
   data() {
     return {
       campaignLoading: false,
+      openSetting: false,
       search: {
         app_id: '',
         campaign_id: '',
@@ -104,6 +107,10 @@ export default {
         campaign_daily: {},
         balance_status: {},
         flow_resource: {}
+      },
+      relationForm: {
+        app_id: '',
+        campaign_ids: []
       }
     }
   },
@@ -115,7 +122,9 @@ export default {
   methods: {
     initData(app_id) {
       this.$set(this.search, 'app_id', app_id)
-      this.fetchData()
+      if (this.openSetting === false) {
+        this.fetchData()
+      }
     },
     fetchData() {
       this.campaignLoading = true
@@ -160,7 +169,35 @@ export default {
     editRow() {
 
     },
+    confirmRelation() {
+      this.relationForm.campaign_ids = []
+      for (let item of this.$refs.table.selection) {
+        this.relationForm.campaign_ids.push(item.campaign_id)
+      }
+      this.relationForm.app_id = this.search.app_id
+      if (this.relationForm.campaign_ids.length === 0) {
+        this.$message.error("请选择计划")
+        return
+      }
+      if (this.relationForm.app_id === '') {
+        this.$message.error("请选择应用")
+        return
+      }
+      this.campaignLoading = true
+      campaignBindApp(this.relationForm).then(res => {
+        this.$message.success("绑定成功，刷新列表中...")
+        this.openSetting = false
+        this.fetchData()
+      }).catch(() => {
+        this.campaignLoading = false
+        this.openSetting = false
+      })
+    },
     addAdgroup(campaign) {
+      if (campaign.app_id === '') {
+        this.$message.error("未关联应用不可以直接建任务")
+        return
+      }
       this.$router.push({ name: 'AdgroupCreate', query: { campaign_id: campaign.campaign_id } })
     },
     handlePage(p) {

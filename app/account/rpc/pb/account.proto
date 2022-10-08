@@ -35,6 +35,7 @@ message TokenInfo{
   string refresh_token = 3;
   int64 expired_at = 4;
   string token_type = 5;
+  string advertiser_id = 6;
 }
 
 message AccountListReq{

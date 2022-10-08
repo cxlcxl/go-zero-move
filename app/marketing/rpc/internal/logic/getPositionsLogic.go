@@ -4,7 +4,7 @@ import (
 	"business/app/marketing/rpc/internal/svc"
 	"business/app/marketing/rpc/marketing"
 	"context"
-
+	"fmt"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -23,7 +23,7 @@ func NewGetPositionsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetP
 }
 
 func (l *GetPositionsLogic) GetPositions(in *marketing.PositionListReq) (*marketing.PositionListResp, error) {
-	positions, err := l.svcCtx.PositionModel.PositionList(l.ctx, in.Category, in.AccountId)
+	positions, err := l.svcCtx.PositionModel.PositionList(l.ctx, in.Category, in.ProductType, in.AccountId)
 	if err != nil {
 		return nil, err
 	}
@@ -44,6 +44,7 @@ func (l *GetPositionsLogic) GetPositions(in *marketing.PositionListReq) (*market
 			SupportPriceType:           position.SupportPriceType,
 		})
 	}
+	fmt.Println("------", creativeSizeIds)
 	samples, err := l.svcCtx.SampleModel.SampleList(l.ctx, creativeSizeIds)
 	if err != nil {
 		return nil, err

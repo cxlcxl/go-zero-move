@@ -18,8 +18,8 @@ import (
 var (
 	tokensFieldNames          = builder.RawFieldNames(&Tokens{})
 	tokensRows                = strings.Join(tokensFieldNames, ",")
-	tokensRowsExpectAutoSet   = strings.Join(stringx.Remove(tokensFieldNames, "`id`", "`create_time`", "`update_time`", "`create_at`", "`update_at`"), ",")
-	tokensRowsWithPlaceHolder = strings.Join(stringx.Remove(tokensFieldNames, "`id`", "`create_time`", "`update_time`", "`created_at`", "`update_at`"), "=?,") + "=?"
+	tokensRowsExpectAutoSet   = strings.Join(stringx.Remove(tokensFieldNames, "`id`", "`create_at`", "`update_at`"), ",")
+	tokensRowsWithPlaceHolder = strings.Join(stringx.Remove(tokensFieldNames, "`id`", "`created_at`", "`update_at`"), "=?,") + "=?"
 )
 
 type (
@@ -38,7 +38,8 @@ type (
 
 	Tokens struct {
 		Id           int64     `db:"id"`
-		AccountId    int64     `db:"account_id"` // 账户ID
+		AccountId    int64     `db:"account_id"`    // 账户ID
+		AdvertiserId string    `db:"advertiser_id"` //
 		AccessToken  string    `db:"access_token"`
 		RefreshToken string    `db:"refresh_token"`
 		ExpiredAt    time.Time `db:"expired_at"` // access_token 过期时间
@@ -90,14 +91,14 @@ func (m *defaultTokensModel) FindOneByAccountId(ctx context.Context, accountId i
 }
 
 func (m *defaultTokensModel) Insert(ctx context.Context, data *Tokens) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?)", m.table, tokensRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.AccountId, data.AccessToken, data.RefreshToken, data.ExpiredAt, data.CreatedAt, data.UpdatedAt, data.TokenType)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", m.table, tokensRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.AccountId, data.AdvertiserId, data.AccessToken, data.RefreshToken, data.ExpiredAt, data.CreatedAt, data.UpdatedAt, data.TokenType)
 	return ret, err
 }
 
 func (m *defaultTokensModel) Update(ctx context.Context, newData *Tokens) error {
 	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tokensRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, newData.AccountId, newData.AccessToken, newData.RefreshToken, newData.ExpiredAt, newData.UpdatedAt, newData.TokenType, newData.Id)
+	_, err := m.conn.ExecCtx(ctx, query, newData.AccountId, newData.AdvertiserId, newData.AccessToken, newData.RefreshToken, newData.ExpiredAt, newData.UpdatedAt, newData.TokenType, newData.Id)
 	return err
 }
 

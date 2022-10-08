@@ -8,10 +8,11 @@ import (
 	"business/cronJobs/jobs/refreshToken"
 	"business/cronJobs/jobs/targeting"
 	"business/cronJobs/vars"
+	"time"
 )
 
 type Job func()
-type ManualJob func(day string, pauseRule int64)
+type ManualJob func(day time.Time, pauseRule int64)
 
 var (
 	ScheduleJobs = map[string]Job{
@@ -26,6 +27,7 @@ var (
 	}
 
 	ManualScheduleJobs = map[string]ManualJob{
+		vars.ApiModuleCampaign:        campaign.CampaignManual,
 		vars.ApiModuleRefreshToken:    refreshToken.RefreshTokenManual,
 		vars.ApiModulePositionPrice:   position.PriceManual,
 		vars.ApiModulePositionElement: position.ElementManual,
