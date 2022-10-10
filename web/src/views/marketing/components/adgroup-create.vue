@@ -278,7 +278,7 @@ export default {
       this.$set(this.pricing, this.editableTabsValue, supportPriceType)
       this.adgroupForm.adgroups.forEach((tab, idx) => {
         if (tab.tab_name === this.editableTabsValue) {
-          this.$refs['creativeSelect__' + this.editableTabsValue][idx].setPositionSubTypes(placements, creativeSizeId)
+          this.$refs['creativeSelect__' + this.editableTabsValue][idx].setPositionSubTypes(placements, creativeSizeId, this.campaign.app_id)
           this.$set(this.adgroupForm.adgroups[idx], 'creative_size_id', creativeSizeId)
           // 出价联动
           this.$set(this.adgroupForm.adgroups[idx], 'price_type', '')

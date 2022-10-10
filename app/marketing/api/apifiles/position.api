@@ -67,7 +67,7 @@ type (
         MaxLength int64 `json:"max_length"`
         Width int64 `json:"width"`
         Height int64 `json:"height"`
-        FileSizeKBLimit int64 `json:"file_size_kb_limit"`
+        FileSizeKbLimit int64 `json:"file_size_kb_limit"`
         MinWidth int64 `json:"min_width"`
         MinHeight int64 `json:"min_height"`
         GifSizeKbLimit int64 `json:"gif_size_kb_limit"`

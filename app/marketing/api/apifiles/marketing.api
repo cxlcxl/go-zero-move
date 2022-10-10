@@ -133,4 +133,7 @@ service marketing-api {
 	@doc "素材绑定"
 	@handler assetBind
 	post /asset/bind(AssetBindReq) returns (BaseResp)
+	@doc "创意元素素材查询"
+	@handler assetElement
+	get /asset/element(AssetElementReq) returns (AssetElementResp)
 }

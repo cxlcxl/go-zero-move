@@ -38,6 +38,7 @@ type MarketingCenterClient interface {
 	AssetList(ctx context.Context, in *AssetListReq, opts ...grpc.CallOption) (*AssetListResp, error)
 	DeleteAssets(ctx context.Context, in *AssetDeleteReq, opts ...grpc.CallOption) (*BaseResp, error)
 	BindAsset(ctx context.Context, in *AssetBindReq, opts ...grpc.CallOption) (*BaseResp, error)
+	AssetElement(ctx context.Context, in *AssetElementReq, opts ...grpc.CallOption) (*AssetElementResp, error)
 	TrackingList(ctx context.Context, in *TrackingListReq, opts ...grpc.CallOption) (*TrackingListResp, error)
 	BatchInsertTracking(ctx context.Context, in *BatchInsertTrackingReq, opts ...grpc.CallOption) (*BaseResp, error)
 	GetPositions(ctx context.Context, in *PositionListReq, opts ...grpc.CallOption) (*PositionListResp, error)
@@ -199,6 +200,15 @@ func (c *marketingCenterClient) BindAsset(ctx context.Context, in *AssetBindReq,
 	return out, nil
 }
 
+func (c *marketingCenterClient) AssetElement(ctx context.Context, in *AssetElementReq, opts ...grpc.CallOption) (*AssetElementResp, error) {
+	out := new(AssetElementResp)
+	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/AssetElement", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *marketingCenterClient) TrackingList(ctx context.Context, in *TrackingListReq, opts ...grpc.CallOption) (*TrackingListResp, error) {
 	out := new(TrackingListResp)
 	err := c.cc.Invoke(ctx, "/marketing.MarketingCenter/TrackingList", in, out, opts...)
@@ -282,6 +292,7 @@ type MarketingCenterServer interface {
 	AssetList(context.Context, *AssetListReq) (*AssetListResp, error)
 	DeleteAssets(context.Context, *AssetDeleteReq) (*BaseResp, error)
 	BindAsset(context.Context, *AssetBindReq) (*BaseResp, error)
+	AssetElement(context.Context, *AssetElementReq) (*AssetElementResp, error)
 	TrackingList(context.Context, *TrackingListReq) (*TrackingListResp, error)
 	BatchInsertTracking(context.Context, *BatchInsertTrackingReq) (*BaseResp, error)
 	GetPositions(context.Context, *PositionListReq) (*PositionListResp, error)
@@ -343,6 +354,9 @@ func (UnimplementedMarketingCenterServer) DeleteAssets(context.Context, *AssetDe
 }
 func (UnimplementedMarketingCenterServer) BindAsset(context.Context, *AssetBindReq) (*BaseResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BindAsset not implemented")
+}
+func (UnimplementedMarketingCenterServer) AssetElement(context.Context, *AssetElementReq) (*AssetElementResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AssetElement not implemented")
 }
 func (UnimplementedMarketingCenterServer) TrackingList(context.Context, *TrackingListReq) (*TrackingListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TrackingList not implemented")
@@ -666,6 +680,24 @@ func _MarketingCenter_BindAsset_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MarketingCenter_AssetElement_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AssetElementReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketingCenterServer).AssetElement(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/marketing.MarketingCenter/AssetElement",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketingCenterServer).AssetElement(ctx, req.(*AssetElementReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _MarketingCenter_TrackingList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TrackingListReq)
 	if err := dec(in); err != nil {
@@ -862,6 +894,10 @@ var MarketingCenter_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "BindAsset",
 			Handler:    _MarketingCenter_BindAsset_Handler,
+		},
+		{
+			MethodName: "AssetElement",
+			Handler:    _MarketingCenter_AssetElement_Handler,
 		},
 		{
 			MethodName: "TrackingList",

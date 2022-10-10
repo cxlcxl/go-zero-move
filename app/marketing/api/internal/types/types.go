@@ -224,6 +224,33 @@ type AssetBindReq struct {
 	AssetIds []int64 `json:"asset_ids" validate:"required"`
 }
 
+type AssetElementReq struct {
+	AssetName       string `form:"asset_name,optional"`
+	AppId           string `form:"app_id" validate:"required"`
+	FileFormat      string `form:"file_format" validate:"required"`
+	FileSizeKbLimit int64  `form:"file_size_kb_limit" validate:"numeric"`
+	Width           int64  `form:"width" validate:"numeric"`
+	Height          int64  `form:"height" validate:"numeric"`
+	FileType        string `form:"file_type" validate:"required"`
+}
+
+type AssetElementResp struct {
+	*BaseResp
+	Data []*AssetElement `json:"data"`
+}
+
+type AssetElement struct {
+	AssetId           int64  `json:"asset_id"`
+	AssetName         string `json:"asset_name"`
+	AssetType         string `json:"asset_type"`
+	FileUrl           string `json:"file_url"`
+	Width             int64  `json:"width"`
+	Height            int64  `json:"height"`
+	VideoPlayDuration int64  `json:"video_play_duration"`
+	FileSize          int64  `json:"file_size"`
+	FileFormat        string `json:"file_format"`
+}
+
 type TargetingCreateReq struct {
 	CampaignId         string     `json:"campaign_id"`
 	TargetingType      string     `json:"targeting_type"`
@@ -369,7 +396,7 @@ type ElementItem struct {
 	MaxLength       int64  `json:"max_length"`
 	Width           int64  `json:"width"`
 	Height          int64  `json:"height"`
-	FileSizeKBLimit int64  `json:"file_size_kb_limit"`
+	FileSizeKbLimit int64  `json:"file_size_kb_limit"`
 	MinWidth        int64  `json:"min_width"`
 	MinHeight       int64  `json:"min_height"`
 	GifSizeKbLimit  int64  `json:"gif_size_kb_limit"`

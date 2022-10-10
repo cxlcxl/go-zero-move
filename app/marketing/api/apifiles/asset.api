@@ -65,4 +65,28 @@ type (
         AppId string `json:"app_id" validate:"required"`
         AssetIds []int64 `json:"asset_ids" validate:"required"`
     }
+    AssetElementReq {
+        AssetName string `form:"asset_name,optional"`
+        AppId string `form:"app_id" validate:"required"`
+        FileFormat string `form:"file_format" validate:"required"`
+        FileSizeKbLimit int64 `form:"file_size_kb_limit" validate:"numeric"`
+        Width int64 `form:"width" validate:"numeric"`
+        Height int64 `form:"height" validate:"numeric"`
+        FileType string `form:"file_type" validate:"required"`
+    }
+    AssetElementResp {
+        *BaseResp
+        Data []*AssetElement `json:"data"`
+    }
+    AssetElement {
+        AssetId int64 `json:"asset_id"`
+        AssetName string `json:"asset_name"`
+        AssetType string `json:"asset_type"`
+        FileUrl string `json:"file_url"`
+        Width int64 `json:"width"`
+        Height int64 `json:"height"`
+        VideoPlayDuration int64 `json:"video_play_duration"`
+        FileSize int64 `json:"file_size"`
+        FileFormat string `json:"file_format"`
+    }
 )

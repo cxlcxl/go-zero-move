@@ -1,5 +1,5 @@
 <template>
-  <div class="creative-select-container" v-show="selected" v-loading="creativeLoading">
+  <div class="creative-select-container" v-show="selected">
     <p class="creative-title text-primary">创意素材选择</p>
     <p class="creative-sub-type mt10">
       <el-radio-group v-model="element_search.sub_type" @change="handleChangeSubType">
@@ -12,16 +12,14 @@
     <div class="creative-opt">
       <el-button icon="el-icon-plus" plain @click="addCreative" :disabled="creativesForm.length >= 5">添加创意</el-button>
 
-      <span :class="{'creative-item': true, 'creative-item-active': creative.creative_index === active_creative_index}"
+      <span :class="{'creative-item': true, 'creative-item-active': creative.creative_index === creative_index-1}"
             v-for="(creative, idx) in creativesForm" v-if="creative.sub_type === element_search.sub_type">
-        <i @click="changeCreative(creative)">创意 {{creative.creative_index}}</i>
-        <i class="el-icon-copy-document text-info" @click="copyCreative(idx)"/>
-        <i class="el-icon-delete text-error" @click="removeCreative(idx)"/>
+        创意 {{creative.creative_index}} <i class="el-icon-delete text-error" @click="removeCreative(idx)"/>
       </span>
     </div>
-    <p class="creative-size mt10" v-show="creative_sizes.length > 0">
+    <p class="creative-size mt10" v-show="creative_size.length > 0">
       <el-radio-group v-model="element_search.creative_size" @change="handleChangeSize">
-        <el-radio-button :label="v" v-for="(v, label) in creative_sizes">{{v}}</el-radio-button>
+        <el-radio-button :label="v" v-for="(v, label) in creative_size">{{v}}</el-radio-button>
       </el-radio-group>
     </p>
     <el-form class="creative-element" label-width="120px" size="mini" ref="elementForm" :model="elementForm">
@@ -60,7 +58,6 @@ export default {
     return {
       selected: false,
       selectedSize: false,
-      creativeLoading: false,
       app_id: "",
       placement_sub_types: {
         placements: {},
@@ -71,7 +68,7 @@ export default {
         sub_type: '',
         creative_size: ''
       },
-      creative_sizes: [],
+      creative_size: [],
       elements: [],
       creatives: {},
       headers: {},
@@ -81,7 +78,6 @@ export default {
       elementForm: {
         creative_name: '',
       },
-      active_creative_index: 1,
       creative_index: 1,
       creativesForm: [], // {creative_name: '', sub_type: '', creative_size: '', creative_index: 1}
       assets: {}
@@ -104,7 +100,7 @@ export default {
       this.app_id = appId
       this.element_search.creative_size_id = creativeSizeId
       this.creatives = {}
-      this.creative_sizes = []
+      this.creative_size = []
       this.elements = []
       this.placement_sub_types = placements
       let filled = false
@@ -123,22 +119,16 @@ export default {
         for (let i = 0; i < this.creativesForm.length; i++) {
           if (this.creativesForm[i].sub_type === sub_type) {
             this.$set(this.element_search, 'creative_size', this.creativesForm[i].creative_size)
-            this.active_creative_index = this.creativesForm[i].creative_index
-            this.creative_sizes = this.placement_sub_types.placements[sub_type]
-            if (this.creativesForm[i].creative_size !== '') {
-              this.fetchElements()
-            }
+            this.fetchElements()
             return
           }
         }
       }
-      this.creative_sizes = []
+      this.creative_size = []
       this.elements = []
       this.$set(this.element_search, 'creative_size', '')
     },
-    handleChangeSize(v) {
-      this.setCreativeSubType(v)
-
+    handleChangeSize() {
       if (!this.selectedSize) {
         this.fetchElements()
       } else {
@@ -152,102 +142,48 @@ export default {
       }
       this.selectedSize = true
     },
-    setCreativeSubType(creativeSize) {
-      for (let i = 0; i < this.creativesForm.length; i++) {
-        if (this.creativesForm[i].creative_index === this.active_creative_index) {
-          this.$set(this.creativesForm[i], 'creative_size', creativeSize)
-          break
-        }
-      }
-    },
     addCreative() {
       if (this.element_search.sub_type === '') {
         this.$message.error('请先选择版位形式')
         return
       }
 
-      let size = ''
-      this.creative_sizes = this.placement_sub_types.placements[this.element_search.sub_type]
-      if (this.creative_sizes.length === 1) {
-        this.element_search.creative_size = this.creative_sizes[0]
-        size = this.creative_sizes[0]
+      this.creative_size = this.placement_sub_types.placements[this.element_search.sub_type]
+      if (this.creative_size.length === 1) {
+        this.element_search.creative_size = this.creative_size[0]
         this.selectedSize = true
+        this.fetchElements()
       } else {
         this.selectedSize = false
       }
 
-      let creative = {
+      this.creativesForm.push({
         creative_name: '',
         sub_type: this.element_search.sub_type,
         creative_index: this.creative_index,
-        creative_size: size,
-      }
-      this.creativesForm.push(creative)
-      this.changeCreative(creative)
+        creative_size: this.element_search.creative_size,
+      })
       this.creative_index++
-    },
-    changeCreative(creative) {
-      this.active_creative_index = creative.creative_index
-
-      this.$set(this.element_search, 'creative_size', creative.creative_size)
-      this.$set(this.element_search, 'sub_type', creative.sub_type)
-      this.creative_sizes = this.placement_sub_types.placements[creative.sub_type]
-
-      if (creative.creative_size !== '') {
-        this.fetchElements()
-      }
-    },
-    copyCreative(idx) {
-      if (this.creativesForm.length >= 5) {
-        this.$message.error('创意数量已达上线')
-        return
-      }
-      let creative = Object.assign({}, this.creativesForm[idx])
-      creative.creative_index = this.creative_index
-      this.creative_index++
-      this.creativesForm.push(creative)
-      this.changeCreative(creative)
     },
     removeCreative(idx) {
-      this.$confirm('确认删除吗?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.creativesForm.splice(idx, 1)
-        if (this.creativesForm.length === 0) {
-          this.clearCreativeStatus()
-        } else {
-          let creative = this.creativesForm[this.creativesForm.length - 1]
-          this.active_creative_index = creative.creative_index
-          this.$set(this.element_search, 'creative_size', creative.creative_size)
-          this.$set(this.element_search, 'sub_type', creative.sub_type)
-          this.creative_sizes = this.placement_sub_types.placements[creative.sub_type]
-
-          this.fetchElements()
-        }
-      }).catch(() => {})
-    },
-    clearCreativeStatus() {
-      this.creative_index = 1
-      this.active_creative_index = 1
-      this.creative_sizes = []
-      this.elements = []
+      this.creativesForm.splice(idx, 1)
+      if (this.creativesForm.length === 0) {
+        this.creative_index = 1
+      } else {
+        let creative = this.creativesForm[this.creativesForm.length - 1]
+        this.creative_index = creative.creative_index
+        this.$set(this.element_search, 'creative_size', creative.creative_size)
+        this.$set(this.element_search, 'sub_type', creative.sub_type)
+      }
     },
     fetchElements() {
-      this.creativeLoading = true
-      console.log('元素获取')
-
-      setTimeout(() => {
-        this.creativeLoading = false
-      }, 1000)
-      // positionElements(this.element_search).then(res => {
-      //   this.elements = res.data
-      //   for (let e of this.elements) {
-      //     this.elementForm[e.element_name] = ''
-      //     this.assets[e.element_name] = {}
-      //   }
-      // }).catch(() => {})
+      positionElements(this.element_search).then(res => {
+        this.elements = res.data
+        for (let e of this.elements) {
+          this.elementForm[e.element_name] = ''
+          this.assets[e.element_name] = {}
+        }
+      }).catch(() => {})
     },
     elementAsset(element) {
       this.$refs['elementAsset__' + element.element_id][0].initElementSelect(element, this.app_id)
@@ -293,7 +229,7 @@ export default {
       color: #606266;
       cursor: pointer;
 
-      .el-icon-copy-document,.el-icon-delete {
+      .el-icon-delete {
         margin-left: 5px;
       }
 

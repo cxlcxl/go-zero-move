@@ -1,9 +1,9 @@
 <template>
-  <el-upload ref="upload" :action="action" style="text-align: left;" :limit="limit" :on-exceed="fileOverflow"
-             :file-list="fileList" :auto-upload="false" :headers="headers" :data="postData" :accept="accept"
+  <el-upload ref="upload" :action="UploadUrl" style="text-align: left;" :limit="limit" :on-exceed="fileOverflow"
+             :file-list="fileList" :auto-upload="false" :headers="headers" :data="PostData" :accept="accept"
              :on-success="uploadSuccess" :on-error="uploadError" :before-upload="beforeUpload" :on-change="onChange"
              :on-remove="removeFile" multiple>
-    <el-button icon="el-icon-paperclip" slot="trigger" size="small">{{triggerText}}</el-button>
+    <el-button icon="el-icon-paperclip" slot="trigger" size="mini">{{triggerText}}</el-button>
 
     <slot name="opt"/>
     <div slot="tip" class="el-upload__tip">{{tip}}</div>
@@ -12,19 +12,20 @@
 
 <script>
   import {getToken} from "@/utils/auth"
-  import {fileUpload} from "@a/global"
 
   export default {
     props: {
+      UploadUrl: {
+        type: String,
+        required: true
+      },
+      PostData: {
+        type: Object,
+        required: true
+      },
       accept: {
         type: String,
         default: '.png,.jpg,.jpeg,.pdf,.docx,.xlsx'
-      },
-      postData: {
-        type: Object,
-        default: () => {
-          return {module: 'contract'}
-        }
       },
       limit: {
         type: Number,
@@ -52,11 +53,6 @@
         selectedFiles: []
       }
     },
-    computed: {
-      action() {
-        return fileUpload
-      }
-    },
     methods: {
       fileOverflow() {
         this.$message.error("文件的最大上传数量为：" + this.limit)
@@ -72,7 +68,7 @@
         this.$message.error(JSON.parse(err.message).message)
       },
       beforeUpload(file) {
-        this.$emit('before', file)
+        return this.$emit('before', file)
       },
       submit() {
         if (this.selectedFiles.length === 0) {

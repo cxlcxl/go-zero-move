@@ -134,6 +134,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/asset/bind",
 					Handler: assetBindHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/asset/element",
+					Handler: assetElementHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),

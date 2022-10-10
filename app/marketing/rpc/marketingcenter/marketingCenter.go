@@ -16,6 +16,8 @@ type (
 	Asset                               = marketing.Asset
 	AssetBindReq                        = marketing.AssetBindReq
 	AssetDeleteReq                      = marketing.AssetDeleteReq
+	AssetElementReq                     = marketing.AssetElementReq
+	AssetElementResp                    = marketing.AssetElementResp
 	AssetListReq                        = marketing.AssetListReq
 	AssetListResp                       = marketing.AssetListResp
 	BaseResp                            = marketing.BaseResp
@@ -78,6 +80,7 @@ type (
 		AssetList(ctx context.Context, in *AssetListReq, opts ...grpc.CallOption) (*AssetListResp, error)
 		DeleteAssets(ctx context.Context, in *AssetDeleteReq, opts ...grpc.CallOption) (*BaseResp, error)
 		BindAsset(ctx context.Context, in *AssetBindReq, opts ...grpc.CallOption) (*BaseResp, error)
+		AssetElement(ctx context.Context, in *AssetElementReq, opts ...grpc.CallOption) (*AssetElementResp, error)
 		TrackingList(ctx context.Context, in *TrackingListReq, opts ...grpc.CallOption) (*TrackingListResp, error)
 		BatchInsertTracking(ctx context.Context, in *BatchInsertTrackingReq, opts ...grpc.CallOption) (*BaseResp, error)
 		GetPositions(ctx context.Context, in *PositionListReq, opts ...grpc.CallOption) (*PositionListResp, error)
@@ -176,6 +179,11 @@ func (m *defaultMarketingCenter) DeleteAssets(ctx context.Context, in *AssetDele
 func (m *defaultMarketingCenter) BindAsset(ctx context.Context, in *AssetBindReq, opts ...grpc.CallOption) (*BaseResp, error) {
 	client := marketing.NewMarketingCenterClient(m.cli.Conn())
 	return client.BindAsset(ctx, in, opts...)
+}
+
+func (m *defaultMarketingCenter) AssetElement(ctx context.Context, in *AssetElementReq, opts ...grpc.CallOption) (*AssetElementResp, error) {
+	client := marketing.NewMarketingCenterClient(m.cli.Conn())
+	return client.AssetElement(ctx, in, opts...)
 }
 
 func (m *defaultMarketingCenter) TrackingList(ctx context.Context, in *TrackingListReq, opts ...grpc.CallOption) (*TrackingListResp, error) {

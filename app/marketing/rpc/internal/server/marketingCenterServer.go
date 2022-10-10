@@ -102,6 +102,11 @@ func (s *MarketingCenterServer) BindAsset(ctx context.Context, in *marketing.Ass
 	return l.BindAsset(in)
 }
 
+func (s *MarketingCenterServer) AssetElement(ctx context.Context, in *marketing.AssetElementReq) (*marketing.AssetElementResp, error) {
+	l := logic.NewAssetElementLogic(ctx, s.svcCtx)
+	return l.AssetElement(in)
+}
+
 func (s *MarketingCenterServer) TrackingList(ctx context.Context, in *marketing.TrackingListReq) (*marketing.TrackingListResp, error) {
 	l := logic.NewTrackingListLogic(ctx, s.svcCtx)
 	return l.TrackingList(in)

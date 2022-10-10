@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/Masterminds/squirrel"
+	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"strings"
 )
@@ -20,6 +21,7 @@ type (
 		BatchInsert(ctx context.Context, assets []*Assets) error
 		AssetList(ctx context.Context, appId, assetType string, w, h int64, offset, limit uint64) (campaigns []*Assets, total int64, err error)
 		AssetBind(ctx context.Context, appId string, assetIds []int64) (err error)
+		AssetElementList(ctx context.Context, appId, assetType string, width, height, fileSize int64, assetName string) ([]*Assets, error)
 	}
 
 	customAssetsModel struct {
@@ -52,6 +54,23 @@ func (m *defaultAssetsModel) BatchInsert(ctx context.Context, assets []*Assets) 
 		return err
 	}
 	return nil
+}
+
+func (m *defaultAssetsModel) AssetElementList(ctx context.Context, appId, assetType string, w, h, fileSize int64, assetName string) (assets []*Assets, err error) {
+	query := squirrel.Select(assetsRows).From(m.table).Where("app_id in (?, '')", appId).Where("asset_type = ?", assetType).
+		Where("width = ?", w).Where("height = ?", h).Where("file_size <= ?", fileSize)
+	if len(assetName) > 0 {
+		query = query.Where("asset_name like ?", "%"+assetName+"%")
+	}
+	sql, args, err := query.OrderBy("width asc,height asc").ToSql()
+	if err != nil {
+		return nil, err
+	}
+	err = m.conn.QueryRowsCtx(ctx, &assets, sql, args...)
+	if len(assets) == 0 {
+		return nil, sqlc.ErrNotFound
+	}
+	return
 }
 
 func (m *defaultAssetsModel) AssetList(ctx context.Context, appId, assetType string, w, h int64, offset, limit uint64) (assets []*Assets, total int64, err error) {

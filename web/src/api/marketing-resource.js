@@ -72,3 +72,11 @@ export function bindAsset(data) {
     data
   });
 }
+
+export function elementAsset(params) {
+  return request({
+    url: "/marketing/asset/element",
+    method: "get",
+    params
+  });
+}
