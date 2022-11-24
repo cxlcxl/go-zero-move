@@ -7,5 +7,11 @@
 web/node_modules/
 web/node_modules/*
 web/node_modules
-*.dev.yaml
-*.pro.yaml
+
+app/**/api/etc/*.pro.yaml
+app/**/rpc/etc/*.pro.yaml
+app/**/api/etc/*.test.yaml
+app/**/rpc/etc/*.test.yaml
+
+cronJobs/etc/*.test.yaml
+cronJobs/etc/*.pro.yaml

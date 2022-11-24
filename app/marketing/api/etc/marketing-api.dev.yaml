@@ -1,20 +1,23 @@
 Name: marketing-api
 Host: 0.0.0.0
 Port: 18004
-Timeout: 5000
+Timeout: 15000
 
 Auth:
   AccessSecret: "ADS_BUSINESS"
   Expire: 259200 # 秒
 
 MarketingRpcClient:
-  Target: "k8s://business/rbac-client-svc:28004"
+  Endpoints:
+    - "127.0.0.1:28004"
 
 AccountRpcClient:
-  Target: "k8s://business/rbac-client-svc:28002"
+  Endpoints:
+    - "127.0.0.1:28002"
 
 AppRpcClient:
-  Target: "k8s://business/rbac-client-svc:28003"
+  Endpoints:
+    - "127.0.0.1:28003"
 
 Redis:
   Host: "192.168.120.61:6379"
@@ -27,11 +30,7 @@ Kafka:
 
 MarketingApis:
   Authorize:
-    CodeUrl: "https://login.cloud.huawei.com/oauth2/v2/authorize"
-    TokenUrl: "https://login.cloud.huawei.com/oauth2/v2/token"
-    RedirectUri: "http://localhost:19527/#/marketing/callback"
     Refresh: "https://oauth-login.cloud.huawei.com/oauth2/v2/token"
-    Scope: "https://ads.cloud.huawei.com/promotion https://ads.cloud.huawei.com/report"
   Campaign:
     Query: "https://ads-dra.cloud.huawei.com/ads/v1/promotion/campaign/query"
     Create: "https://ads-dra.cloud.huawei.com/ads/v1/promotion/campaign/create"

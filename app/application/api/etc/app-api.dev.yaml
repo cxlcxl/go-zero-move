@@ -1,16 +1,19 @@
 Name: app-api
 Host: 0.0.0.0
 Port: 18003
+Timeout: 10000
 
 Auth:
   AccessSecret: "ADS_BUSINESS"
   Expire: 259200 # 秒
 
 AppRpcConf:
-  Target: "k8s://business/app-rpc-svc:28003"
+  Endpoints:
+    - "127.0.0.1:28003"
 
 AccountRpcConf:
-  Target: "k8s://business/account-rpc-svc:28002"
+  Endpoints:
+    - "127.0.0.1:28002"
 
 MarketingApis:
   App:

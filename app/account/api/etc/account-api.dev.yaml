@@ -22,4 +22,4 @@ MarketingApis:
     TokenUrl: "https://login.cloud.huawei.com/oauth2/v2/token"
     RedirectUri: "http://localhost:19527/#/marketing/callback"
     Refresh: "https://oauth-login.cloud.huawei.com/oauth2/v2/token"
-    Scope: "https://ads.cloud.huawei.com/promotion https://ads.cloud.huawei.com/report"
+    Scope: "https://www.huawei.com/auth/account/base.profile https://ads.cloud.huawei.com/report https://ads.cloud.huawei.com/promotion https://ads.cloud.huawei.com/tools https://ads.cloud.huawei.com/account https://ads.cloud.huawei.com/finance"
